@@ -2030,10 +2030,18 @@ export function WorkflowPane({
 // ---------------------------------------------------------------------------
 
 export const PRESETS = [
+  // --- Existing ---
   { label: "Competitive analysis pipeline", prompt: "Scrape the homepages of Stripe, Square, and Adyen, then compare their product offerings side-by-side and generate a competitive analysis summary with strengths and weaknesses" },
   { label: "Multi-source research report", prompt: "Search GitHub for the top 5 trending AI repositories this week, fetch each repo's README, then synthesize a research briefing that covers what each project does, their tech stacks, and which problems they solve" },
   { label: "Job market snapshot", prompt: "Search for senior backend engineer job postings on LinkedIn and Indeed, extract salary ranges and required skills, then produce a summary table comparing compensation across companies" },
   { label: "News digest + sentiment", prompt: "Scrape the front pages of Hacker News, TechCrunch, and The Verge, identify overlapping stories, then run sentiment analysis on coverage of the top 3 topics and generate a briefing with takeaways" },
   { label: "UML diagram on draw.io", prompt: "Go to draw.io (https://app.diagrams.net) and create a UML class diagram for a simple e-commerce application with entities for User, Product, Order, and OrderItem — including their attributes, methods, and relationships (associations, multiplicities). Save the diagram and take a screenshot." },
   { label: "Star today's trending GitHub repos", prompt: "Fetch today's top trending repositories on GitHub, then for each one check whether I have already starred it and, if not, star it on my behalf. Report which repos were newly starred and which were already starred." },
+  // --- Cross-app & OAuth-powered ---
+  { label: "Gmail → Slack daily digest", prompt: "Read my 10 most recent unread Gmail messages, summarize each one in a single sentence, then post the digest as a single formatted Slack message to my #daily-updates channel" },
+  { label: "CRM lead enrichment pipeline", prompt: "Take a list of 5 company domains (stripe.com, linear.app, notion.so, vercel.com, retool.com), scrape each homepage for their product description and team size, search LinkedIn for their CEO, then compile everything into a structured lead sheet and email it to me via Gmail" },
+  { label: "Investor update drafter", prompt: "Pull my GitHub activity for the last month (commits, PRs merged, repos updated), check my Google Calendar for key meetings this week, then draft a professional investor update email covering engineering progress, key milestones, and upcoming priorities. Send a draft to my Gmail" },
+  // --- Browser + tool combos ---
+  { label: "Product Hunt launch scout", prompt: "Open Product Hunt (https://www.producthunt.com/), screenshot today's top 5 launches, then for each one scrape the product's homepage for pricing and features. Compile a competitive intel report with the screenshots, a pricing comparison table, and a one-line verdict for each product. Email me the full report via Gmail" },
+  { label: "Competitor pricing monitor", prompt: "Open the pricing pages of Vercel (https://vercel.com/pricing), Netlify (https://www.netlify.com/pricing), and Render (https://render.com/pricing) in a browser, screenshot each one, extract plan names, prices, and key limits. Generate a side-by-side comparison matrix highlighting the cheapest option per feature tier, and email it to me" },
 ];

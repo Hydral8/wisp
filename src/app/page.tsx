@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useConvexAuth, useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -215,6 +215,11 @@ function ComposePane() {
   const [listening, setListening] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
+  const visiblePresets = useMemo(() => {
+    const shuffled = [...PRESETS].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 6);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -366,9 +371,9 @@ function ComposePane() {
           </div>
         </div>
 
-        {/* Suggestion chips */}
+        {/* Suggestion chips — show a random subset of 6 */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
-          {PRESETS.map((p) => (
+          {visiblePresets.map((p) => (
             <button
               key={p.label}
               onClick={() => {
