@@ -63,5 +63,7 @@ export type PlanningEvent =
   | { type: "tool_search_start"; query: string }
   | { type: "tool_search_complete"; query: string; count: number; tool_names: string[]; elapsed: number }
   | { type: "planning_thinking"; text: string }
+  | { type: "planning_message"; text: string }
+  | { type: "planning_warnings"; warnings: string[] }
   | { type: "dag_complete"; workflow: Workflow }
   | { type: "planning_error"; message: string };

@@ -112,7 +112,13 @@ Rules:
 - Once you have matching tools, immediately produce the DAG. Do not search again with rephrased queries.
 - For tasks an LLM handles natively (summarizing, formatting, analyzing, translating, classifying, comparing, writing), use server_name "__llm__" with tool_name "generate". Arguments: {"prompt": "your instruction here", "input": "{{previous_output_key}}"}. Do NOT search for tools for these tasks.
 - depends_on controls ordering. {{output_key}} references previous results.
-- Output ONLY the JSON DAG, no prose."""
+- If you CANNOT fulfill part or all of the request, respond in plain text (no JSON) explaining specifically why:
+  * "No suitable tool found for X" if search returned nothing relevant
+  * "Tool X requires authentication against Y" if the tool needs credentials the user hasn't provided
+  * "This task requires capabilities not available in the current tool set" for unsupported operations
+  * Suggest alternatives or workarounds when possible
+- If only some steps are blocked, build a partial DAG for what IS possible and explain what was skipped and why in a "warnings" field: {"name":"...","description":"...","warnings":["..."],"nodes":[...]}
+- When everything is feasible, output ONLY the JSON DAG, no prose."""
 
 SEARCH_TOOL = {"name": "search_tools", "description": "Search Wisp for MCP tools matching a query.", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}
 
@@ -207,17 +213,23 @@ async def run_planner_stream(messages: list[dict], max_turns: int = 8):
 
         messages.append({"role": "assistant", "content": resp.content})
 
-        if text.strip():
-            yield {"type": "planning_thinking", "text": text}
-
         obj = extract_json(text)
         if obj and is_dag(obj):
+            # Extract warnings if present
+            warnings = obj.get("warnings", [])
+            if warnings:
+                yield {"type": "planning_warnings", "warnings": warnings}
             wf = _build_workflow(obj)
             workflows[wf.id] = wf
             yield {"type": "dag_complete", "workflow": wf.model_dump()}
             return
 
-        yield {"type": "planning_error", "message": text or "No DAG in response"}
+        # Model responded with text — it's explaining something to the user
+        if text.strip():
+            yield {"type": "planning_message", "text": text}
+            return
+
+        yield {"type": "planning_error", "message": "No response from model."}
         return
 
     yield {"type": "planning_error", "message": "No DAG produced after max turns."}

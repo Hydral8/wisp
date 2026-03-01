@@ -804,6 +804,15 @@ export default function Home() {
             setPhase("preview");
           }
 
+          // Model is explaining why it can't do something — show as assistant message, stay conversational
+          if (pe.type === "planning_message") {
+            setChatMessages((prev) => [
+              ...prev,
+              { role: "assistant", content: pe.text },
+            ]);
+            setPhase("idle");
+          }
+
           // Error
           if (pe.type === "planning_error") {
             setPhase("idle");
