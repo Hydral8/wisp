@@ -32,6 +32,7 @@ export default function WorkflowPage() {
   const [planningEvents, setPlanningEvents] = useState<PlanningEvent[]>([]);
   const [nodeStatuses, setNodeStatuses] = useState<Map<string, NodeStatus>>(new Map());
   const [runMode, setRunMode] = useState<"deploy" | "test" | null>(null);
+  const [browserUseMode, setBrowserUseMode] = useState<"local" | "remote">("local");
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -70,6 +71,7 @@ export default function WorkflowPage() {
 
           if (pe.type === "dag_complete") {
             setWorkflow(pe.workflow);
+            setBrowserUseMode(pe.workflow.browser_use_mode ?? "local");
             setPhase("preview");
             newWorkflowId = pe.workflow.id;
           }
@@ -119,6 +121,7 @@ export default function WorkflowPage() {
         .then((r) => r.json())
         .then((wf) => {
           setWorkflow(wf);
+          setBrowserUseMode(wf.browser_use_mode ?? "local");
           setPhase("preview");
         })
         .catch(() => {
@@ -148,7 +151,10 @@ export default function WorkflowPage() {
         const res = await fetch(`${API}/deploy`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workflow_id: workflow.id }),
+          body: JSON.stringify({
+            workflow_id: workflow.id,
+            browser_use_mode: browserUseMode,
+          }),
         });
 
         await consumeSSE(res, (event) => {
@@ -165,6 +171,10 @@ export default function WorkflowPage() {
                 status: "running",
                 level: d.level as number,
                 progress: d.progress as number,
+                browserSteps: [],
+                browserSessionId: undefined,
+                browserLiveUrl: undefined,
+                browserShareUrl: undefined,
               });
               return next;
             });
@@ -179,6 +189,12 @@ export default function WorkflowPage() {
                 result: d.result,
                 elapsed: d.elapsed as number,
                 progress: d.progress as number,
+                actionRequired: Boolean(d.action_required),
+                actionMessage: d.action_message as string | undefined,
+                actionUrl: d.action_url as string | undefined,
+                browserSessionId: d.session_id as string | undefined,
+                browserLiveUrl: d.live_url as string | undefined,
+                browserShareUrl: d.share_url as string | undefined,
               });
               return next;
             });
@@ -192,6 +208,60 @@ export default function WorkflowPage() {
                 status: "error",
                 error: d.error as string,
                 progress: d.progress as number,
+                actionRequired: Boolean(d.action_required),
+                actionMessage: d.action_message as string | undefined,
+                actionUrl: d.action_url as string | undefined,
+              });
+              return next;
+            });
+          } else if (event.type === "node_action_required") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              if (!existing) return next;
+              next.set(event.node_id as string, {
+                ...existing,
+                actionRequired: true,
+                actionMessage:
+                  (d.action_message as string | undefined) ??
+                  existing.actionMessage,
+                actionUrl:
+                  (d.action_url as string | undefined) ??
+                  existing.actionUrl,
+              });
+              return next;
+            });
+          } else if (event.type === "node_browser_session") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              if (!existing) return next;
+              next.set(event.node_id as string, {
+                ...existing,
+                browserSessionId: d.session_id as string | undefined,
+                browserLiveUrl: d.live_url as string | undefined,
+                browserShareUrl: d.share_url as string | undefined,
+              });
+              return next;
+            });
+          } else if (event.type === "node_step") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              if (!existing) return next;
+              next.set(event.node_id as string, {
+                ...existing,
+                browserSteps: [
+                  ...(existing.browserSteps ?? []),
+                  {
+                    number: Number(d.number ?? 0),
+                    next_goal: String(d.next_goal ?? ""),
+                    url: d.url ? String(d.url) : undefined,
+                  },
+                ],
               });
               return next;
             });
@@ -206,7 +276,7 @@ export default function WorkflowPage() {
         setPhase("done");
       }
     },
-    [workflow],
+    [browserUseMode, workflow],
   );
 
   const handleCreateWebhook = useCallback(async () => {
@@ -267,6 +337,8 @@ export default function WorkflowPage() {
             nodeStatuses={nodeStatuses}
             phase={phase}
             runMode={runMode}
+            browserUseMode={browserUseMode}
+            onChangeBrowserUseMode={setBrowserUseMode}
             onRun={handleRun}
             onCreateWebhook={handleCreateWebhook}
             webhookUrl={webhookUrl}

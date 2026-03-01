@@ -13,11 +13,37 @@ interface WorkflowSummary {
   nodes: { id: string }[];
 }
 
+interface CredentialProfile {
+  app_id: string;
+  display_name: string;
+  username: string;
+  email: string;
+  password: string;
+  api_key: string;
+  token: string;
+  notes: string;
+  updated_at: string;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const [input, setInput] = useState(PRESETS[0].prompt);
   const [workflows, setWorkflows] = useState<WorkflowSummary[]>([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [profiles, setProfiles] = useState<CredentialProfile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [editingAppId, setEditingAppId] = useState<string | null>(null);
+  const [profileForm, setProfileForm] = useState({
+    appId: "",
+    displayName: "",
+    username: "",
+    email: "",
+    password: "",
+    apiKey: "",
+    token: "",
+    notes: "",
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch all workflows on mount
@@ -29,11 +55,88 @@ export default function Dashboard() {
       })
       .catch(() => {})
       .finally(() => setLoadingList(false));
+
+    fetch(`${API}/credentials/profiles`)
+      .then((r) => r.json())
+      .then((data) => {
+        setProfiles(data.profiles ?? []);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingProfiles(false));
   }, []);
 
   const handleSubmit = () => {
     if (!input.trim()) return;
     router.push(`/workflow/new?prompt=${encodeURIComponent(input.trim())}`);
+  };
+
+  const resetProfileForm = () => {
+    setEditingAppId(null);
+    setProfileForm({
+      appId: "",
+      displayName: "",
+      username: "",
+      email: "",
+      password: "",
+      apiKey: "",
+      token: "",
+      notes: "",
+    });
+  };
+
+  const handleSaveProfile = async () => {
+    const appId = profileForm.appId.trim().toLowerCase();
+    if (!appId) return;
+
+    setSavingProfile(true);
+    try {
+      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          display_name: profileForm.displayName,
+          username: profileForm.username,
+          email: profileForm.email,
+          password: profileForm.password,
+          api_key: profileForm.apiKey,
+          token: profileForm.token,
+          notes: profileForm.notes,
+        }),
+      });
+      const refreshed = await fetch(`${API}/credentials/profiles`).then((r) => r.json());
+      setProfiles(refreshed.profiles ?? []);
+      resetProfileForm();
+    } catch {
+      // noop
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleEditProfile = (profile: CredentialProfile) => {
+    setEditingAppId(profile.app_id);
+    setProfileForm({
+      appId: profile.app_id,
+      displayName: profile.display_name ?? "",
+      username: profile.username ?? "",
+      email: profile.email ?? "",
+      password: profile.password ?? "",
+      apiKey: profile.api_key ?? "",
+      token: profile.token ?? "",
+      notes: profile.notes ?? "",
+    });
+  };
+
+  const handleDeleteProfile = async (appId: string) => {
+    try {
+      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, {
+        method: "DELETE",
+      });
+      setProfiles((prev) => prev.filter((p) => p.app_id !== appId));
+      if (editingAppId === appId) resetProfileForm();
+    } catch {
+      // noop
+    }
   };
 
   const statusColor = (status: string) => {
@@ -177,6 +280,154 @@ export default function Dashboard() {
                   </span>
                 </div>
               </button>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="flex items-center justify-between mb-4 mt-10 pb-2"
+          style={{ borderBottom: "1px solid var(--border)" }}
+        >
+          <h2 className="text-xs font-bold tracking-wider uppercase" style={{ color: "var(--text-dim)" }}>
+            Credentials
+          </h2>
+          <span className="text-xs" style={{ color: "var(--text-dim)" }}>
+            {profiles.length} profiles
+          </span>
+        </div>
+
+        <div
+          className="rounded-lg p-4 mb-4"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+        >
+          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="App id (e.g. github)"
+              value={profileForm.appId}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, appId: e.target.value }))}
+              disabled={Boolean(editingAppId)}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Display name"
+              value={profileForm.displayName}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, displayName: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Username"
+              value={profileForm.username}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, username: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Email"
+              value={profileForm.email}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, email: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Password"
+              type="password"
+              value={profileForm.password}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, password: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="API key"
+              value={profileForm.apiKey}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, apiKey: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Token"
+              value={profileForm.token}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, token: e.target.value }))}
+            />
+            <input
+              className="px-3 py-2 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              placeholder="Notes"
+              value={profileForm.notes}
+              onChange={(e) => setProfileForm((prev) => ({ ...prev, notes: e.target.value }))}
+            />
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <button
+              onClick={handleSaveProfile}
+              disabled={savingProfile || !profileForm.appId.trim()}
+              className="px-3 py-1.5 rounded text-xs font-medium transition-opacity"
+              style={{ background: "var(--accent)", color: "#fff", opacity: savingProfile || !profileForm.appId.trim() ? 0.5 : 1 }}
+            >
+              {editingAppId ? "Update profile" : "Save profile"}
+            </button>
+            {editingAppId && (
+              <button
+                onClick={resetProfileForm}
+                className="px-3 py-1.5 rounded text-xs"
+                style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-dim)" }}
+              >
+                Cancel edit
+              </button>
+            )}
+          </div>
+        </div>
+
+        {loadingProfiles ? (
+          <p className="text-xs py-3" style={{ color: "var(--text-dim)" }}>Loading profiles...</p>
+        ) : profiles.length === 0 ? (
+          <p className="text-xs py-3" style={{ color: "var(--text-dim)" }}>
+            No credential profiles yet. Add one above to reuse app logins across relaunches.
+          </p>
+        ) : (
+          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+            {profiles.map((profile) => (
+              <div
+                key={profile.app_id}
+                className="p-3 rounded-lg"
+                style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-medium" style={{ color: "var(--text)" }}>
+                    {profile.display_name || profile.app_id}
+                  </div>
+                  <code className="text-[10px]" style={{ color: "var(--text-dim)" }}>
+                    {profile.app_id}
+                  </code>
+                </div>
+                <div className="space-y-1 text-xs" style={{ color: "var(--text-dim)" }}>
+                  {profile.username && <div>Username: {profile.username}</div>}
+                  {profile.email && <div>Email: {profile.email}</div>}
+                  {profile.password && <div>Password: ••••••••</div>}
+                  {profile.api_key && <div>API key: ••••••••</div>}
+                  {profile.token && <div>Token: ••••••••</div>}
+                  {profile.notes && <div>Notes: {profile.notes}</div>}
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={() => handleEditProfile(profile)}
+                    className="px-2 py-1 rounded text-xs"
+                    style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-dim)" }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProfile(profile.app_id)}
+                    className="px-2 py-1 rounded text-xs"
+                    style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", color: "var(--red)" }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         )}

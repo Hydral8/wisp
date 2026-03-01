@@ -547,6 +547,90 @@ export function ExecutionEntry({ node }: { node: NodeStatus }) {
 
       {expanded && (
         <div className="mt-3 space-y-2 animate-fade-in-fast">
+          {node.actionRequired && (
+            <div
+              className="p-2 rounded text-xs"
+              style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.4)" }}
+            >
+              <div className="font-medium mb-1" style={{ color: "#f59e0b" }}>
+                User action required in browser
+              </div>
+              {node.actionMessage && (
+                <div style={{ color: "var(--text-dim)" }}>{node.actionMessage}</div>
+              )}
+              {node.actionUrl && (
+                <a
+                  href={node.actionUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                  style={{ color: "var(--blue)" }}
+                >
+                  Open browser view
+                </a>
+              )}
+            </div>
+          )}
+          {node.browserSteps && node.browserSteps.length > 0 && (
+            <div>
+              <div className="text-xs font-medium mb-1" style={{ color: "var(--blue)" }}>
+                Browser Steps
+              </div>
+              <div className="space-y-1">
+                {node.browserSteps.map((step, idx) => (
+                  <div
+                    key={`${step.number}-${idx}`}
+                    className="text-xs p-2 rounded"
+                    style={{ background: "var(--bg-surface)", color: "var(--text-dim)" }}
+                  >
+                    <div>Step {step.number}: {step.next_goal}</div>
+                    {step.url && (
+                      <a
+                        href={step.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline"
+                        style={{ color: "var(--blue)" }}
+                      >
+                        {step.url}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {(node.browserLiveUrl || node.browserShareUrl) && (
+            <div>
+              <div className="text-xs font-medium mb-1" style={{ color: "var(--blue)" }}>
+                Live View
+              </div>
+              <div className="space-y-1">
+                {node.browserLiveUrl && (
+                  <a
+                    href={node.browserLiveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline block text-xs"
+                    style={{ color: "var(--blue)" }}
+                  >
+                    Open private live view
+                  </a>
+                )}
+                {node.browserShareUrl && (
+                  <a
+                    href={node.browserShareUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline block text-xs"
+                    style={{ color: "var(--blue)" }}
+                  >
+                    Open shareable recording link
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
           {node.arguments && Object.keys(node.arguments).length > 0 && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: "var(--blue)" }}>
@@ -611,6 +695,8 @@ export function WorkflowPane({
   nodeStatuses,
   phase,
   runMode,
+  browserUseMode,
+  onChangeBrowserUseMode,
   onRun,
   onCreateWebhook,
   webhookUrl,
@@ -619,6 +705,8 @@ export function WorkflowPane({
   nodeStatuses: Map<string, NodeStatus>;
   phase: AppPhase;
   runMode: "deploy" | "test" | null;
+  browserUseMode: "local" | "remote";
+  onChangeBrowserUseMode: (mode: "local" | "remote") => void;
   onRun: (mode: "deploy" | "test") => void;
   onCreateWebhook: () => void;
   webhookUrl: string | null;
@@ -638,7 +726,21 @@ export function WorkflowPane({
             {workflow.description}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-1">
+            <span className="text-xs" style={{ color: "var(--text-dim)" }}>
+              Browser-use
+            </span>
+            <select
+              className="px-2 py-1 rounded text-xs outline-none"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+              value={browserUseMode}
+              onChange={(e) => onChangeBrowserUseMode(e.target.value as "local" | "remote")}
+            >
+              <option value="local">Local</option>
+              <option value="remote">Remote</option>
+            </select>
+          </div>
           {phase === "preview" && (
             <>
               <button
