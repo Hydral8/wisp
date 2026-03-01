@@ -265,7 +265,7 @@ export const startExecution = action({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
-    const userId = identity.subject as Id<"users">;
+    const userId = identity.subject.split("|")[0] as Id<"users">;
 
     const workflow = await ctx.runQuery(api.workflows.get, {
       id: args.workflowId,

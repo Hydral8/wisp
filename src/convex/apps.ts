@@ -92,7 +92,7 @@ export const generateAppLayout = action({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
 
-    const userId = identity.subject;
+    const userId = identity.subject.split("|")[0];
 
     // Fetch workflow
     const workflow = await ctx.runQuery(api.workflows.get, {
