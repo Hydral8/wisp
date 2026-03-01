@@ -482,11 +482,55 @@ export function PipelineBar({
 }
 
 // ---------------------------------------------------------------------------
+// Result formatting helpers
+// ---------------------------------------------------------------------------
+
+function isLLMNode(node: NodeStatus) {
+  return node.server_name === "__llm__";
+}
+
+function friendlyLabel(node: NodeStatus) {
+  if (isLLMNode(node)) return node.step || "AI Analysis";
+  return node.step || node.tool_name;
+}
+
+function friendlySubtitle(node: NodeStatus) {
+  if (isLLMNode(node)) return "Language model";
+  return `${node.server_name} / ${node.tool_name}`;
+}
+
+/** Extract a human-readable string from a result object. */
+function formatResult(result: unknown): string {
+  if (result == null) return "";
+  if (typeof result === "string") return result;
+  // { result: "..." } from LLM nodes
+  if (typeof result === "object" && !Array.isArray(result)) {
+    const obj = result as Record<string, unknown>;
+    // If it has a single "result" key with a string, surface that
+    if (typeof obj.result === "string") return obj.result;
+    // If it has a "text" or "content" key
+    if (typeof obj.text === "string") return obj.text;
+    if (typeof obj.content === "string") return obj.content;
+    // If it has "_truncated" flag, show preview
+    if (obj._truncated && typeof obj.preview === "string") return obj.preview;
+  }
+  // Fallback: pretty JSON
+  return JSON.stringify(result, null, 2);
+}
+
+/** Trim long text for a preview line. */
+function previewText(text: string, maxLen = 120): string {
+  const oneLine = text.replace(/\n/g, " ").trim();
+  if (oneLine.length <= maxLen) return oneLine;
+  return oneLine.slice(0, maxLen) + "…";
+}
+
+// ---------------------------------------------------------------------------
 // ExecutionEntry
 // ---------------------------------------------------------------------------
 
-export function ExecutionEntry({ node }: { node: NodeStatus }) {
-  const [expanded, setExpanded] = useState(false);
+export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: boolean }) {
+  const [expanded, setExpanded] = useState(!!isFinal);
   const statusColor =
     node.status === "complete"
       ? "var(--green)"
@@ -505,96 +549,119 @@ export function ExecutionEntry({ node }: { node: NodeStatus }) {
           ? "node-error"
           : "";
 
+  const resultText = node.result !== undefined ? formatResult(node.result) : "";
+  const hasResult = resultText.length > 0;
+
   return (
     <div
-      className={`rounded-lg p-4 animate-fade-in transition-all cursor-pointer ${statusClass}`}
-      style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
-      onClick={() => setExpanded(!expanded)}
+      className={`rounded-lg animate-fade-in transition-all ${statusClass}`}
+      style={{
+        background: isFinal ? "var(--bg-surface)" : "var(--bg-card)",
+        border: isFinal ? "1px solid var(--accent)" : "1px solid var(--border)",
+      }}
     >
-      <div className="flex items-center justify-between">
+      {/* Header — always visible */}
+      <div
+        className="flex items-center justify-between p-4 cursor-pointer"
+        onClick={() => setExpanded(!expanded)}
+      >
         <div className="flex items-center gap-3">
           <div
-            className="w-2 h-2 rounded-full"
+            className="w-2 h-2 rounded-full flex-shrink-0"
             style={{
               background: statusColor,
               animation:
                 node.status === "running" ? "pulse-dot 1s ease-in-out infinite" : "none",
             }}
           />
-          <div>
+          <div className="min-w-0">
             <div className="text-xs font-medium" style={{ color: "var(--text)" }}>
-              {node.step || node.tool_name}
+              {isFinal ? "Final Result" : friendlyLabel(node)}
             </div>
             <div className="text-xs mt-0.5" style={{ color: "var(--text-dim)" }}>
-              {node.server_name} / {node.tool_name}
+              {isFinal ? friendlyLabel(node) : friendlySubtitle(node)}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {node.elapsed !== undefined && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {node.status === "running" && (
+            <span className="text-xs" style={{ color: "var(--text-dim)" }}>Running...</span>
+          )}
+          {node.elapsed !== undefined && node.status !== "running" && (
             <span className="text-xs" style={{ color: "var(--text-dim)" }}>
               {node.elapsed}s
             </span>
           )}
           <span
-            className="text-xs"
-            style={{ color: statusColor, transform: expanded ? "rotate(180deg)" : "none" }}
+            className="text-xs transition-transform"
+            style={{ color: "var(--text-dim)", transform: expanded ? "rotate(180deg)" : "none" }}
           >
             v
           </span>
         </div>
       </div>
 
+      {/* Result preview — shows a one-liner when collapsed */}
+      {!expanded && hasResult && node.status === "complete" && (
+        <div
+          className="px-4 pb-3 -mt-1 text-xs truncate"
+          style={{ color: "var(--text-dim)" }}
+        >
+          {previewText(resultText)}
+        </div>
+      )}
+
+      {/* Expanded content */}
       {expanded && (
-        <div className="mt-3 space-y-2 animate-fade-in-fast">
-          {node.arguments && Object.keys(node.arguments).length > 0 && (
-            <div>
-              <div className="text-xs font-medium mb-1" style={{ color: "var(--blue)" }}>
-                Request
-              </div>
+        <div className="px-4 pb-4 space-y-3 animate-fade-in-fast"
+          style={{ borderTop: "1px solid var(--border)" }}
+        >
+          {/* Result — readable text */}
+          {hasResult && (
+            <div className="mt-3">
               <pre
-                className="text-xs p-2 rounded overflow-x-auto"
+                className="text-xs whitespace-pre-wrap leading-relaxed"
                 style={{
-                  background: "var(--bg-surface)",
-                  color: "var(--text-dim)",
-                  maxHeight: 200,
+                  color: "var(--text)",
+                  maxHeight: isFinal ? 500 : 300,
+                  overflow: "auto",
                 }}
               >
-                {JSON.stringify(node.arguments, null, 2)}
+                {resultText}
               </pre>
             </div>
           )}
-          {node.result !== undefined && (
-            <div>
-              <div className="text-xs font-medium mb-1" style={{ color: "var(--green)" }}>
-                Response
-              </div>
-              <pre
-                className="text-xs p-2 rounded overflow-x-auto"
-                style={{
-                  background: "var(--bg-surface)",
-                  color: "var(--text-dim)",
-                  maxHeight: 300,
-                }}
-              >
-                {typeof node.result === "string"
-                  ? node.result
-                  : JSON.stringify(node.result, null, 2)}
-              </pre>
-            </div>
-          )}
+
+          {/* Error */}
           {node.error && (
-            <div>
-              <div className="text-xs font-medium mb-1" style={{ color: "var(--red)" }}>
-                Error
-              </div>
-              <pre
-                className="text-xs p-2 rounded"
-                style={{ background: "rgba(248,113,113,0.08)", color: "var(--red)" }}
-              >
+            <div className="mt-3 p-2 rounded"
+              style={{ background: "rgba(248,113,113,0.08)" }}>
+              <div className="text-xs" style={{ color: "var(--red)" }}>
                 {node.error}
-              </pre>
+              </div>
             </div>
+          )}
+
+          {/* Technical details — collapsible for devs */}
+          {node.arguments && Object.keys(node.arguments).length > 0 && (
+            <Collapsible label="Technical details" defaultOpen={false}>
+              <div className="space-y-2">
+                <div className="text-xs" style={{ color: "var(--text-dim)" }}>
+                  {node.server_name} / {node.tool_name}
+                </div>
+                <pre
+                  className="text-xs p-2 rounded overflow-x-auto"
+                  style={{
+                    background: "var(--bg)",
+                    color: "var(--text-dim)",
+                    maxHeight: 150,
+                    fontSize: 10,
+                  }}
+                >
+                  {JSON.stringify(node.arguments, null, 2)}
+                </pre>
+              </div>
+            </Collapsible>
           )}
         </div>
       )}
@@ -692,11 +759,18 @@ export function WorkflowPane({
       <div className="flex-1 overflow-y-auto p-4">
         {showExecution ? (
           <div className="space-y-3">
-            {workflow.nodes
-              .filter((n) => nodeStatuses.has(n.id))
-              .map((n) => (
-                <ExecutionEntry key={n.id} node={nodeStatuses.get(n.id)!} />
-              ))}
+            {(() => {
+              const visibleNodes = workflow.nodes.filter((n) => nodeStatuses.has(n.id));
+              const lastIdx = visibleNodes.length - 1;
+              const allDone = phase === "done";
+              return visibleNodes.map((n, i) => (
+                <ExecutionEntry
+                  key={n.id}
+                  node={nodeStatuses.get(n.id)!}
+                  isFinal={allDone && i === lastIdx}
+                />
+              ));
+            })()}
             {webhookUrl && (
               <div
                 className="p-3 rounded-lg text-xs animate-fade-in"
@@ -720,30 +794,39 @@ export function WorkflowPane({
                   Level {li + 1}
                 </div>
                 <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
-                  {level.map((node) => (
-                    <div
-                      key={node.id}
-                      className="p-3 rounded-lg"
-                      style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
-                    >
-                      <div className="text-xs font-medium">{node.step}</div>
-                      <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>
-                        {node.server_name} / {node.tool_name}
+                  {level.map((node) => {
+                    const isLlm = node.server_name === "__llm__";
+                    return (
+                      <div
+                        key={node.id}
+                        className="p-3 rounded-lg"
+                        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+                      >
+                        <div className="text-xs font-medium">{node.step}</div>
+                        <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>
+                          {isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`}
+                        </div>
+                        {isLlm && typeof node.arguments.prompt === "string" && (
+                          <div className="text-xs mt-2 p-2 rounded"
+                            style={{ background: "var(--bg-surface)", color: "var(--text-dim)" }}>
+                            {node.arguments.prompt}
+                          </div>
+                        )}
+                        {!isLlm && Object.keys(node.arguments).length > 0 && (
+                          <pre
+                            className="text-xs mt-2 p-2 rounded overflow-x-auto"
+                            style={{
+                              background: "var(--bg-surface)",
+                              color: "var(--text-dim)",
+                              fontSize: 10,
+                            }}
+                          >
+                            {JSON.stringify(node.arguments, null, 2)}
+                          </pre>
+                        )}
                       </div>
-                      {Object.keys(node.arguments).length > 0 && (
-                        <pre
-                          className="text-xs mt-2 p-2 rounded overflow-x-auto"
-                          style={{
-                            background: "var(--bg-surface)",
-                            color: "var(--text-dim)",
-                            fontSize: 10,
-                          }}
-                        >
-                          {JSON.stringify(node.arguments, null, 2)}
-                        </pre>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 {li < levels.length - 1 && (
                   <div className="flex justify-center py-2">

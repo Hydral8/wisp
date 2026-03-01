@@ -107,9 +107,15 @@ def is_dag(obj: dict) -> bool:
 SYSTEM = """You are a workflow planner for Wisp, a tool gateway with 2000+ MCP tools.
 Search for real tools, then output a JSON DAG:
 {"name":"...","description":"...","nodes":[{"id":"n1","step":"...","server_name":"...","tool_name":"...","arguments":{},"depends_on":[],"output_key":"r1"}]}
-Rules:
-- Use search_tools to find real tools. One broad search per capability needed — do NOT repeat similar searches.
-- Once you have matching tools, immediately produce the DAG. Do not search again with rephrased queries.
+
+TOOL SEARCH RULES (critical):
+- You may call search_tools multiple times in parallel, but ONLY for genuinely different capabilities.
+  GOOD parallel: "GitHub search repositories" + "web page scraper" (different capabilities)
+  BAD parallel: "GitHub search trending repos" + "GitHub trending repositories search" (same intent rephrased)
+- Each distinct capability needs exactly ONE search. Never rephrase and retry the same search.
+- Once you have results, produce the DAG immediately. Do not search again for capabilities you already found tools for.
+
+OTHER RULES:
 - For tasks an LLM handles natively (summarizing, formatting, analyzing, translating, classifying, comparing, writing), use server_name "__llm__" with tool_name "generate". Arguments: {"prompt": "your instruction here", "input": "{{previous_output_key}}"}. Do NOT search for tools for these tasks.
 - depends_on controls ordering. {{output_key}} references previous results.
 - If you CANNOT fulfill part or all of the request, respond in plain text (no JSON) explaining specifically why:
