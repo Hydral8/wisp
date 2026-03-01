@@ -1825,7 +1825,7 @@ const PRESETS = [
     },
     {
         label: "UML diagram on draw.io",
-        prompt: "Go to draw.io (https://app.diagrams.net) and create a UML class diagram for a simple e-commerce application with entities for User, Product, Order, and OrderItem — including their attributes, methods, and relationships (associations, multiplicities). Save the diagram."
+        prompt: "Go to draw.io (https://app.diagrams.net) and create a UML class diagram for a simple e-commerce application with entities for User, Product, Order, and OrderItem — including their attributes, methods, and relationships (associations, multiplicities). Save the diagram and take a screenshot."
     },
     {
         label: "Star today's trending GitHub repos",
