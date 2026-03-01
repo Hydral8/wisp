@@ -668,7 +668,9 @@ export const startPlanning = action({
                   internal.registry.getServerConnectionInfoInternal,
                   { serverName: sn }
                 );
+                console.log(`[execute_tool] ${sn}/${tn} connInfo=${connInfo ? connInfo.method : "null"}`);
 
+                const proxyT0 = Date.now();
                 const callResp = await fetch(`${mcpProxyUrl}/call`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -679,7 +681,12 @@ export const startPlanning = action({
                     connection_info: connInfo,
                   }),
                 });
+                const proxyElapsed = ((Date.now() - proxyT0) / 1000).toFixed(1);
+                console.log(`[execute_tool] ${sn}/${tn} proxy responded ${callResp.status} in ${proxyElapsed}s`);
                 result = await callResp.json();
+                if (callResp.status >= 400) {
+                  console.log(`[execute_tool] ${sn}/${tn} error:`, JSON.stringify(result).slice(0, 300));
+                }
                 result = normalizeMcpResult(result);
               }
 
