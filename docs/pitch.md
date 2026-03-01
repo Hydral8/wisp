@@ -1,221 +1,257 @@
-# Wisp — The MCP Tool Gateway with Browser Automation
+# Wisp — From Exploration to Reusable Workflows to Marketplace
 
-> One prompt. 5,000+ tools. Live browser control. Real-time execution.
-
----
-
-## What is Wisp?
-
-Wisp is a natural-language automation platform that connects an AI agent to **5,206 MCP tools across 364+ servers** — plus a live browser. Users describe what they want in plain English; Wisp finds the right tools, executes them, and streams results in real time.
-
-Unlike chatbots that just talk, Wisp **actually does the work**: it searches for tools, calls APIs, controls a browser, verifies results, and iterates until the task is complete.
+> Explore tools with AI. Lock them into deterministic workflows. Share and reuse on a marketplace.
 
 ---
 
-## The Problem
+## The Insight
 
-Today's AI agents can talk, but they can't act across systems. Automating a real workflow — "scrape this site, check my GitHub stars, save to Notion, message me on Slack" — requires:
+AI agents are great at **exploring** — finding the right tool, figuring out arguments, handling edge cases. But exploration is expensive: it costs tokens, takes time, and produces inconsistent results.
 
-- **Finding the right APIs** across dozens of platforms
-- **Handling auth** (OAuth, API keys, cookies) for each one
-- **Orchestrating execution** in the right order, in parallel where possible
-- **Controlling a browser** for sites with no API
-- **Monitoring progress** and handling errors in real time
+Once you've explored and found a working sequence of tool calls, you shouldn't have to explore again. That sequence should become a **deterministic, reusable workflow** — no AI needed to re-run it.
 
-No single tool does all of this. Users end up stitching together Zapier, custom scripts, browser extensions, and manual work.
+And if your workflow solves a common problem, others shouldn't have to explore either. They should be able to **grab it from a marketplace** and run it instantly.
 
 ---
 
-## The Solution
-
-Wisp is a **3-tier system** that turns one prompt into a fully executed workflow:
+## The Three Stages
 
 ```
-User Prompt
-    ↓
-┌─────────────────────────────────────────────────────┐
-│  Frontend (Next.js :3001)                           │
-│  Chat → Agent Panel → Browser Live View → Results   │
-└────────────────────┬────────────────────────────────┘
-                     ↓ SSE
-┌─────────────────────────────────────────────────────┐
-│  Orchestrator (FastAPI :8001)                        │
-│  Gemini/Claude Agent Loop → DAG Execution → Creds   │
-└────────────────────┬────────────────────────────────┘
-                     ↓ HTTP
-┌─────────────────────────────────────────────────────┐
-│  MCP Gateway (FastAPI :8000)                         │
-│  5,206 Tools → Semantic Search → Connection Pool     │
-└─────────────────────────────────────────────────────┘
+┌─────────────┐      ┌──────────────────────┐      ┌─────────────────┐
+│  1. EXPLORE  │ ──→  │  2. LOCK INTO WORKFLOW │ ──→  │  3. MARKETPLACE  │
+│              │      │                      │      │                 │
+│  AI agent    │      │  Deterministic DAG   │      │  Share & reuse  │
+│  searches    │      │  No AI needed        │      │  One-click run  │
+│  5,206 tools │      │  Parallel execution  │      │  Community      │
+│  + browser   │      │  Webhook triggers    │      │  templates      │
+│  Iterates    │      │  Consistent results  │      │  Configurable   │
+└─────────────┘      └──────────────────────┘      └─────────────────┘
+     Expensive              Cheap & Fast              Zero marginal cost
+     Variable               Deterministic             Scalable
+     One-time               Repeatable                Community-driven
 ```
 
 ---
 
-## Core Features
+## Stage 1: Explore
 
-### 1. Agentic Tool Discovery & Execution
+A user describes what they want in natural language. Wisp's AI agent:
 
-The AI agent doesn't work from a fixed list — it **searches** for the right tools at runtime.
+1. **Searches** across 5,206 MCP tools and 364+ servers using semantic search
+2. **Discovers** sibling tools on the same server (e.g., finding `monitor_task` after `browser_task`)
+3. **Executes** tools to test them with real data
+4. **Controls a browser** for sites with no API (food delivery, LinkedIn, event signup, competitor pricing)
+5. **Verifies** results and iterates until the task is actually done
 
-- **Semantic search** over 5,206 indexed MCP tools (sentence-transformers + sqlite-vec)
-- **Server discovery**: find MCP servers by name or description
-- **Tool browsing**: list all tools on a discovered server
-- **Live execution**: call any tool and get structured results
-- **Iterative loop**: search → execute → verify → adjust → repeat until done
+This is the expensive part — it uses an LLM (Gemini Flash), costs tokens, and may take multiple turns. But it only needs to happen **once per workflow type**.
 
-The agent has 4 core tools:
-| Tool | Purpose |
-|------|---------|
-| `search_tools` | Semantic search across all 5,206 tools |
-| `list_server_tools` | Browse tools on a specific server |
-| `search_servers` | Find servers by name/description |
-| `execute_tool` | Run any MCP tool with arguments |
+**Example exploration:**
 
-### 2. Live Browser Automation (Browser-Use)
+```
+User: "Compare pad thai delivery prices on UberEats, DoorDash, and Grubhub"
 
-For sites with **no API** — food delivery, LinkedIn, competitor pricing pages, event registration — Wisp controls a real browser:
+Agent:
+  → search_tools("food delivery") → no MCP API exists
+  → search_tools("browser_use") → found browser-use MCP
+  → browser_task(UberEats, search "pad thai") → $18.99, 35 min
+  → browser_task(DoorDash, search "pad thai") → $16.49, 28 min
+  → browser_task(Grubhub, search "pad thai") → $19.99, 42 min
+  → Done: comparison table generated
+```
 
-- **Browser-Use Cloud integration**: fire-and-forget `browser_task`, auto-polling `monitor_task`
-- **Live streaming iframe**: users watch the browser work in real time
-- **Smart lifecycle**: iframe appears when session starts, hides when it ends, reappears on new session
-- **Instruction optimization**: agent rewrites raw prompts into step-by-step browser instructions with URLs, UI actions, expected states, and error recovery
+The agent figured out that no food delivery API exists, fell back to browser automation, and completed the task across 3 platforms. This exploration took ~2 minutes and multiple LLM turns.
 
-**Key insight**: the agent decides when to use an API (fast, reliable) vs. a browser (no API available). This hybrid approach covers the full web.
+---
 
-### 3. Parallel DAG Execution
+## Stage 2: Lock Into Workflow
 
-When the agent plans a multi-step workflow, independent steps run **in parallel**:
+Once the agent completes a task, the user clicks **"Convert to Workflow"**. This captures the executed steps as a **deterministic DAG**:
 
-- Topological sorting ensures correct dependency order
-- Steps at the same level execute concurrently
-- Reference binding: `{{node_id.field}}` passes outputs between steps
-- Real-time SSE streaming of each step's progress
+```json
+{
+  "name": "Food Delivery Price Comparison",
+  "nodes": [
+    { "id": "ubereats",  "tool": "browser_task", "server": "com.browser-use/mcp", "args": {"task": "Search UberEats for pad thai..."}, "depends_on": [] },
+    { "id": "doordash",  "tool": "browser_task", "server": "com.browser-use/mcp", "args": {"task": "Search DoorDash for pad thai..."}, "depends_on": [] },
+    { "id": "grubhub",   "tool": "browser_task", "server": "com.browser-use/mcp", "args": {"task": "Search Grubhub for pad thai..."}, "depends_on": [] },
+    { "id": "compare",   "tool": "generate",     "server": "__llm__",              "args": {"prompt": "Compare: {{ubereats}}, {{doordash}}, {{grubhub}}"}, "depends_on": ["ubereats", "doordash", "grubhub"] }
+  ]
+}
+```
 
-### 4. Credential Management & Auto-Injection
+Now this workflow:
+- **Runs without AI planning** — no LLM needed to figure out which tools to use
+- **Executes in parallel** — UberEats, DoorDash, Grubhub scraped simultaneously
+- **Produces consistent results** — same steps every time
+- **Triggers via webhook** — `POST /webhooks/{id}/trigger` runs it on demand
+- **Costs near zero** — only pays for tool execution, not exploration
 
-- **Local profiles**: store username, email, password, API key, token per service
-- **Auto-injection**: credentials matched to tool/server and applied automatically
-- **OAuth support**: Nango integration for Gmail, Notion, Slack, Stripe, Atlassian, Linear
-- **Mid-execution requests**: workflows can pause to ask for 2FA codes or CAPTCHAs
+The user went from a 2-minute AI exploration to a **10-second deterministic execution**.
 
-### 5. MCP Connection Pool
+---
 
-The gateway maintains **persistent connections** to MCP servers:
+## Stage 3: Marketplace — Reuse & Share
 
-- Stdio processes stay alive between requests (no per-call spawn overhead)
-- 5-minute idle TTL with automatic cleanup
-- Auto-reconnect on failure
-- Supports stdio (npx/uvx/docker), HTTP (streamable), and local processes
+The locked workflow becomes a **template** that anyone can use:
 
-### 6. Real-Time Streaming UI
+### Publishing
+- User clicks **"Publish to Marketplace"** on a saved workflow
+- Adds a name, description, and tags
+- Marks **configurable parameters** (e.g., "pad thai" → user-provided food item, delivery address)
 
-Everything streams via SSE — users see the agent work in real time:
+### Consuming
+- Other users browse the marketplace or search by tag/description
+- Click **"Use"** → workflow is cloned to their account
+- Fill in configurable parameters → run immediately
+- **Zero exploration needed** — the original creator already did the hard work
 
-- **Agent thinking**: model reasoning text
-- **Tool searches**: which tools were found and selected
-- **Tool execution**: start, progress, and completion of each step
-- **Browser view**: embedded live browser session
-- **Results**: structured output with collapsible details
+### The Flywheel
+
+```
+More users explore → More workflows created → More templates published
+    ↑                                                    ↓
+    └──── More users attracted by marketplace ←──────────┘
+```
+
+Each exploration creates a reusable asset. The platform gets **more valuable with every user** because their explorations become templates for everyone else.
+
+---
+
+## Why This Matters
+
+### The Cost Curve
+
+| Stage | Cost per run | Latency | Reliability |
+|-------|:---:|:---:|:---:|
+| Explore (AI agent) | High (LLM tokens) | 1-3 min | Variable |
+| Workflow (deterministic) | Low (tool calls only) | 5-30 sec | Consistent |
+| Marketplace (shared) | Low | 5-30 sec | Consistent |
+
+Exploration is expensive but happens once. Every subsequent run is cheap and fast.
+
+### vs. Zapier / n8n
+
+| | Zapier / n8n | Wisp |
+|---|---|---|
+| **Building a workflow** | Manual: drag nodes, configure each step, read API docs | AI explores and builds it for you |
+| **Tool coverage** | Hundreds of pre-built integrations | 5,206 MCP tools + browser for everything else |
+| **No-API sites** | Not supported | Browser-Use handles them |
+| **Sharing** | Export/import JSON | One-click marketplace with configurable params |
+| **First-time setup** | Hours of manual work | Minutes of conversation |
+
+**Zapier makes you the integrator. Wisp makes the AI the integrator.**
+
+### vs. AI Agents (ChatGPT, Claude, etc.)
+
+| | AI Agents | Wisp |
+|---|---|---|
+| **Exploration** | Good (but can't execute MCP tools) | Good (5,206 tools + browser) |
+| **Reusability** | None — re-explores every time | Lock into deterministic workflow |
+| **Sharing** | Copy-paste prompts | Marketplace with one-click use |
+| **Execution** | Talks about doing it | Actually does it |
+| **Cost per repeat** | Same as first run | Near zero |
+
+**AI agents explore every time. Wisp explores once, then runs deterministically forever.**
+
+---
+
+## The Product
+
+### Compose — Start with a prompt
+Type what you want. The AI agent searches tools, executes them, and shows live progress. For web tasks, a live browser iframe appears so you can watch.
+
+### Convert — Lock it in
+When the agent finishes, click "Convert to Workflow." The executed steps become a deterministic DAG with parallel execution, reference binding between nodes, and webhook triggers.
+
+### Automations — Run again
+Your saved workflows appear in the Automations tab. Re-run with one click or trigger via webhook. No AI needed — same steps, same results, every time.
+
+### Marketplace — Share it
+Publish workflows as templates. Other users clone them, fill in their parameters, and run. The community builds a library of proven automations.
+
+### Credentials — Bring your keys
+Store API keys and login profiles. Wisp auto-injects them when running workflows that need auth. Supports OAuth (GitHub, Google, Slack, Notion) and manual credentials.
+
+---
+
+## How Browser-Use Fits In
+
+Browser-Use is the **escape hatch** for the 80% of the web that has no API:
+
+| Has API → Use MCP tool | No API → Use browser |
+|---|---|
+| GitHub star/unstar | GitHub Trending page |
+| Notion create page | Eventbrite registration |
+| Slack send message | UberEats menu search |
+| Google Calendar event | LinkedIn Easy Apply |
+| Email send | Competitor pricing pages |
+
+The agent **automatically decides** which to use. When a tool exists, it uses the API (faster, cheaper). When no tool exists, it launches a browser session. Users see a live iframe during browser tasks.
+
+This is critical for the marketplace: workflows that combine **API calls + browser automation** can automate things no pure-API tool can handle.
 
 ---
 
 ## Architecture
 
-### Frontend (`/src` — Next.js 16 + React 19)
+```
+Frontend (Next.js :3001)
+├── Compose: natural language input + preset templates
+├── Agent Panel: live SSE stream of exploration
+├── BrowserLiveView: embedded iframe for browser tasks
+├── Workflow Editor: DAG visualization + execution monitor
+├── Marketplace: browse, search, use community templates
+└── Credentials: API key + OAuth management
 
-| Component | Purpose |
-|-----------|---------|
-| **Compose** | Main input — describe your task, pick a preset template |
-| **ChatPane** | Two-way conversation for refinement |
-| **PlanningFeed** | Live agent progress stream |
-| **BrowserLiveView** | Embedded iframe with LIVE indicator, maximize, open-in-tab |
-| **WorkflowPane** | DAG visualization with execution monitoring |
-| **Credentials** | Manage saved API keys and login profiles |
-| **Automations** | View and re-run saved workflows |
-| **Marketplace** | Community workflow templates |
+Orchestrator (FastAPI :8001)
+├── Agentic Loop: Gemini Flash iterates over tools
+├── DAG Executor: parallel topological execution
+├── Workflow Store: save/load/trigger deterministic workflows
+├── Convert: agent steps → reusable DAG
+└── Webhooks: HTTP triggers for saved workflows
 
-### Orchestrator (`/server` — FastAPI)
-
-| Endpoint | Purpose |
-|----------|---------|
-| `POST /plan/stream` | SSE streaming agentic loop (Gemini Flash) |
-| `POST /deploy` | Execute stored workflow with SSE progress |
-| `POST /automate` | Plan + execute in one call |
-| `POST /chat` | Follow-up refinement |
-| `POST /webhooks` | Create webhook trigger for a workflow |
-| `POST /convert-to-workflow` | Turn executed agent steps into reusable DAG |
-
-### MCP Gateway (`/router` — FastAPI)
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /search` | Semantic tool search |
-| `POST /call` | Execute tool on any MCP server |
-| `GET /servers/search` | Find servers |
-| `GET /servers/{name}/tools` | List server tools |
+MCP Gateway (FastAPI :8000)
+├── 5,206 tools across 364+ servers
+├── Semantic search (sentence-transformers + sqlite-vec)
+├── Connection pool (persistent stdio/HTTP sessions)
+├── Auth injection (Nango OAuth, env vars, local creds)
+└── Supports: npm (npx), Python (uvx), Docker, HTTP
+```
 
 ---
 
-## Registry Stats
+## Demo Script (90 seconds)
+
+**1. Explore** (60s)
+> "Find today's trending GitHub repos, star the AI ones, and save them to my Notion database"
+
+- Agent searches → finds GitHub MCP, Notion MCP, browser-use
+- Live browser iframe opens → scrapes GitHub Trending (no API for this)
+- GitHub MCP checks star status → stars new repos
+- Notion MCP creates database entries
+- Agent reports results
+
+**2. Convert** (10s)
+- Click "Convert to Workflow"
+- DAG appears: 3 parallel nodes (scrape, star, save) with dependencies
+
+**3. Marketplace** (20s)
+- Click "Publish to Marketplace"
+- Set configurable param: topic filter (default: "AI")
+- Another user opens marketplace → clicks "Use" → runs immediately with their own GitHub + Notion credentials
+
+**Punchline**: "The first run took 2 minutes of AI exploration. Every run after that takes 10 seconds with no AI. And now anyone on the marketplace can do it in one click."
+
+---
+
+## Registry
 
 | Metric | Count |
 |--------|-------|
-| Total MCP Tools | 5,206 |
-| Total MCP Servers | 364+ |
-| Connection Types | stdio, HTTP, local |
-| Auth Integrations | GitHub, Google, Slack, Notion, Stripe, Linear, Atlassian |
-| API Keys Configured | 20+ |
-
----
-
-## Built-in Presets
-
-| Preset | What it does |
-|--------|-------------|
-| Competitive Analysis | Scrape & compare competitor websites |
-| Research Report | Aggregate GitHub trending + multi-source synthesis |
-| Job Market Snapshot | Scrape LinkedIn/Indeed, analyze salaries & skills |
-| News Digest | Hacker News + TechCrunch + Verge with sentiment analysis |
-| UML Diagram | Create architecture diagrams on draw.io via browser |
-| GitHub Star Bot | Auto-star trending repos that match criteria |
-
----
-
-## Why Browser-Use Matters
-
-Most automation tools stop at APIs. But **the majority of the web has no API**:
-
-| Site/Task | Has Public API? | Wisp Solution |
-|-----------|:-:|---------------|
-| UberEats/DoorDash menu search | No | browser-use |
-| Eventbrite/Lu.ma registration | No | browser-use |
-| Competitor pricing pages | No | browser-use |
-| GitHub Trending page | No | browser-use |
-| LinkedIn Easy Apply | No | browser-use |
-| GitHub star/unstar | Yes | GitHub MCP |
-| Notion read/write | Yes | Notion MCP |
-| Slack messages | Yes | Slack MCP |
-| Google Calendar | Yes | Calendar MCP |
-
-**Wisp automatically picks the right approach**: API when available (fast, reliable), browser when not (flexible, universal).
-
----
-
-## Competitive Landscape
-
-| Feature | Zapier | n8n | Wisp |
-|---------|:------:|:---:|:----:|
-| Natural language input | No | No | Yes |
-| AI-powered tool discovery | No | No | Yes |
-| 5,000+ MCP tools | No | No | Yes |
-| Live browser automation | No | No | Yes |
-| Real-time streaming UI | No | Partial | Yes |
-| Parallel execution | Limited | Yes | Yes |
-| Credential auto-injection | Partial | Partial | Yes |
-| Webhook triggers | Yes | Yes | Yes |
-| No-code setup | Partial | No | Yes |
-
-**Key differentiator**: Zapier and n8n require users to manually select and configure each step. Wisp's agent **finds and configures tools automatically** from a natural language description.
+| MCP Tools | 5,206 |
+| MCP Servers | 364+ |
+| Connection types | stdio, HTTP, local |
+| Auth integrations | GitHub, Google, Slack, Notion, Stripe, Linear, Atlassian |
 
 ---
 
@@ -223,37 +259,12 @@ Most automation tools stop at APIs. But **the majority of the web has no API**:
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 16, React 19, Tailwind CSS 4, TypeScript |
-| Orchestrator | FastAPI, Google GenAI SDK (Gemini), Anthropic SDK (Claude) |
+| Frontend | Next.js 16, React 19, TypeScript |
+| Orchestrator | FastAPI, Gemini Flash, Claude Sonnet |
 | Gateway | FastAPI, sentence-transformers, sqlite-vec, MCP SDK |
-| Database | SQLite (registry + embeddings), Convex (user data + auth) |
-| Auth | Convex Auth (GitHub/Google OAuth), Nango (3rd-party OAuth) |
+| Database | Convex (user data, workflows, marketplace), SQLite (tool registry) |
+| Auth | Convex Auth (GitHub/Google), Nango (3rd-party OAuth) |
 | Browser | Browser-Use Cloud API |
-| Infra | uv (Python), npm (Node), Docker support |
-
----
-
-## Demo Flow (60 seconds)
-
-1. **User types**: "Find today's trending GitHub repos, star the ones about AI, and save them to my Notion database"
-2. **Agent searches**: finds GitHub MCP + Notion MCP + browser-use (for Trending page)
-3. **Browser opens**: live iframe shows GitHub Trending being scraped
-4. **Tools execute**: GitHub MCP checks star status, stars new repos; Notion MCP creates database entries
-5. **Results stream**: each step appears in real-time in the agent panel
-6. **Done**: agent reports which repos were starred and saved
-
-**Total user effort**: one sentence. **Tools orchestrated**: 3 MCP servers + 1 browser session.
-
----
-
-## Roadmap
-
-- [ ] Scheduled workflows (cron triggers)
-- [ ] Multi-browser parallel sessions
-- [ ] Workflow marketplace (share & discover community templates)
-- [ ] Mobile companion app (monitor executions on the go)
-- [ ] Enterprise SSO + team workspaces
-- [ ] Custom MCP server builder (add your own APIs)
 
 ---
 
@@ -261,10 +272,4 @@ Most automation tools stop at APIs. But **the majority of the web has no API**:
 
 Built at the YC Browser-Use Hackathon.
 
----
-
-## Links
-
 - GitHub: [github.com/Hydral8/wisp](https://github.com/Hydral8/wisp)
-- Browser-Use: [browser-use.com](https://browser-use.com)
-- MCP Specification: [modelcontextprotocol.io](https://modelcontextprotocol.io)
