@@ -407,12 +407,17 @@ export const getAppForConnection = internalQuery({
 
 // --- Dynamic server-to-Composio matching ---
 
+/**
+ * Map MCP server names to Composio apps — ONLY for OAuth services.
+ * Non-OAuth tools (Exa, Firecrawl, etc.) should go through MCP proxy.
+ */
 export function mapServerToComposioApp(serverName: string): string | null {
   const parts = serverName.split("/");
   const lastSegment = (parts[parts.length - 1] || "").toLowerCase();
   const domainPart = (parts[0] || "").split(".").pop()?.toLowerCase() || "";
 
-  const ALIASES: Record<string, string> = {
+  // Strict mapping: only OAuth-based services that need Composio auth
+  const OAUTH_ALIASES: Record<string, string> = {
     gmail: "GMAIL",
     "google-calendar": "GOOGLECALENDAR",
     "google-drive": "GOOGLEDRIVE",
@@ -422,14 +427,28 @@ export function mapServerToComposioApp(serverName: string): string | null {
     googlesheets: "GOOGLESHEETS",
     google_docs: "GOOGLEDOCS",
     "google-docs": "GOOGLEDOCS",
+    slack: "SLACK",
+    discord: "DISCORD",
+    notion: "NOTION",
+    linear: "LINEAR",
+    github: "GITHUB",
+    outlook: "OUTLOOK",
+    trello: "TRELLO",
+    asana: "ASANA",
+    jira: "JIRA",
+    salesforce: "SALESFORCE",
+    hubspot: "HUBSPOT",
+    linkedin: "LINKEDIN",
+    twitter: "TWITTER",
+    spotify: "SPOTIFY",
+    dropbox: "DROPBOX",
   };
 
-  if (ALIASES[lastSegment]) return ALIASES[lastSegment];
-  if (ALIASES[domainPart]) return ALIASES[domainPart];
+  if (OAUTH_ALIASES[lastSegment]) return OAUTH_ALIASES[lastSegment];
+  if (OAUTH_ALIASES[domainPart]) return OAUTH_ALIASES[domainPart];
 
-  const direct = normalizeAppName(lastSegment);
-  if (!direct || NON_CONNECTABLE_APP_KEYS.has(direct)) return null;
-  return direct;
+  // No fuzzy matching — if it's not an explicit OAuth service, use MCP proxy
+  return null;
 }
 
 export const resolveComposioApp = internalQuery({
@@ -718,14 +737,17 @@ export const executeComposioTool = internalAction({
     const appName = normalizeAppName(args.appName);
     const userId = normalizeUserId(args.userId);
 
-    // Build tool slug, avoiding duplicate app prefix
-    const rawTool = String(args.toolName || "").trim().toUpperCase();
+    // Build tool slug, avoiding duplicate app prefix/suffix
+    let rawTool = String(args.toolName || "").trim().toUpperCase();
+    // Strip trailing app name suffix (e.g. "WEB_SEARCH_EXA" -> "WEB_SEARCH")
+    const appSuffix = `_${appName}`;
+    if (rawTool.endsWith(appSuffix)) {
+      rawTool = rawTool.slice(0, -appSuffix.length);
+    }
     const appPrefix = `${appName}_`;
     const toolSlug = rawTool.startsWith(appPrefix)
       ? rawTool
-      : rawTool.startsWith(`${appName}`)
-        ? `${appName}_${rawTool.slice(appName.length).replace(/^_+/, "")}`
-        : `${appName}_${rawTool}`;
+      : `${appPrefix}${rawTool.replace(new RegExp(`^${appName}_?`, "i"), "")}`;
 
     // Try session-based execute first
     const session = await findWorkingSession(userId, appName);

@@ -16,7 +16,13 @@ import logging
 from pathlib import Path
 from typing import Optional, Dict, Any
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%H:%M:%S",
+)
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,8 +44,8 @@ if ENV_PATH.exists():
 # Persistent MCP connection pool for stdio servers
 # ---------------------------------------------------------------------------
 
-POOL_IDLE_TTL = 300
-POOL_REAP_INTERVAL = 60
+POOL_IDLE_TTL = 900   # 15 min — keep MCP sessions warm longer
+POOL_REAP_INTERVAL = 120
 
 
 class _PoolEntry:
@@ -259,8 +265,13 @@ async def health_check():
 @app.post("/call")
 async def call_tool(request: CallRequest):
     """Execute a tool on an MCP server. Requires connection_info from caller."""
+    t0 = time.monotonic()
+    log.info("[call] %s / %s  method=%s", request.server_name, request.tool_name,
+             request.connection_info.get("method") if request.connection_info else "none")
+
     info = request.connection_info
     if not info:
+        log.warning("[call] %s — missing connection_info", request.server_name)
         raise HTTPException(
             status_code=400,
             detail=f"connection_info is required for server '{request.server_name}'.",
@@ -277,6 +288,7 @@ async def call_tool(request: CallRequest):
                 headers = resolve_env_vars(headers)
             http_client = httpx.AsyncClient(headers=headers) if headers else None
 
+            log.info("[call] %s — remote → %s", request.server_name, info["url"])
             async with streamable_http_client(info["url"], http_client=http_client) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await asyncio.wait_for(session.initialize(), timeout=timeout)
@@ -284,6 +296,8 @@ async def call_tool(request: CallRequest):
                         session.call_tool(request.tool_name, request.arguments),
                         timeout=timeout,
                     )
+                    elapsed = time.monotonic() - t0
+                    log.info("[call] %s / %s — done in %.1fs", request.server_name, request.tool_name, elapsed)
                     return result.model_dump() if hasattr(result, "model_dump") else result
 
         elif info["method"] in ("stdio", "local"):
@@ -298,6 +312,8 @@ async def call_tool(request: CallRequest):
                 env.update(info.get("env", {}))
                 cwd = info.get("cwd")
 
+            log.info("[call] %s — stdio %s %s", request.server_name, command, " ".join(args[:2]))
+
             server_params = StdioServerParameters(
                 command=command,
                 args=args,
@@ -311,6 +327,8 @@ async def call_tool(request: CallRequest):
                 request.arguments,
                 timeout=timeout,
             )
+            elapsed = time.monotonic() - t0
+            log.info("[call] %s / %s — done in %.1fs", request.server_name, request.tool_name, elapsed)
             return result.model_dump() if hasattr(result, "model_dump") else result
 
         else:
@@ -320,8 +338,12 @@ async def call_tool(request: CallRequest):
             )
 
     except asyncio.TimeoutError:
+        elapsed = time.monotonic() - t0
+        log.error("[call] %s / %s — TIMEOUT after %.1fs", request.server_name, request.tool_name, elapsed)
         raise HTTPException(status_code=504, detail="Tool execution timed out.")
     except Exception as e:
+        elapsed = time.monotonic() - t0
+        log.error("[call] %s / %s — ERROR after %.1fs: %s", request.server_name, request.tool_name, elapsed, e)
         import traceback
         traceback.print_exc()
         error_msg = str(e)

@@ -671,23 +671,39 @@ export const startPlanning = action({
                 console.log(`[execute_tool] ${sn}/${tn} connInfo=${connInfo ? connInfo.method : "null"}`);
 
                 const proxyT0 = Date.now();
-                const callResp = await fetch(`${mcpProxyUrl}/call`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    server_name: sn,
-                    tool_name: tn,
-                    arguments: toolArgs,
-                    connection_info: connInfo,
-                  }),
-                });
-                const proxyElapsed = ((Date.now() - proxyT0) / 1000).toFixed(1);
-                console.log(`[execute_tool] ${sn}/${tn} proxy responded ${callResp.status} in ${proxyElapsed}s`);
-                result = await callResp.json();
-                if (callResp.status >= 400) {
-                  console.log(`[execute_tool] ${sn}/${tn} error:`, JSON.stringify(result).slice(0, 300));
+                const controller = new AbortController();
+                const proxyTimeout = setTimeout(() => controller.abort(), 45000);
+                try {
+                  const callResp = await fetch(`${mcpProxyUrl}/call`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      server_name: sn,
+                      tool_name: tn,
+                      arguments: toolArgs,
+                      connection_info: connInfo,
+                    }),
+                    signal: controller.signal,
+                  });
+                  clearTimeout(proxyTimeout);
+                  const proxyElapsed = ((Date.now() - proxyT0) / 1000).toFixed(1);
+                  console.log(`[execute_tool] ${sn}/${tn} proxy responded ${callResp.status} in ${proxyElapsed}s`);
+                  result = await callResp.json();
+                  if (callResp.status >= 400) {
+                    console.log(`[execute_tool] ${sn}/${tn} error:`, JSON.stringify(result).slice(0, 300));
+                  }
+                  result = normalizeMcpResult(result);
+                } catch (fetchErr: any) {
+                  clearTimeout(proxyTimeout);
+                  const proxyElapsed = ((Date.now() - proxyT0) / 1000).toFixed(1);
+                  if (fetchErr.name === "AbortError") {
+                    console.log(`[execute_tool] ${sn}/${tn} timed out after ${proxyElapsed}s`);
+                    result = { error: `Tool execution timed out after 45s. The MCP server may need a cold start — try again.` };
+                  } else {
+                    console.log(`[execute_tool] ${sn}/${tn} fetch error: ${fetchErr.message}`);
+                    result = { error: fetchErr.message };
+                  }
                 }
-                result = normalizeMcpResult(result);
               }
 
               const elapsed = (Date.now() - t0) / 1000;
