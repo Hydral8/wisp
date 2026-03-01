@@ -340,19 +340,23 @@ export function PlanningFeed({
   const endRef = useRef<HTMLDivElement>(null);
   const isDone = events.some((e) => e.type === "agent_done" || e.type === "dag_complete" || e.type === "planning_error");
 
-  // Stable liveUrl — only changes when a new live_url actually appears
+  // Active live_url: show when browser_task returns a live_url,
+  // hide when monitor_task completes (is_success is set), reshow on new browser_task.
   const liveUrl = useMemo(() => {
     for (let i = events.length - 1; i >= 0; i--) {
       const e = events[i];
-      if (e.type === "tool_exec_complete") {
-        const r = e.result;
-        if (r && typeof r === "object" && !Array.isArray(r)) {
-          const obj = r as Record<string, unknown>;
-          if (typeof obj.live_url === "string" && obj.live_url.startsWith("http")) {
-            console.log("[BrowserLiveView] Found live_url:", obj.live_url);
-            return obj.live_url;
-          }
-        }
+      if (e.type !== "tool_exec_complete") continue;
+      const tn = (e as unknown as Record<string, unknown>).tool_name;
+      const r = e.result;
+      const obj = (r && typeof r === "object" && !Array.isArray(r))
+        ? r as Record<string, unknown> : null;
+      // monitor_task finished → session is done, hide iframe
+      if (tn === "monitor_task" && obj && obj.is_success !== undefined && obj.is_success !== null) {
+        return null;
+      }
+      // browser_task returned a live_url → session is active
+      if (tn === "browser_task" && obj && typeof obj.live_url === "string" && obj.live_url.startsWith("http")) {
+        return obj.live_url;
       }
     }
     return null;
@@ -404,8 +408,8 @@ export function PlanningFeed({
           )}
         </div>
       </div>
-      {/* Live browser view — stable ref prevents iframe reload on re-render */}
-      {liveUrl && !isDone && (
+      {/* Live browser view — shows during active browser_task, hides when monitor_task completes */}
+      {liveUrl && (
         <div style={{ borderBottom: "1px solid var(--border)", padding: 12 }}>
           <BrowserLiveView liveUrl={liveUrl} isRunning={!isDone} />
         </div>
