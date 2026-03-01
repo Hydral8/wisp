@@ -1,0 +1,16 @@
+requires = ["uv>=0.1.0"]
+build-backend = "uv.build"
+
+[project]
+name = "wisp-server"
+description = "Wisp Instant - Main Server"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.40.0",
+    "fastapi>=0.115.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "uvicorn>=0.30.0",
+]
