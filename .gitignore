@@ -51,3 +51,5 @@ __pycache__/
 # nextjs
 **/node_modules/
 **/.next/
+
+src/.next/

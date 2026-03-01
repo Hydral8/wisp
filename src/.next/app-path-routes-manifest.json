@@ -1,8 +1,0 @@
-{
-  "/_global-error/page": "/_global-error",
-  "/_not-found/page": "/_not-found",
-  "/api/composio/callback/route": "/api/composio/callback",
-  "/app/[id]/page": "/app/[id]",
-  "/page": "/",
-  "/workflow/[id]/page": "/workflow/[id]"
-}

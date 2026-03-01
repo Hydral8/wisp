@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/hackathons/yc/wisp/src/middleware.ts"],"sourcesContent":["import { convexAuthNextjsMiddleware } from \"@convex-dev/auth/nextjs/server\";\n\nexport default convexAuthNextjsMiddleware();\n\nexport const config = {\n    // Check the Convex Auth middleware docs for exactly what routes you want this to run on.\n    // The default below runs on all pages except static files and Next.js internals.\n    matcher: [\"/((?!.*\\\\..*|_next).*)\", \"/\", \"/(api|trpc)(.*)\"],\n};\n"],"names":[],"mappings":";;;;;;AAAA;;uCAEe,IAAA,qQAA0B;AAElC,MAAM,SAAS;IAClB,yFAAyF;IACzF,iFAAiF;IACjF,SAAS;QAAC;QAA0B;QAAK;KAAkB;AAC/D"}}]
-}
