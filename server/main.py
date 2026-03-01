@@ -30,6 +30,8 @@ if _env.exists():
 WISP_URL = os.getenv("WISP_GATEWAY_URL", "http://localhost:8000")
 ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
+BROWSER_USE_API_KEY = os.getenv("BROWSER_USE_API_KEY", "")
+BROWSER_USE_API = "https://api.browser-use.com/api/v3"
 
 app = FastAPI(title="Wisp Instant", version="0.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -186,16 +188,15 @@ TOOL SEARCH RULES:
 - Use list_server_tools after finding a promising tool to discover sibling tools on the same server.
 
 EXECUTE_TOOL:
-- Use execute_tool to actually run MCP tools and see real results.
-- For browser_task: it returns a task_id. You MUST then call execute_tool with monitor_task passing that task_id to wait for completion.
-- monitor_task will automatically poll until completion — you only need to call it ONCE. Do NOT call monitor_task in a loop yourself.
+- Use execute_tool to run MCP tools (non-browser). Do NOT use execute_tool for browser tasks.
 
-BROWSER TASKS — CRITICAL:
-- For ANY web interaction, search for "browser_use" first (literally that string).
-- Prefer browser_task from com.browser-use/mcp over generic browser tools from other servers.
-- Only skip browser_use if a purpose-built MCP tool exists for the exact platform.
-- ALWAYS set "model": "bu-max" and "max_steps": 200 (or higher for complex tasks) in browser_task arguments.
-- NEVER launch browser_task more than once for the same task. If it fails, do NOT retry with the same or similar prompt. Move on or report the failure.
+BROWSER TASKS — USE browser_use_run DIRECTLY:
+- For ANY task requiring a web browser, use the browser_use_run tool directly. Do NOT search for browser_use MCP servers or use execute_tool for browser work.
+- browser_use_run launches a cloud browser session. It returns a session_id and liveUrl.
+- After calling browser_use_run, call browser_use_status with the session_id. It will automatically poll until the task completes — call it only ONCE.
+- NEVER call browser_use_run more than once. You get exactly ONE browser_use_run call. Put ALL browser work into a single detailed prompt.
+- NEVER call browser_use_run and browser_use_status in the same tool call batch (parallel). Call browser_use_run FIRST, wait for the result, THEN call browser_use_status in the NEXT turn.
+- To reuse an existing session for a follow-up task, pass the session_id from a previous run.
 - You MUST rewrite and optimize the user's request into a detailed, step-by-step browser instruction prompt. NEVER pass the user's raw message as the task. Your optimized prompt must include:
   * The exact URL to navigate to first
   * Each UI action in sequence: what to click, what to type, what to select
@@ -203,7 +204,7 @@ BROWSER TASKS — CRITICAL:
   * Explicit success criteria — how to know the task is done
   * Error recovery: what to do if an element is missing or a page doesn't load
   * Example: Instead of "Create a UML diagram on draw.io", write: "1. Navigate to https://app.diagrams.net 2. Click 'Create New Diagram' 3. Select 'Blank Diagram' 4. Use the UML shape library: drag a Class shape onto the canvas 5. Double-click the class shape and set the name to 'User' 6. Add attributes: id: int, name: string, email: string ..."
-- The quality of the browser_task prompt directly determines success. Spend effort making it thorough and unambiguous.
+- The quality of the browser_use_run prompt directly determines success. Spend effort making it thorough and unambiguous.
 
 DO NOT output a JSON DAG. Just work through the task step by step using the tools available.
 When you're done, summarize what was accomplished and whether it succeeded."""
@@ -211,8 +212,11 @@ When you're done, summarize what was accomplished and whether it succeeded."""
 SEARCH_TOOL = {"name": "search_tools", "description": "Search Wisp for MCP tools matching a query.", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}
 LIST_SERVER_TOOLS = {"name": "list_server_tools", "description": "List ALL tools available on a specific MCP server. Use after search_tools to discover sibling tools on the same server.", "input_schema": {"type": "object", "properties": {"server_name": {"type": "string", "description": "The server name (e.g. 'com.browser-use/mcp')"}}, "required": ["server_name"]}}
 SEARCH_SERVERS = {"name": "search_servers", "description": "Search for MCP servers by name or description. Returns server names, descriptions, and tool counts. Use when you want to find which server provides a capability before listing its tools.", "input_schema": {"type": "object", "properties": {"query": {"type": "string", "description": "Search query (e.g. 'github', 'slack', 'browser')"}}, "required": ["query"]}}
-EXECUTE_TOOL = {"name": "execute_tool", "description": "Execute an MCP tool and get its result. Use this to actually run tools, test them, and do real work. Returns the tool's output.", "input_schema": {"type": "object", "properties": {"server_name": {"type": "string", "description": "The MCP server name"}, "tool_name": {"type": "string", "description": "The tool to execute"}, "arguments": {"type": "object", "description": "Arguments to pass to the tool"}}, "required": ["server_name", "tool_name"]}}
-AGENT_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS, EXECUTE_TOOL]
+EXECUTE_TOOL = {"name": "execute_tool", "description": "Execute an MCP tool and get its result. Use this to actually run tools, test them, and do real work. Returns the tool's output. Do NOT use this for browser tasks — use browser_use_run instead.", "input_schema": {"type": "object", "properties": {"server_name": {"type": "string", "description": "The MCP server name"}, "tool_name": {"type": "string", "description": "The tool to execute"}, "arguments": {"type": "object", "description": "Arguments to pass to the tool"}}, "required": ["server_name", "tool_name"]}}
+BROWSER_USE_RUN_TOOL = {"name": "browser_use_run", "description": "Launch a browser automation task. Returns session_id and live_url immediately. Then call browser_use_status with the session_id to poll for completion. Do NOT call this twice for the same task.", "input_schema": {"type": "object", "properties": {"task": {"type": "string", "description": "Detailed step-by-step browser instructions. Must include exact URLs, UI actions, expected states, and success criteria."}, "session_id": {"type": "string", "description": "Optional: reuse an existing idle session instead of creating a new one"}}, "required": ["task"]}}
+BROWSER_USE_STATUS_TOOL = {"name": "browser_use_status", "description": "Get the status of a browser_use session. Automatically polls until the task is done — only call ONCE per session. Returns status, output, liveUrl, and cost info.", "input_schema": {"type": "object", "properties": {"session_id": {"type": "string", "description": "The session ID from browser_use_run"}}, "required": ["session_id"]}}
+BROWSER_USE_STOP_TOOL = {"name": "browser_use_stop", "description": "Stop a running browser_use session. Use when you want to terminate early.", "input_schema": {"type": "object", "properties": {"session_id": {"type": "string", "description": "The session ID to stop"}}, "required": ["session_id"]}}
+AGENT_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS, EXECUTE_TOOL, BROWSER_USE_RUN_TOOL, BROWSER_USE_STATUS_TOOL, BROWSER_USE_STOP_TOOL]
 
 # Gemini-format tool declarations for the agentic planner
 def _anthropic_schema_to_gemini(schema: dict) -> dict:
@@ -276,6 +280,76 @@ MONITOR_MAX_AGENT_POLLS = 120  # max polls (~20 min)
 # Dedup: track launched browser_task by task prompt to prevent re-launching the same task
 _browser_task_cache: dict[str, dict] = {}  # key: task prompt hash -> result
 
+_BU_HEADERS = {"X-Browser-Use-API-Key": BROWSER_USE_API_KEY, "Content-Type": "application/json"}
+
+async def browser_use_run(task: str, session_id: str | None = None) -> dict:
+    """Launch a browser-use session via the v3 API. Returns immediately with session info."""
+    # Dedup
+    if task in _browser_task_cache:
+        print(f"[browser_use] Dedup hit for task: {task[:80]}...")
+        return _browser_task_cache[task]
+    payload: dict[str, Any] = {"task": task, "model": "bu-mini"}
+    if session_id:
+        payload["sessionId"] = session_id
+    async with httpx.AsyncClient(timeout=60) as c:
+        r = await c.post(f"{BROWSER_USE_API}/sessions", json=payload, headers=_BU_HEADERS)
+        r.raise_for_status()
+        result = r.json()
+    sid = result.get("id", "")
+    # Poll briefly for liveUrl (browser-use needs time to provision the sandbox)
+    if sid and not result.get("liveUrl"):
+        for attempt in range(5):
+            await asyncio.sleep(3)
+            try:
+                async with httpx.AsyncClient(timeout=15) as c:
+                    r2 = await c.get(f"{BROWSER_USE_API}/sessions/{sid}", headers=_BU_HEADERS)
+                    r2.raise_for_status()
+                    details = r2.json()
+                    if details.get("liveUrl"):
+                        result["liveUrl"] = details["liveUrl"]
+                        result["live_url"] = details["liveUrl"]
+                        print(f"[browser_use] liveUrl obtained on attempt {attempt+1}: {details['liveUrl']}")
+                        break
+            except Exception:
+                pass
+    if result.get("liveUrl"):
+        result["live_url"] = result["liveUrl"]
+    _browser_task_cache[task] = result
+    print(f"[browser_use] Session created: id={sid}, liveUrl={result.get('liveUrl')}")
+    return result
+
+async def browser_use_status(session_id: str) -> dict:
+    """Poll a browser-use session until it finishes. Returns final status."""
+    poll = 0
+    last_live_url = None
+    while poll < MONITOR_MAX_AGENT_POLLS:
+        async with httpx.AsyncClient(timeout=15) as c:
+            r = await c.get(f"{BROWSER_USE_API}/sessions/{session_id}", headers=_BU_HEADERS)
+            r.raise_for_status()
+            result = r.json()
+        status = result.get("status", "")
+        live_url = result.get("liveUrl")
+        if live_url and not last_live_url:
+            last_live_url = live_url
+            print(f"[browser_use] liveUrl available: {live_url}")
+        print(f"[browser_use] Status poll {poll}: status={status}, output={str(result.get('output', ''))[:80]}")
+        if status in ("stopped", "error", "timed_out", "idle"):
+            if result.get("liveUrl"):
+                result["live_url"] = result["liveUrl"]
+            return result
+        poll += 1
+        await asyncio.sleep(MONITOR_POLL_WAIT)
+    if result.get("liveUrl"):
+        result["live_url"] = result["liveUrl"]
+    return result
+
+async def browser_use_stop(session_id: str) -> dict:
+    """Stop a browser-use session."""
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.post(f"{BROWSER_USE_API}/sessions/{session_id}/stop", headers=_BU_HEADERS)
+        r.raise_for_status()
+        return r.json()
+
 async def _call_router(server_name: str, tool_name: str, arguments: dict, timeout: float = 120) -> dict:
     """Single call to the MCP router, returns normalized result."""
     async with httpx.AsyncClient(timeout=timeout) as c:
@@ -287,7 +361,7 @@ async def execute_tool_call(server_name: str, tool_name: str, arguments: dict) -
     """Execute an MCP tool via the router and return the normalized result."""
     # Enforce browser_task defaults so the agent never under-provisions
     if tool_name == "browser_task":
-        arguments["model"] = "bu-max"
+        arguments["model"] = "bu-mini"
         if not arguments.get("max_steps") or int(arguments.get("max_steps", 0)) < 200:
             arguments["max_steps"] = 200
         # Dedup: don't launch the same browser_task twice
@@ -480,6 +554,47 @@ async def run_planner_stream(messages: list[dict], max_turns: int = 30):
                         elapsed = round(time.time() - t0, 2)
                         r = {"error": str(e)}
                         yield {"type": "tool_exec_complete", "server_name": sn, "tool_name": tn,
+                               "result": r, "elapsed": elapsed, "success": False}
+                elif name == "browser_use_run":
+                    task_str = inp.get("task", "")
+                    sid = inp.get("session_id") or None
+                    yield {"type": "tool_exec_start", "server_name": "browser-use", "tool_name": "run", "arguments": {"task": task_str[:120]}}
+                    try:
+                        r = await browser_use_run(task_str, sid)
+                        elapsed = round(time.time() - t0, 2)
+                        executed_steps.append({"server_name": "browser-use", "tool_name": "browser_use_run", "arguments": {"task": task_str}, "result": r, "elapsed": elapsed})
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "run",
+                               "result": r, "elapsed": elapsed, "success": True}
+                    except Exception as e:
+                        elapsed = round(time.time() - t0, 2)
+                        r = {"error": str(e)}
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "run",
+                               "result": r, "elapsed": elapsed, "success": False}
+                elif name == "browser_use_status":
+                    sid = inp.get("session_id", "")
+                    yield {"type": "tool_exec_start", "server_name": "browser-use", "tool_name": "status", "arguments": {"session_id": sid}}
+                    try:
+                        r = await browser_use_status(sid)
+                        elapsed = round(time.time() - t0, 2)
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "status",
+                               "result": r, "elapsed": elapsed, "success": True}
+                    except Exception as e:
+                        elapsed = round(time.time() - t0, 2)
+                        r = {"error": str(e)}
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "status",
+                               "result": r, "elapsed": elapsed, "success": False}
+                elif name == "browser_use_stop":
+                    sid = inp.get("session_id", "")
+                    yield {"type": "tool_exec_start", "server_name": "browser-use", "tool_name": "stop", "arguments": {"session_id": sid}}
+                    try:
+                        r = await browser_use_stop(sid)
+                        elapsed = round(time.time() - t0, 2)
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "stop",
+                               "result": r, "elapsed": elapsed, "success": True}
+                    except Exception as e:
+                        elapsed = round(time.time() - t0, 2)
+                        r = {"error": str(e)}
+                        yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "stop",
                                "result": r, "elapsed": elapsed, "success": False}
                 elif name == "list_server_tools":
                     sn = inp.get("server_name", "")
@@ -679,12 +794,12 @@ async def exec_llm(args: dict) -> dict:
     if isinstance(input_data, (dict, list)):
         input_data = json.dumps(input_data, indent=2)
     user_msg = f"{prompt}\n\nInput:\n{input_data}" if input_data else prompt
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
-    resp = client.messages.create(
-        model="claude-sonnet-4-20250514", max_tokens=4096,
-        messages=[{"role": "user", "content": user_msg}],
+    gclient = genai.Client(api_key=GEMINI_KEY)
+    resp = gclient.models.generate_content(
+        model="gemini-3-flash-preview",
+        contents=[gtypes.Content(role="user", parts=[gtypes.Part.from_text(text=user_msg)])],
     )
-    text = "".join(b.text for b in resp.content if hasattr(b, "text"))
+    text = resp.text or ""
     return {"result": text}
 
 def sse(data: dict) -> str:
