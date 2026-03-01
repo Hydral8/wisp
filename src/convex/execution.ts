@@ -3,6 +3,7 @@ import { internal, api } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
+import { mapServerToComposioApp } from "./composio";
 
 // --- Types ---
 
@@ -437,28 +438,53 @@ export const startExecution = action({
               workflowId: args.workflowId,
             };
           } else {
-            // Regular MCP tool call via proxy
-            if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
-            const isLongRunning = ["monitor_task", "browser_task"].includes(
-              node.tool_name
-            );
-            const timeout = isLongRunning ? 600000 : 120000;
+            // Check if Composio can handle this tool
+            const composioApp = mapServerToComposioApp(node.server_name);
+            let usedComposio = false;
 
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            if (composioApp) {
+              const connection = await ctx.runQuery(
+                internal.composio.getConnectionForProvider,
+                { userId, provider: composioApp }
+              );
+              if (connection?.status === "active") {
+                result = await ctx.runAction(
+                  internal.composio.executeComposioTool,
+                  {
+                    userId,
+                    appName: composioApp,
+                    toolName: node.tool_name,
+                    arguments: enrichedArgs,
+                  }
+                );
+                usedComposio = true;
+              }
+            }
 
-            const callResp = await fetch(`${mcpProxyUrl}/call`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                server_name: node.server_name,
-                tool_name: node.tool_name,
-                arguments: enrichedArgs,
-              }),
-              signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
-            result = normalizeMcpResult(await callResp.json());
+            // Fall back to MCP proxy
+            if (!usedComposio) {
+              if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
+              const isLongRunning = ["monitor_task", "browser_task"].includes(
+                node.tool_name
+              );
+              const timeout = isLongRunning ? 600000 : 120000;
+
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+              const callResp = await fetch(`${mcpProxyUrl}/call`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  server_name: node.server_name,
+                  tool_name: node.tool_name,
+                  arguments: enrichedArgs,
+                }),
+                signal: controller.signal,
+              });
+              clearTimeout(timeoutId);
+              result = normalizeMcpResult(await callResp.json());
+            }
           }
 
           // Store output

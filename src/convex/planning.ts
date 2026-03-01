@@ -3,6 +3,7 @@ import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
+import { mapServerToComposioApp } from "./composio";
 
 // --- System prompt (ported from server/main.py) ---
 
@@ -378,19 +379,46 @@ export const startPlanning = action({
             });
 
             try {
-              if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
-              const callResp = await fetch(`${mcpProxyUrl}/call`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  server_name: sn,
-                  tool_name: tn,
-                  arguments: toolArgs,
-                }),
-              });
-              result = await callResp.json();
-              // Normalize MCP result
-              result = normalizeMcpResult(result);
+              // Check if Composio can handle this tool
+              const composioApp = mapServerToComposioApp(sn);
+              let usedComposio = false;
+
+              if (composioApp) {
+                const userId = identity.subject as Id<"users">;
+                const connection = await ctx.runQuery(
+                  internal.composio.getConnectionForProvider,
+                  { userId, provider: composioApp }
+                );
+                if (connection?.status === "active") {
+                  result = await ctx.runAction(
+                    internal.composio.executeComposioTool,
+                    {
+                      userId,
+                      appName: composioApp,
+                      toolName: tn,
+                      arguments: toolArgs,
+                    }
+                  );
+                  usedComposio = true;
+                }
+              }
+
+              // Fall back to MCP proxy
+              if (!usedComposio) {
+                if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
+                const callResp = await fetch(`${mcpProxyUrl}/call`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    server_name: sn,
+                    tool_name: tn,
+                    arguments: toolArgs,
+                  }),
+                });
+                result = await callResp.json();
+                result = normalizeMcpResult(result);
+              }
+
               const elapsed = (Date.now() - t0) / 1000;
               executedSteps.push({
                 server_name: sn,

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useConvexAuth, useQuery, useMutation } from "convex/react";
+import { useConvexAuth, useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SignIn, UserMenu } from "@/components/auth";
 import { PRESETS } from "@/components/workflow-ui";
@@ -435,6 +435,155 @@ function AutomationsPane() {
 
 // ─── Credentials ─────────────────────────────────────────────────────────────
 
+// --- Composio app display metadata ---
+const COMPOSIO_APPS = [
+  { key: "GITHUB", label: "GitHub", color: "#333" },
+  { key: "GMAIL", label: "Gmail", color: "#EA4335" },
+  { key: "SLACK", label: "Slack", color: "#4A154B" },
+  { key: "NOTION", label: "Notion", color: "#000" },
+  { key: "LINEAR", label: "Linear", color: "#5E6AD2" },
+  { key: "GOOGLECALENDAR", label: "Google Calendar", color: "#4285F4" },
+  { key: "GOOGLEDRIVE", label: "Google Drive", color: "#0F9D58" },
+  { key: "GOOGLESHEETS", label: "Google Sheets", color: "#0F9D58" },
+];
+
+function IntegrationsSection() {
+  const connections = useQuery(api.composio.getConnections) ?? [];
+  const initiate = useAction(api.composio.initiateConnection);
+  const disconnect = useMutation(api.composio.removeConnection);
+  const save = useMutation(api.composio.saveConnection);
+  const [connecting, setConnecting] = useState<string | null>(null);
+
+  // Listen for OAuth callback postMessage
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "composio_callback" && connecting) {
+        save({
+          provider: connecting,
+          composioEntityId: e.data.connectedAccountId || "",
+          status: e.data.status || "active",
+        });
+        setConnecting(null);
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [connecting, save]);
+
+  const connectedProviders = new Map(
+    connections.map((c: any) => [c.provider, c])
+  );
+
+  const handleConnect = async (appKey: string) => {
+    setConnecting(appKey);
+    try {
+      const callbackUrl = `${window.location.origin}/api/composio/callback`;
+      const result = await initiate({ appName: appKey, callbackUrl });
+      if (result.redirectUrl) {
+        window.open(result.redirectUrl, "composio_oauth", "width=600,height=700");
+      }
+    } catch (err) {
+      console.error("Composio connect error:", err);
+      setConnecting(null);
+    }
+  };
+
+  const handleDisconnect = async (appKey: string) => {
+    try {
+      await disconnect({ provider: appKey });
+    } catch (err) {
+      console.error("Composio disconnect error:", err);
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 14 }}>
+        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+          Integrations
+        </h2>
+        <p style={{ fontSize: 12, color: "var(--text-dim)", margin: 0 }}>
+          Connect apps via OAuth — no API keys needed
+        </p>
+      </div>
+      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
+        {COMPOSIO_APPS.map((app) => {
+          const conn = connectedProviders.get(app.key);
+          const isActive = conn?.status === "active";
+          const isConnecting = connecting === app.key;
+
+          return (
+            <div
+              key={app.key}
+              style={{
+                padding: "12px 14px",
+                borderRadius: 8,
+                border: `1px solid ${isActive ? "rgba(74,222,128,0.3)" : "var(--border)"}`,
+                background: isActive ? "rgba(74,222,128,0.05)" : "var(--bg-card)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 10,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: isActive ? "var(--green)" : "var(--border)",
+                    flexShrink: 0,
+                  }}
+                />
+                <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>
+                  {app.label}
+                </span>
+              </div>
+              {isActive ? (
+                <button
+                  onClick={() => handleDisconnect(app.key)}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 5,
+                    border: "1px solid rgba(248,113,113,0.3)",
+                    background: "rgba(248,113,113,0.08)",
+                    color: "var(--red)",
+                    fontSize: 10,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  Disconnect
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleConnect(app.key)}
+                  disabled={isConnecting}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 5,
+                    border: "1px solid var(--border)",
+                    background: isConnecting ? "var(--border)" : "transparent",
+                    color: "var(--text-dim)",
+                    fontSize: 10,
+                    fontWeight: 500,
+                    fontFamily: "inherit",
+                    cursor: isConnecting ? "not-allowed" : "pointer",
+                    transition: "background 0.12s, color 0.12s",
+                  }}
+                >
+                  {isConnecting ? "Connecting..." : "Connect"}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const CREDENTIAL_FIELDS = [
   { key: "appId", placeholder: "App id (e.g. github)", disabled: "editing" as const },
   { key: "displayName", placeholder: "Display name" },
@@ -511,7 +660,10 @@ function CredentialsPane() {
         </p>
       </div>
 
-      {/* Form */}
+      {/* Composio Integrations */}
+      <IntegrationsSection />
+
+      {/* Manual Credentials Form */}
       <div
         style={{
           background: "var(--bg-card)",

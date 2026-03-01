@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as chat from "../chat.js";
+import type * as composio from "../composio.js";
 import type * as credentials from "../credentials.js";
 import type * as embeddings from "../embeddings.js";
 import type * as execution from "../execution.js";
@@ -32,6 +33,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   chat: typeof chat;
+  composio: typeof composio;
   credentials: typeof credentials;
   embeddings: typeof embeddings;
   execution: typeof execution;

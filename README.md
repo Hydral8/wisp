@@ -11,9 +11,25 @@ Natural-language workflow automation powered by 2000+ MCP tools. Describe what y
 │  Vercel     │  real- │  Auth, DB, Vector│        │  Railway     │
 └─────────────┘  time  │  Search, Actions │        └──────────────┘
                        └──────────────────┘              │
-                                                         ▼
-                                                   MCP Servers
-                                                  (stdio + remote)
+                              │                          ▼
+                              │                    MCP Servers
+                              │                   (stdio + remote)
+                              │
+                              │  HTTP
+                              ▼
+                       ┌──────────────┐
+                       │  Composio    │
+                       │  Managed     │
+                       │  OAuth+Exec  │
+                       └──────────────┘
+```
+
+**Tool execution routing:**
+```
+Tool call needed
+    ├─ Composio connected account exists for this app?
+    │   YES → Composio executes (managed OAuth, no API keys needed)
+    └─ NO  → MCP Proxy executes (stdio/remote, manual credentials)
 ```
 
 ### `/src` — Frontend (Next.js + Convex)
@@ -32,7 +48,8 @@ All orchestration, auth, database, and vector search logic runs in Convex.
 - **Planning**: `convex/planning.ts` — Claude-powered agentic loop that searches tools and builds execution DAGs
 - **Execution**: `convex/execution.ts` — Topological DAG execution with parallel levels, credential injection, browser automation
 - **Registry**: `convex/registry.ts` — Semantic tool search via 768D vector embeddings (HuggingFace)
-- **Credentials**: `convex/credentials.ts` — User-scoped credential storage
+- **Composio**: `convex/composio.ts` — Managed OAuth connections + tool execution via Composio API
+- **Credentials**: `convex/credentials.ts` — User-scoped manual credential storage (fallback)
 - **Workflows**: `convex/workflows.ts` — CRUD for saved workflows
 - **Webhooks**: `convex/webhooks.ts` — Webhook triggers for workflows
 - **Embeddings**: `convex/embeddings.ts` — HuggingFace Inference API for embedding generation
@@ -77,6 +94,7 @@ Set environment variables in the Convex dashboard (or via `npx convex env set`):
 | `HUGGINGFACE_API_KEY` | HuggingFace API key (tool embedding generation) |
 | `MCP_PROXY_URL` | URL of the MCP proxy (e.g. `http://localhost:8000`) |
 | `BROWSER_USE_API_KEY` | Browser-Use API key (optional, for browser automation) |
+| `COMPOSIO_API_KEY` | Composio API key from [app.composio.dev](https://app.composio.dev) (optional, for managed OAuth integrations) |
 | `AUTH_GOOGLE_CLIENT_ID` | Google OAuth client ID |
 | `AUTH_GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
 | `AUTH_GITHUB_CLIENT_ID` | GitHub OAuth app client ID |
@@ -114,9 +132,24 @@ node scripts/import_to_convex.mjs
 
 This imports ~364 servers, ~5,206 tools, and associated metadata. Tool embeddings are stored as zero vectors and need regeneration via HuggingFace.
 
+### Composio Setup (Optional)
+
+Composio provides managed OAuth for popular apps so users can connect with one click instead of manually entering API keys.
+
+1. Create an account at [app.composio.dev](https://app.composio.dev)
+2. Copy your API key from the dashboard
+3. Set it in Convex:
+   ```bash
+   npx convex env set COMPOSIO_API_KEY <your-key>
+   ```
+4. In the Composio dashboard, set up **Auth Configs** (integration) for each app you want to support (e.g. GitHub, Gmail, Slack). This is where you configure the OAuth client ID/secret on Composio's side.
+5. Users can then click "Connect" in the Credentials tab to OAuth into each app — no API keys needed.
+
+Currently supported Composio apps: GitHub, Gmail, Slack, Notion, Linear, Google Calendar, Google Drive, Google Sheets. The mapping lives in `src/convex/composio.ts` and is easily extensible.
+
 ## MCP Registry
 
-Wisp includes a built-in registry of 364 MCP servers and 5,206 tools with semantic search. The registry is stored in Convex with 768-dimensional vector embeddings for tool discovery.
+Wisp includes a built-in registry of 364 MCP servers and 5,206 tools with semantic search and importance ranking inspired by the PageRank algorithm by Larry Page and Sergey Brin. The registry is stored in Convex with 768-dimensional vector embeddings for tool discovery.
 
 Supported server types:
 - **npm** — launched via `npx -y <package>`
