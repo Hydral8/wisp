@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useAction, useMutation } from "convex/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { api } from "@/convex/_generated/api";
 import type {
   Workflow,
   DAGNode,
@@ -111,6 +113,32 @@ export function Collapsible({
 
 export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
   const [expanded, setExpanded] = useState(true);
+  const [connecting, setConnecting] = useState(false);
+  const [connected, setConnected] = useState(false);
+  const initiateConnection = useAction(api.composio.initiateConnection);
+  const saveConnection = useMutation(api.composio.saveConnection);
+
+  // Listen for OAuth callback postMessage after popup opens
+  useEffect(() => {
+    if (!connecting) return;
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "composio_callback") {
+        const appName =
+          event.type === "user_action_required" ? event.app : undefined;
+        if (appName) {
+          saveConnection({
+            provider: appName,
+            composioEntityId: e.data.connectedAccountId || "",
+            status: e.data.status || "active",
+          });
+        }
+        setConnecting(false);
+        setConnected(true);
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [connecting, event, saveConnection]);
 
   switch (event.type) {
     case "tool_search_start":
@@ -177,6 +205,85 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
         <div className="text-xs px-3 py-1 animate-fade-in-fast"
           style={{ color: "var(--red)" }}>
           {event.message.slice(0, 200)}
+        </div>
+      );
+
+    case "user_action_required":
+      return (
+        <div
+          className="animate-fade-in-fast"
+          style={{
+            borderLeft: `2px solid ${connected ? "var(--green, #22c55e)" : "var(--yellow)"}`,
+            paddingLeft: 10,
+            paddingTop: 4,
+            paddingBottom: 4,
+            fontSize: 12,
+            color: "var(--text)",
+          }}
+        >
+          <div>{event.message || "User action required to continue."}</div>
+          {connected ? (
+            <div
+              style={{
+                marginTop: 8,
+                padding: "6px 10px",
+                borderRadius: 6,
+                background: "rgba(34, 197, 94, 0.1)",
+                color: "var(--green, #22c55e)",
+                fontSize: 11,
+                fontWeight: 500,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6.5L4.5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Connected! Send a message to continue.
+            </div>
+          ) : (event.action_url || event.app) ? (
+            <button
+              onClick={async () => {
+                if (connecting) return;
+                setConnecting(true);
+                try {
+                  let redirectUrl = event.action_url || "";
+                  if (!redirectUrl && event.app) {
+                    const callbackUrl = `${window.location.origin}/api/composio/callback`;
+                    const res = await initiateConnection({
+                      appName: event.app,
+                      callbackUrl,
+                    });
+                    redirectUrl = res.redirectUrl || "";
+                  }
+                  if (redirectUrl) {
+                    window.open(redirectUrl, "composio_oauth", "width=600,height=700");
+                  } else {
+                    setConnecting(false);
+                  }
+                } catch {
+                  setConnecting(false);
+                }
+              }}
+              disabled={connecting}
+              style={{
+                marginTop: 8,
+                padding: "6px 10px",
+                borderRadius: 6,
+                border: "1px solid var(--border)",
+                background: "var(--bg-card)",
+                color: "var(--text)",
+                fontSize: 11,
+                fontWeight: 500,
+                fontFamily: "inherit",
+                cursor: connecting ? "not-allowed" : "pointer",
+                opacity: connecting ? 0.6 : 1,
+              }}
+            >
+              {connecting ? "Waiting for connection..." : "Connect account"}
+            </button>
+          ) : null}
         </div>
       );
 

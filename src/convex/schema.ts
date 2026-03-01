@@ -237,6 +237,8 @@ export default defineSchema({
     description: v.string(),
     logo: v.optional(v.string()),
     categories: v.array(v.string()),
+    integrationId: v.optional(v.string()),
+    authConfigId: v.optional(v.string()),
     syncedAt: v.float64(),
   }).index("by_key", ["key"]),
 

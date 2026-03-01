@@ -107,6 +107,37 @@ export const getServerConnectionInfo = query({
   },
 });
 
+/** Internal version for use from actions (e.g. execution.ts) */
+export const getServerConnectionInfoInternal = internalQuery({
+  args: { serverName: v.string() },
+  handler: async (ctx, args) => {
+    const remote = await ctx.db
+      .query("serverRemotes")
+      .withIndex("by_server", (q) => q.eq("serverName", args.serverName))
+      .first();
+    if (remote) {
+      return {
+        method: "remote" as const,
+        url: remote.url,
+        headers: remote.headersJson ? JSON.parse(remote.headersJson) : null,
+      };
+    }
+    const pkg = await ctx.db
+      .query("serverPackages")
+      .withIndex("by_server", (q) => q.eq("serverName", args.serverName))
+      .first();
+    if (pkg) {
+      return {
+        method: "stdio" as const,
+        registry: pkg.registryType,
+        identifier: pkg.identifier,
+        runtime_hint: pkg.runtimeHint,
+      };
+    }
+    return null;
+  },
+});
+
 /** List all tools for a server */
 export const getToolsForServer = query({
   args: { serverName: v.string() },

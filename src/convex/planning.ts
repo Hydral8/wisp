@@ -17,13 +17,15 @@ IMPORTANT BEHAVIOR:
 - Your goal is a working, tested automation pipeline — not a plan or a conversation.
 
 WORKFLOW:
-1. Search for tools using search_tools
-2. List server tools with list_server_tools to discover related tools
-3. EXECUTE tools with execute_tool to test them and do real work
-4. Check results, adjust arguments, retry if needed
-5. Keep iterating until the automation is FULLY WORKING
-6. If you are blocked on user-specific info (API keys, account names, etc.), ask the user and STOP — do not guess sensitive values
-7. When finished, respond with a summary of what the automation does and what was tested
+1. If the task involves an OAuth service (Gmail, GitHub, Slack, Google Calendar, etc.), use search_composio_tools FIRST to find Composio actions
+2. For other capabilities, search for tools using search_tools
+3. List server tools with list_server_tools to discover related tools
+4. EXECUTE tools with execute_tool to test them and do real work
+5. Check results, adjust arguments, retry if needed
+6. Keep iterating until the automation is FULLY WORKING
+7. If you are blocked on user-specific info (API keys, account names, etc.), ask the user and STOP — do not guess sensitive values
+8. When finished, respond with a summary of what the automation does and what was tested
+9. If any tool returns action_required/requires_user_action (for example OAuth connect), STOP immediately and wait for the user's next message after they complete the action.
 
 TOOL SEARCH RULES:
 - Search for each distinct capability exactly once. Do not rephrase and retry the same search.
@@ -33,7 +35,15 @@ SCRAPING & WEB SEARCH:
 - If the task requires scraping, getting text data from websites, or searching the web, actively look for and use web search tools (e.g., Brave, Google, Scrapeless, specific scraping APIs) available in the registry.
 - Do NOT just assume data is unavailable; leverage the available MCP tools to fetch the required information.
 
+COMPOSIO (OAuth Apps) — ALWAYS PREFER FOR AUTH-BASED SERVICES:
+- For services that require user authentication (Gmail, Google Calendar, Google Drive, Google Sheets, GitHub, Slack, Notion, Discord, Trello, Asana, Jira, Salesforce, HubSpot, Outlook, LinkedIn, Twitter/X, Spotify, Dropbox, etc.), ALWAYS use search_composio_tools FIRST.
+- Composio tools handle OAuth automatically — the user has already connected their accounts. No API keys or credentials needed.
+- Use search_composio_tools with the app name (e.g. "GMAIL", "GITHUB", "SLACK") to discover available actions. Then use execute_tool with server_name set to the app name (e.g. "GMAIL") and tool_name set to the Composio action name.
+- If execution returns an action_required response with a connect URL, ask the user to complete the OAuth link, then retry the same tool call.
+- Only fall back to generic MCP tools (via search_tools) if Composio does not have the app or returns no results.
+
 TOOL EXECUTION STRATEGY:
+- PREFER Composio tools for any OAuth/authenticated service (see above).
 - PREFER MCP tools via execute_tool whenever possible — they are faster, cheaper, and more reliable than browser automation.
 - Search the registry thoroughly before falling back to browser_use. There are 2000+ tools covering APIs for search, scraping, data fetching, social media, finance, email, and more.
 - Only use browser_use_run when the task genuinely requires interactive browser automation (e.g. logging into a site, filling forms, taking screenshots, or when no suitable MCP tool exists).
@@ -61,7 +71,7 @@ When you're done, summarize what was accomplished and whether it succeeded.`;
 const AGENT_TOOLS = [
   {
     name: "search_tools",
-    description: "Search Wisp for MCP tools matching a query.",
+    description: "Search Wisp for MCP tools matching a query. For OAuth services (Gmail, GitHub, Slack, etc.), results include Composio tools that handle auth automatically — prefer those.",
     input_schema: {
       type: "object",
       properties: { query: { type: "string" } },
@@ -80,6 +90,27 @@ const AGENT_TOOLS = [
         },
       },
       required: ["server_name"],
+    },
+  },
+  {
+    name: "search_composio_tools",
+    description:
+      "Search for Composio tools for an OAuth app (Gmail, GitHub, Slack, Google Calendar, Google Drive, Notion, Discord, Trello, Jira, Salesforce, HubSpot, Outlook, LinkedIn, Twitter, Spotify, Dropbox, etc.). Composio handles OAuth automatically — no API keys needed. ALWAYS use this for auth-based services instead of generic MCP tools.",
+    input_schema: {
+      type: "object",
+      properties: {
+        app_name: {
+          type: "string",
+          description:
+            "The app name (e.g. 'GMAIL', 'GITHUB', 'SLACK', 'GOOGLECALENDAR', 'GOOGLEDRIVE', 'NOTION')",
+        },
+        use_case: {
+          type: "string",
+          description:
+            "Optional: describe what you want to do (e.g. 'send email', 'create issue', 'list messages')",
+        },
+      },
+      required: ["app_name"],
     },
   },
   {
@@ -177,6 +208,28 @@ const AGENT_TOOLS = [
   },
 ];
 
+const OAUTH_APP_KEYWORDS: Array<{ key: string; tokens: string[] }> = [
+  { key: "GMAIL", tokens: ["gmail"] },
+  { key: "GITHUB", tokens: ["github"] },
+  { key: "SLACK", tokens: ["slack"] },
+  { key: "NOTION", tokens: ["notion"] },
+  { key: "LINEAR", tokens: ["linear"] },
+  { key: "GOOGLECALENDAR", tokens: ["google calendar", "gcal", "calendar"] },
+  { key: "GOOGLEDRIVE", tokens: ["google drive", "gdrive", "drive"] },
+  { key: "GOOGLESHEETS", tokens: ["google sheets", "gsheets", "sheets"] },
+  { key: "OUTLOOK", tokens: ["outlook"] },
+  { key: "DISCORD", tokens: ["discord"] },
+  { key: "TRELLO", tokens: ["trello"] },
+  { key: "ASANA", tokens: ["asana"] },
+  { key: "JIRA", tokens: ["jira"] },
+  { key: "SALESFORCE", tokens: ["salesforce"] },
+  { key: "HUBSPOT", tokens: ["hubspot"] },
+  { key: "LINKEDIN", tokens: ["linkedin"] },
+  { key: "TWITTER", tokens: ["twitter", "x.com"] },
+  { key: "SPOTIFY", tokens: ["spotify"] },
+  { key: "DROPBOX", tokens: ["dropbox"] },
+];
+
 // --- Planning event writer ---
 
 export const writePlanningEvent = internalMutation({
@@ -252,6 +305,33 @@ export const startPlanning = action({
 
     const callCache = new Map<string, string>();
     const executedSteps: Array<Record<string, unknown>> = [];
+    const userId = identity.subject.split("|")[0] as Id<"users">;
+    const saveSessionMessages = async () => {
+      await ctx.runMutation(internal.planning.saveChatSession, {
+        userId,
+        sessionId,
+        messages,
+      });
+    };
+    const pauseForUserAction = async (action: { action_message: string; action_url?: string; app?: string }) => {
+      await ctx.runMutation(internal.planning.writePlanningEvent, {
+        sessionId,
+        event: {
+          type: "user_action_required",
+          message: action.action_message,
+          action_url: action.action_url,
+          app: action.app,
+        },
+      });
+      await saveSessionMessages();
+      return {
+        sessionId,
+        executedSteps,
+        status: "waiting_input",
+        waitingForUserAction: true,
+        actionRequired: action,
+      };
+    };
 
     for (let turn = 0; turn < maxTurns; turn++) {
       await ctx.runMutation(internal.planning.writePlanningEvent, {
@@ -335,12 +415,22 @@ export const startPlanning = action({
           const cacheKey = `${name}:${JSON.stringify(inp)}`;
 
           if (callCache.has(cacheKey)) {
+            const cachedContent = callCache.get(cacheKey)!;
             messages.push({
               role: "tool",
               tool_call_id: toolCall.id,
               name: name,
-              content: callCache.get(cacheKey)!,
+              content: cachedContent,
             });
+            try {
+              const parsed = JSON.parse(cachedContent);
+              const action = detectUserActionRequired(parsed);
+              if (action) {
+                return await pauseForUserAction(action);
+              }
+            } catch {
+              // Cached output may be non-JSON text.
+            }
             continue;
           }
 
@@ -353,29 +443,50 @@ export const startPlanning = action({
               sessionId,
               event: { type: "tool_search_start", query: q },
             });
-            result = await ctx.runAction(api.registry.searchTools, {
-              query: q,
-              limit: 5,
-            });
-            if (Array.isArray(result)) {
-              result = result.map((t: any) => {
-                try {
-                  return { ...t, input_schema: JSON.parse(t.input_schema) };
-                } catch {
-                  return t;
-                }
+            const oauthApp = detectOAuthAppFromText(q);
+            if (oauthApp) {
+              const ensure = await ctx.runAction(
+                internal.composio.ensureConnectionForApp,
+                { userId, appName: oauthApp }
+              );
+              const ensureAction = detectUserActionRequired(ensure);
+              if (ensureAction) {
+                return await pauseForUserAction(ensureAction);
+              }
+              // Force OAuth services through Composio-first discovery to avoid generic MCP detours.
+              try {
+                result = await ctx.runAction(internal.composio.searchComposioTools, {
+                  appName: oauthApp,
+                  useCase: q,
+                  limit: 15,
+                });
+              } catch (e: any) {
+                result = { error: e.message };
+              }
+            } else {
+              result = await ctx.runAction(api.registry.searchTools, {
+                query: q,
+                limit: 5,
               });
+              if (Array.isArray(result)) {
+                result = result.map((t: any) => {
+                  try {
+                    return { ...t, input_schema: JSON.parse(t.input_schema) };
+                  } catch {
+                    return t;
+                  }
+                });
+              }
             }
             const elapsed = (Date.now() - t0) / 1000;
-            const toolNames = (result || []).map(
-              (t: any) => t.tool_name || ""
-            );
+            const resultList = Array.isArray(result) ? result : [];
+            const toolNames = resultList.map((t: any) => t.tool_name || "");
             await ctx.runMutation(internal.planning.writePlanningEvent, {
               sessionId,
               event: {
                 type: "tool_search_complete",
                 query: q,
-                count: (result || []).length,
+                count: resultList.length,
                 tool_names: toolNames,
                 elapsed,
               },
@@ -386,26 +497,90 @@ export const startPlanning = action({
               sessionId,
               event: { type: "tool_search_start", query: `[list] ${sn}` },
             });
-            result = await ctx.runQuery(api.registry.getToolsForServer, {
-              serverName: sn,
-            });
-            if (Array.isArray(result)) {
-              result = result.map((t: any) => {
-                try {
-                  return { ...t, input_schema: JSON.parse(t.input_schema) };
-                } catch {
-                  return t;
-                }
+            const composioApp = await ctx.runQuery(
+              internal.composio.resolveComposioApp,
+              { serverName: sn }
+            );
+            if (composioApp) {
+              const ensure = await ctx.runAction(
+                internal.composio.ensureConnectionForApp,
+                { userId, appName: composioApp }
+              );
+              const ensureAction = detectUserActionRequired(ensure);
+              if (ensureAction) {
+                return await pauseForUserAction(ensureAction);
+              }
+              try {
+                result = await ctx.runAction(internal.composio.searchComposioTools, {
+                  appName: composioApp,
+                  limit: 25,
+                });
+              } catch (e: any) {
+                result = { error: e.message };
+              }
+            } else {
+              result = await ctx.runQuery(api.registry.getToolsForServer, {
+                serverName: sn,
               });
+              if (Array.isArray(result)) {
+                result = result.map((t: any) => {
+                  try {
+                    return { ...t, input_schema: JSON.parse(t.input_schema) };
+                  } catch {
+                    return t;
+                  }
+                });
+              }
             }
             const elapsed = (Date.now() - t0) / 1000;
+            const resultList = Array.isArray(result) ? result : [];
             await ctx.runMutation(internal.planning.writePlanningEvent, {
               sessionId,
               event: {
                 type: "tool_search_complete",
                 query: `[list] ${sn}`,
-                count: (result || []).length,
-                tool_names: (result || []).map((t: any) => t.tool_name || ""),
+                count: resultList.length,
+                tool_names: resultList.map((t: any) => t.tool_name || ""),
+                elapsed,
+              },
+            });
+          } else if (name === "search_composio_tools") {
+            const rawAppName = String(inp.app_name || "");
+            const useCase = inp.use_case || undefined;
+            const inferredAppName = detectOAuthAppFromText(
+              `${rawAppName} ${useCase || ""}`
+            );
+            const appName = inferredAppName || rawAppName;
+            const ensure = await ctx.runAction(
+              internal.composio.ensureConnectionForApp,
+              { userId, appName }
+            );
+            const ensureAction = detectUserActionRequired(ensure);
+            if (ensureAction) {
+              return await pauseForUserAction(ensureAction);
+            }
+            await ctx.runMutation(internal.planning.writePlanningEvent, {
+              sessionId,
+              event: { type: "tool_search_start", query: `[composio] ${appName}${useCase ? `: ${useCase}` : ""}` },
+            });
+            try {
+              result = await ctx.runAction(internal.composio.searchComposioTools, {
+                appName,
+                useCase,
+                limit: 15,
+              });
+            } catch (e: any) {
+              result = { error: e.message };
+            }
+            const elapsed = (Date.now() - t0) / 1000;
+            const toolNames = Array.isArray(result) ? result.map((t: any) => t.tool_name || "") : [];
+            await ctx.runMutation(internal.planning.writePlanningEvent, {
+              sessionId,
+              event: {
+                type: "tool_search_complete",
+                query: `[composio] ${appName}`,
+                count: toolNames.length,
+                tool_names: toolNames,
                 elapsed,
               },
             });
@@ -423,13 +598,14 @@ export const startPlanning = action({
               limit: 10,
             });
             const elapsed = (Date.now() - t0) / 1000;
+            const resultList = Array.isArray(result) ? result : [];
             await ctx.runMutation(internal.planning.writePlanningEvent, {
               sessionId,
               event: {
                 type: "tool_search_complete",
                 query: `[servers] ${q}`,
-                count: (result || []).length,
-                tool_names: (result || []).map((s: any) => s.name || ""),
+                count: resultList.length,
+                tool_names: resultList.map((s: any) => s.name || ""),
                 elapsed,
               },
             });
@@ -448,35 +624,39 @@ export const startPlanning = action({
             });
 
             try {
-              // Check if Composio can handle this tool
-              const composioApp = await ctx.runQuery(
+              // Check if Composio can handle this tool by app key/server mapping.
+              const composioAppKey = await ctx.runQuery(
                 internal.composio.resolveComposioApp,
                 { serverName: sn }
               );
-              let usedComposio = false;
+              const isComposioOAuthApp = Boolean(composioAppKey);
 
-              if (composioApp) {
-                const userId = identity.subject.split("|")[0] as Id<"users">;
-                const connection = await ctx.runQuery(
-                  internal.composio.getConnectionForProvider,
-                  { userId, provider: composioApp }
+              if (isComposioOAuthApp) {
+                const connectionState = await ctx.runAction(
+                  internal.composio.ensureConnectionForApp,
+                  {
+                    userId,
+                    appName: composioAppKey!,
+                  }
                 );
-                if (connection?.status === "active") {
-                  result = await ctx.runAction(
-                    internal.composio.executeComposioTool,
-                    {
-                      userId,
-                      appName: composioApp,
-                      toolName: tn,
-                      arguments: toolArgs,
-                    }
-                  );
-                  usedComposio = true;
+                const action = detectUserActionRequired(connectionState);
+                if (action) {
+                  return await pauseForUserAction(action);
+                } else {
+                result = await ctx.runAction(
+                  internal.composio.executeComposioTool,
+                  {
+                    userId,
+                    appName: composioAppKey!,
+                    toolName: tn,
+                    arguments: toolArgs,
+                  }
+                );
                 }
               }
 
-              // Fall back to MCP proxy
-              if (!usedComposio) {
+              // Fall back to MCP proxy only for non-Composio apps.
+              if (!isComposioOAuthApp) {
                 if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
                 const callResp = await fetch(`${mcpProxyUrl}/call`, {
                   method: "POST",
@@ -725,6 +905,11 @@ export const startPlanning = action({
             name: name,
             content: contentStr,
           });
+
+          const action = detectUserActionRequired(result);
+          if (action) {
+            return await pauseForUserAction(action);
+          }
         }
 
         continue;
@@ -752,12 +937,7 @@ export const startPlanning = action({
       }
 
       // Save session messages
-      const userId = identity.subject.split("|")[0] as Id<"users">;
-      await ctx.runMutation(internal.planning.saveChatSession, {
-        userId,
-        sessionId,
-        messages,
-      });
+      await saveSessionMessages();
 
       return { sessionId, executedSteps };
     }
@@ -821,4 +1001,41 @@ function normalizeMcpResult(result: any): any {
     }
   }
   return result;
+}
+
+function detectOAuthAppFromText(query: string): string | null {
+  const q = query.toLowerCase();
+  for (const entry of OAUTH_APP_KEYWORDS) {
+    if (entry.tokens.some((token) => q.includes(token))) {
+      return entry.key;
+    }
+  }
+  return null;
+}
+
+function detectUserActionRequired(
+  value: any
+): { action_required: boolean; action_message: string; action_url?: string; app?: string } | null {
+  if (!value || typeof value !== "object") return null;
+  if (!(value.action_required || value.requires_user_action || value.requires_human_input)) {
+    return null;
+  }
+
+  const actionUrl =
+    value.action_url ||
+    value.redirect_url ||
+    value.redirectUrl ||
+    value.connect_url ||
+    undefined;
+
+  return {
+    action_required: true,
+    action_message:
+      value.action_message ||
+      value.message ||
+      value.error ||
+      "User action is required before continuing.",
+    action_url: typeof actionUrl === "string" ? actionUrl : undefined,
+    app: typeof value.app === "string" ? value.app : undefined,
+  };
 }

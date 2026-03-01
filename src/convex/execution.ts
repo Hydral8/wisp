@@ -205,9 +205,16 @@ function flattenStrings(value: any): string[] {
 function detectActionRequired(value: any): { action_required: boolean; action_message: string; action_url?: string } | null {
   if (value && typeof value === "object") {
     if (value.requires_user_action || value.requires_human_input || value.action_required) {
+      const actionUrl =
+        value.action_url ||
+        value.redirect_url ||
+        value.redirectUrl ||
+        value.connect_url ||
+        undefined;
       return {
         action_required: true,
         action_message: value.message || value.error || "Complete the required step in the browser.",
+        action_url: typeof actionUrl === "string" ? actionUrl : undefined,
       };
     }
   }
@@ -458,30 +465,44 @@ export const startExecution = action({
               internal.composio.resolveComposioApp,
               { serverName: node.server_name }
             );
-            let usedComposio = false;
+            const isComposioOAuthApp = Boolean(composioApp);
 
-            if (composioApp) {
-              const connection = await ctx.runQuery(
-                internal.composio.getConnectionForProvider,
-                { userId, provider: composioApp }
+            if (isComposioOAuthApp) {
+              const connectionState = await ctx.runAction(
+                internal.composio.ensureConnectionForApp,
+                {
+                  userId,
+                  appName: composioApp!,
+                }
               );
-              if (connection?.status === "active") {
+              if (
+                connectionState?.action_required ||
+                connectionState?.requires_user_action
+              ) {
+                result = connectionState;
+              } else {
                 result = await ctx.runAction(
                   internal.composio.executeComposioTool,
                   {
                     userId,
-                    appName: composioApp,
+                    appName: composioApp!,
                     toolName: node.tool_name,
                     arguments: enrichedArgs,
                   }
                 );
-                usedComposio = true;
               }
             }
-
-            // Fall back to MCP proxy
-            if (!usedComposio) {
+            
+            // Fall back to MCP proxy only for non-Composio apps.
+            if (!isComposioOAuthApp) {
               if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
+
+              // Look up connection info from Convex DB (stateless proxy)
+              const connInfo = await ctx.runQuery(
+                internal.registry.getServerConnectionInfoInternal,
+                { serverName: node.server_name }
+              );
+
               const isLongRunning = ["monitor_task", "browser_task"].includes(
                 node.tool_name
               );
@@ -497,6 +518,7 @@ export const startExecution = action({
                   server_name: node.server_name,
                   tool_name: node.tool_name,
                   arguments: enrichedArgs,
+                  connection_info: connInfo,
                 }),
                 signal: controller.signal,
               });
@@ -538,6 +560,19 @@ export const startExecution = action({
               data: nodeData,
             },
           });
+
+          if (actionInfo) {
+            await ctx.runMutation(api.workflows.updateStatus, {
+              id: args.workflowId,
+              status: "waiting_input",
+            });
+            return {
+              status: "waiting_input",
+              nodeId: node.id,
+              workflowId: args.workflowId,
+              actionRequired: actionInfo,
+            };
+          }
         } catch (e: any) {
           done++;
           const errorText = e.message || String(e);
@@ -558,6 +593,19 @@ export const startExecution = action({
               data: nodeData,
             },
           });
+
+          if (actionInfo) {
+            await ctx.runMutation(api.workflows.updateStatus, {
+              id: args.workflowId,
+              status: "waiting_input",
+            });
+            return {
+              status: "waiting_input",
+              nodeId: node.id,
+              workflowId: args.workflowId,
+              actionRequired: actionInfo,
+            };
+          }
         }
       }
     }

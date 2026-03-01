@@ -808,7 +808,7 @@ function IntegrationsSection() {
           {/* Grid */}
           <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
             {pageApps.map((app: any) => {
-              const conn = connectedProviders.get(app.key);
+              const conn = connectedProviders.get(app.key) as any;
               const isActive = conn?.status === "active";
               const isConnecting = connecting === app.key;
 
