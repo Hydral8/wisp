@@ -57,19 +57,56 @@ export const list = query({
     searchQuery: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    if (args.searchQuery) {
+    if (!args.searchQuery?.trim()) {
       return await ctx.db
         .query("marketplaceWorkflows")
-        .withSearchIndex("search_marketplace", (q) =>
-          q.search("description", args.searchQuery!)
-        )
+        .withIndex("by_usage")
+        .order("desc")
         .take(50);
     }
-    return await ctx.db
+
+    const q = args.searchQuery.trim();
+
+    // Search by description
+    const byDescription = await ctx.db
       .query("marketplaceWorkflows")
-      .withIndex("by_usage")
-      .order("desc")
+      .withSearchIndex("search_marketplace", (s) =>
+        s.search("description", q)
+      )
       .take(50);
+
+    // Search by name
+    const byName = await ctx.db
+      .query("marketplaceWorkflows")
+      .withSearchIndex("search_by_name", (s) => s.search("name", q))
+      .take(50);
+
+    // Merge and deduplicate
+    const seen = new Set(byDescription.map((d) => d._id));
+    const merged = [
+      ...byDescription,
+      ...byName.filter((n) => !seen.has(n._id)),
+    ];
+
+    // Also include items matching by tags (case-insensitive substring)
+    if (merged.length < 50) {
+      const qLower = q.toLowerCase();
+      const all = await ctx.db
+        .query("marketplaceWorkflows")
+        .withIndex("by_usage")
+        .order("desc")
+        .take(200);
+      for (const item of all) {
+        if (seen.has(item._id)) continue;
+        if (item.tags.some((t) => t.toLowerCase().includes(qLower))) {
+          merged.push(item);
+          seen.add(item._id);
+          if (merged.length >= 50) break;
+        }
+      }
+    }
+
+    return merged.slice(0, 50);
   },
 });
 

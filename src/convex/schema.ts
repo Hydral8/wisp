@@ -228,6 +228,10 @@ export default defineSchema({
     .searchIndex("search_marketplace", {
       searchField: "description",
       filterFields: ["tags"],
+    })
+    .searchIndex("search_by_name", {
+      searchField: "name",
+      filterFields: ["tags"],
     }),
 
   // --- Composio ---
