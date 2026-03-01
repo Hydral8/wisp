@@ -330,9 +330,15 @@ export function ChatPane({
 // PlanningFeed
 // ---------------------------------------------------------------------------
 
-export function PlanningFeed({ events }: { events: PlanningEvent[] }) {
+export function PlanningFeed({
+  events,
+  onConvertToWorkflow,
+}: {
+  events: PlanningEvent[];
+  onConvertToWorkflow?: () => void;
+}) {
   const endRef = useRef<HTMLDivElement>(null);
-  const isDone = events.some((e) => e.type === "dag_complete" || e.type === "planning_error");
+  const isDone = events.some((e) => e.type === "agent_done" || e.type === "dag_complete" || e.type === "planning_error");
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -340,7 +346,8 @@ export function PlanningFeed({ events }: { events: PlanningEvent[] }) {
 
   const visible = events.filter((e) =>
     e.type === "tool_search_complete" || e.type === "planning_thinking" ||
-    e.type === "planning_warnings" || e.type === "dag_complete" || e.type === "planning_error"
+    e.type === "planning_warnings" || e.type === "dag_complete" || e.type === "planning_error" ||
+    e.type === "tool_exec_start" || e.type === "tool_exec_complete" || e.type === "agent_done"
   );
 
   return (
@@ -350,15 +357,64 @@ export function PlanningFeed({ events }: { events: PlanningEvent[] }) {
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--text-dim)" }}>
-          Planning
+          Agent
         </div>
-        {!isDone && (
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text-dim)", opacity: 0.6 }} />
-            <span className="text-xs" style={{ color: "var(--text-dim)" }}>Thinking...</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {!isDone && (
+            <>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text-dim)", opacity: 0.6 }} />
+              <span className="text-xs" style={{ color: "var(--text-dim)" }}>Working...</span>
+            </>
+          )}
+          {isDone && onConvertToWorkflow && (
+            <button
+              onClick={onConvertToWorkflow}
+              style={{
+                padding: "5px 14px",
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 500,
+                border: "none",
+                background: "var(--accent)",
+                color: "#fff",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              Convert to Workflow
+            </button>
+          )}
+        </div>
       </div>
+      {/* Live browser iframe */}
+      {(() => {
+        // Find the latest live_url from tool_exec_complete results (browser_task returns live_url)
+        const liveUrl = [...events].reverse().reduce<string | null>((found, e) => {
+          if (found) return found;
+          if (e.type === "tool_exec_complete") {
+            const r = (e as unknown as Record<string, unknown>).result as Record<string, unknown> | undefined;
+            if (r?.live_url && typeof r.live_url === "string") return r.live_url;
+          }
+          return null;
+        }, null);
+        // Only show while agent is still working (not done yet)
+        if (liveUrl && !isDone) {
+          return (
+            <div style={{ borderBottom: "1px solid var(--border)", padding: "0" }}>
+              <div style={{ padding: "6px 16px", fontSize: 11, color: "var(--text-dim)", display: "flex", alignItems: "center", gap: 6 }}>
+                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e" }} />
+                Live browser session
+              </div>
+              <iframe
+                src={liveUrl}
+                style={{ width: "100%", height: 400, border: "none", background: "#000" }}
+                allow="clipboard-read; clipboard-write"
+              />
+            </div>
+          );
+        }
+        return null;
+      })()}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {visible.map((e, i) => (
           <PlanningFeedCard key={i} event={e} />
@@ -435,6 +491,60 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
           </span>
         </div>
       );
+
+    case "tool_exec_start": {
+      const e = event as Record<string, unknown>;
+      return (
+        <div className="flex items-center gap-1.5 animate-fade-in-fast" style={{ padding: "4px 0" }}>
+          <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--blue, #3b82f6)" }} />
+          <span style={{ fontSize: 12, color: "var(--text)" }}>
+            Executing: {e.server_name as string} / {e.tool_name as string}
+          </span>
+        </div>
+      );
+    }
+
+    case "tool_exec_complete": {
+      const e = event as Record<string, unknown>;
+      const success = e.success as boolean;
+      const result = e.result as Record<string, unknown>;
+      const liveUrl = result?.live_url as string | undefined;
+      const preview = JSON.stringify(result, null, 2);
+      return (
+        <Collapsible
+          label={`${e.server_name as string} / ${e.tool_name as string}`}
+          meta={`${success ? "OK" : "FAIL"} · ${e.elapsed as number}s`}
+          defaultOpen={!success}
+        >
+          {liveUrl && (
+            <div style={{ marginBottom: 8 }}>
+              <a href={liveUrl} target="_blank" rel="noreferrer"
+                style={{ fontSize: 11, color: "var(--blue)", textDecoration: "underline" }}>
+                Open live browser view
+              </a>
+            </div>
+          )}
+          <pre style={{ fontSize: 10, lineHeight: 1.4, color: "var(--text-dim)", margin: 0, maxHeight: 200, overflow: "auto", whiteSpace: "pre-wrap" }}>
+            {preview.length > 2000 ? preview.slice(0, 2000) + "\n..." : preview}
+          </pre>
+        </Collapsible>
+      );
+    }
+
+    case "agent_done": {
+      const e = event as Record<string, unknown>;
+      return (
+        <div className="animate-fade-in" style={{ padding: "8px 0" }}>
+          <div className="flex items-center gap-1.5" style={{ marginBottom: 6 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)", flexShrink: 0 }} />
+            <span style={{ fontSize: 12, color: "var(--text)", fontWeight: 500 }}>Agent complete</span>
+          </div>
+          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, whiteSpace: "pre-wrap" }}>
+            {e.text as string}
+          </p>
+        </div>
+      );
+    }
 
     default:
       return null;

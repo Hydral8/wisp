@@ -10,6 +10,7 @@ import os
 import asyncio
 import time
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
@@ -276,6 +277,10 @@ async def list_available_keys():
             
     return {"available_keys": keys}
 
+@lru_cache(maxsize=256)
+def _cached_retrieve(query: str, page: int, limit: int):
+    return retriever.retrieve(query, page=page, limit=limit)
+
 @app.get("/search")
 async def search_tools(
     query: str = Query(..., description="The search query for tools or servers"),
@@ -287,7 +292,7 @@ async def search_tools(
     Returns hydrated tool metadata, server information, and relevance scores.
     """
     try:
-        results = retriever.retrieve(query, page=page, limit=limit)
+        results = _cached_retrieve(query, page, limit)
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during retrieval: {str(e)}")

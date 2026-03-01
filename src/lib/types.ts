@@ -91,4 +91,7 @@ export type PlanningEvent =
   | { type: "planning_message"; text: string }
   | { type: "planning_warnings"; warnings: string[] }
   | { type: "dag_complete"; workflow: Workflow }
-  | { type: "planning_error"; message: string };
+  | { type: "planning_error"; message: string }
+  | { type: "tool_exec_start"; server_name: string; tool_name: string; arguments: Record<string, unknown> }
+  | { type: "tool_exec_complete"; server_name: string; tool_name: string; result: unknown; elapsed: number; success: boolean }
+  | { type: "agent_done"; text: string; executed_steps: Record<string, unknown>[] };

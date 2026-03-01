@@ -39,6 +39,13 @@ export default function WorkflowPage() {
   const [loaded, setLoaded] = useState(false);
   const [credentialRequest, setCredentialRequest] = useState<CredentialRequest | null>(null);
   const [credentialValues, setCredentialValues] = useState<Record<string, string>>({});
+  const [executedSteps, setExecutedSteps] = useState<Record<string, unknown>[]>([]);
+  const [agentSummary, setAgentSummary] = useState<string>("");
+
+  // Debug: log phase and workflow changes
+  useEffect(() => {
+    console.log(`[render] phase=${phase} workflow=${workflow ? workflow.id : "null"} isNew=${isNew}`);
+  }, [phase, workflow, isNew]);
 
   // Stream planning events
   const streamPlan = useCallback(
@@ -60,6 +67,7 @@ export default function WorkflowPage() {
 
         await consumeSSE(res, (raw) => {
           const event = raw as unknown as PlanningEvent & { session_id?: string };
+          console.log("[SSE] event:", event.type, event);
 
           if (event.type === "session_init") {
             setSessionId(event.session_id ?? null);
@@ -74,10 +82,18 @@ export default function WorkflowPage() {
           ]);
 
           if (pe.type === "dag_complete") {
+            console.log("[SSE] dag_complete -> switching to preview");
             setWorkflow(pe.workflow);
             setBrowserUseMode(pe.workflow.browser_use_mode ?? "local");
-            setPhase("preview");
             newWorkflowId = pe.workflow.id;
+            setPhase("preview");
+          }
+
+          if (pe.type === "agent_done") {
+            console.log("[SSE] agent_done -> staying in planning view");
+            const e = pe as unknown as Record<string, unknown>;
+            setExecutedSteps((e.executed_steps as Record<string, unknown>[]) || []);
+            setAgentSummary((e.text as string) || "");
           }
 
           if (pe.type === "planning_message") {
@@ -89,6 +105,7 @@ export default function WorkflowPage() {
           }
 
           if (pe.type === "planning_error") {
+            console.log("[SSE] planning_error -> idle");
             setPhase("idle");
           }
         });
@@ -112,23 +129,28 @@ export default function WorkflowPage() {
   useEffect(() => {
     if (loaded) return;
     setLoaded(true);
+    console.log(`[init] id=${id} isNew=${isNew} loaded=${loaded}`);
 
     if (isNew) {
       const prompt = searchParams.get("prompt");
+      console.log(`[init] New workflow, prompt=${prompt?.slice(0, 60)}...`);
       if (prompt) {
         setChatMessages([{ role: "user", content: prompt }]);
         streamPlan(prompt);
       }
     } else {
+      console.log(`[init] Loading existing workflow ${id}`);
       // Load existing workflow
       fetch(`${API}/workflows/${id}`)
         .then((r) => r.json())
         .then((wf) => {
+          console.log(`[init] Loaded workflow -> switching to preview`, wf);
           setWorkflow(wf);
           setBrowserUseMode(wf.browser_use_mode ?? "local");
           setPhase("preview");
         })
         .catch(() => {
+          console.log(`[init] Workflow not found: ${id}`);
           setChatMessages([{ role: "assistant", content: "Workflow not found." }]);
         });
     }
@@ -321,6 +343,28 @@ export default function WorkflowPage() {
 
   const isLoading = phase === "planning" || phase === "executing";
 
+  const handleConvertToWorkflow = useCallback(async () => {
+    if (executedSteps.length === 0) return;
+    try {
+      const res = await fetch(`${API}/convert-to-workflow`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: agentSummary.slice(0, 60) || "Workflow",
+          description: agentSummary,
+          executed_steps: executedSteps,
+        }),
+      });
+      const wf = await res.json();
+      setWorkflow(wf);
+      setBrowserUseMode(wf.browser_use_mode ?? "local");
+      setPhase("preview");
+      router.replace(`/workflow/${wf.id}`, { scroll: false });
+    } catch (err) {
+      console.error("Convert error:", err);
+    }
+  }, [executedSteps, agentSummary, router]);
+
   const handleCredentialSubmit = useCallback(async () => {
     if (!credentialRequest || !workflow) return;
     try {
@@ -385,7 +429,10 @@ export default function WorkflowPage() {
           loading={isLoading}
         />
         {phase === "planning" ? (
-          <PlanningFeed events={planningEvents} />
+          <PlanningFeed
+            events={planningEvents}
+            onConvertToWorkflow={executedSteps.length > 0 ? handleConvertToWorkflow : undefined}
+          />
         ) : workflow ? (
           <WorkflowPane
             workflow={workflow}

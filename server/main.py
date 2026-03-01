@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 import anthropic, httpx
+from google import genai
+from google.genai import types as gtypes
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,6 +29,7 @@ if _env.exists():
 
 WISP_URL = os.getenv("WISP_GATEWAY_URL", "http://localhost:8000")
 ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
 
 app = FastAPI(title="Wisp Instant", version="0.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -39,6 +42,7 @@ class DAGNode(BaseModel):
 
 class Workflow(BaseModel):
     id: str; name: str; description: str; nodes: list[DAGNode]
+    objective: str = ""
     status: str = "planned"; webhook_id: Optional[str] = None
     browser_use_mode: str = "local"
 
@@ -166,53 +170,76 @@ def is_dag(obj: dict) -> bool:
 
 # --- Planner ---
 
-SYSTEM = """You are a workflow planner for Wisp, a tool gateway with 2000+ MCP tools.
-Search for real tools, then output a JSON DAG:
-{"name":"...","description":"...","nodes":[{"id":"n1","step":"...","server_name":"...","tool_name":"...","arguments":{},"depends_on":[],"output_key":"r1"}]}
+SYSTEM = """You are an agent for Wisp, a tool gateway with 2000+ MCP tools.
+Your job is to iteratively find tools, EXECUTE them live, verify they work, and keep going until the user's task is fully complete. Do NOT just plan — actually do the work.
 
-TOOL SEARCH RULES (critical):
-- You may call search_tools multiple times in parallel, but ONLY for genuinely different capabilities.
-  GOOD parallel: "GitHub search repositories" + "web page scraper" (different capabilities)
-  BAD parallel: "GitHub search trending repos" + "GitHub trending repositories search" (same intent rephrased)
-- Each distinct capability needs exactly ONE search. Never rephrase and retry the same search.
-- Once you have results, produce the DAG immediately. Do not search again for capabilities you already found tools for.
-- Use list_server_tools to see ALL tools on a server when you find one promising tool and want to know what else it offers (e.g. after finding browser_task, list com.browser-use/mcp to discover monitor_task, list_browser_profiles, etc.).
+WORKFLOW:
+1. Search for tools using search_tools
+2. List server tools with list_server_tools to discover related tools
+3. EXECUTE tools with execute_tool to test them and do real work
+4. Check results, adjust arguments, retry if needed
+5. Keep iterating until the task is FULLY DONE
+6. When finished, respond with a summary of what was accomplished
 
-OTHER RULES:
-- For tasks an LLM handles natively (summarizing, formatting, analyzing, translating, classifying, comparing, writing), use server_name "__llm__" with tool_name "generate". Arguments: {"prompt": "your instruction here", "input": "{{previous_output_key}}"}. Do NOT search for tools for these tasks.
-- For autonomous browser task execution, you can use server_name "__browser_use__" with tool_name "run_task" and arguments {"task":"..."}. Use this for web navigation/extraction workflows that should stream step-by-step progress.
-- depends_on controls ordering. {{output_key}} references previous results. Use dot-notation to access nested fields: {{output_key.field}} or {{output_key.nested.field}}.
-- If you CANNOT fulfill part or all of the request, respond in plain text (no JSON) explaining specifically why:
-  * "No suitable tool found for X" if search returned nothing relevant
-  * "Tool X requires authentication against Y" if the tool needs credentials the user hasn't provided
-  * "This task requires capabilities not available in the current tool set" for unsupported operations
-  * Suggest alternatives or workarounds when possible
-- If only some steps are blocked, build a partial DAG for what IS possible and explain what was skipped and why in a "warnings" field: {"name":"...","description":"...","warnings":["..."],"nodes":[...]}
-- When everything is feasible, output ONLY the JSON DAG, no prose.
+TOOL SEARCH RULES:
+- Search for each distinct capability exactly once. Do not rephrase and retry the same search.
+- Use list_server_tools after finding a promising tool to discover sibling tools on the same server.
 
-BROWSER FALLBACK (HIGH PRIORITY):
-- For ANY task involving web interaction — navigating pages, clicking, form-filling, scraping, logging in, reading UI data, or any site-specific automation — you MUST run the literal search query "browser_use" as your FIRST search call (not "browser automation", not "web navigation", literally the string "browser_use").
-- The search for "browser_use" will return tools like `browser_task`, `monitor_task`, `list_browser_profiles`, etc. from the official browser-use MCP server. USE THESE TOOLS. Do not re-search with synonyms.
-- AFTER EVERY TOOL SEARCH: evaluate whether the results contain a tool that is SPECIFICALLY built for the exact task (e.g., a dedicated GitHub MCP for GitHub operations, a dedicated Slack MCP for Slack). If the results only contain generic browser/scraper tools from other servers (e.g., browser_eval, browser_navigate, browserbase_stagehand_navigate), DISCARD them and use browser_task from browser-use instead — those generic tools are inferior.
-- If browser_use tools appear in any search results, always pick them over any other browser/scraper tool from any other server.
-- Only skip browser_use if a clearly purpose-built non-browser MCP tool exists for the exact platform (e.g., a GitHub MCP for GitHub API calls, a Slack MCP for Slack messages).
-- When building the task argument for browser_task, write extremely detailed step-by-step natural-language instructions. The browser agent is autonomous — it needs precise, unambiguous instructions. Include: exact URLs to navigate to, specific elements to click, exact text to type, expected page states, and explicit success criteria. Think of it as writing a QA test script.
-- ALWAYS set "model": "claude-sonnet-4-6" for browser_task — the default model (browser-use-2.0) is unreliable for complex tasks. Use claude-sonnet-4-6 for all browser automation.
-- ALWAYS set "max_steps" appropriately: use 50 for simple tasks (navigate + read), 100 for moderate tasks (fill forms, multi-page), 200 for complex tasks (create diagrams, multi-step workflows). Never leave it at the default.
-- For complex browser tasks, add an __llm__ node BEFORE browser_task to optimize the task prompt. The LLM node should take the user's request and expand it into detailed, step-by-step browser instructions with explicit UI interactions. Pass the optimized prompt to browser_task via {{output_key}}.
-- IMPORTANT: When using browser_task from the MCP server (com.browser-use/mcp), ALWAYS add a monitor_task node that depends on the browser_task node. browser_task is fire-and-forget — it starts the agent and returns a task_id immediately. monitor_task polls until the agent finishes. Use dot-notation to pass the task_id field: {"task_id": "{{r1.task_id}}"} where r1 is the browser_task output_key.
+EXECUTE_TOOL:
+- Use execute_tool to actually run MCP tools and see real results.
+- For browser_task: it returns a task_id. You MUST then call execute_tool with monitor_task passing that task_id to wait for completion.
+- monitor_task will automatically poll until completion — you only need to call it ONCE. Do NOT call monitor_task in a loop yourself.
 
-CREDENTIAL REQUESTS (bidirectional):
-- If any step (especially browser-use) requires user credentials (username, password, API key, OAuth token, etc.), you MUST add a node BEFORE that step with server_name "__user_input__" and tool_name "request_credentials".
-- Arguments format: {"fields": [{"name": "username", "label": "GitHub Username"}, {"name": "password", "label": "GitHub Password", "sensitive": true}], "reason": "Login to GitHub to star the repository"}
-- Mark any secret field (passwords, tokens, API keys) with "sensitive": true so the UI renders a password input.
-- The output_key of the __user_input__ node should be referenced by downstream steps via {{output_key}} to inject the collected values.
-- Example: if output_key is "creds", the browser-use step can reference {{creds}} to get {"username": "...", "password": "..."}."""
+BROWSER TASKS — CRITICAL:
+- For ANY web interaction, search for "browser_use" first (literally that string).
+- Prefer browser_task from com.browser-use/mcp over generic browser tools from other servers.
+- Only skip browser_use if a purpose-built MCP tool exists for the exact platform.
+- ALWAYS set "model": "bu-max" and "max_steps": 200 (or higher for complex tasks) in browser_task arguments.
+- NEVER launch browser_task more than once for the same task. If it fails, do NOT retry with the same or similar prompt. Move on or report the failure.
+- You MUST rewrite and optimize the user's request into a detailed, step-by-step browser instruction prompt. NEVER pass the user's raw message as the task. Your optimized prompt must include:
+  * The exact URL to navigate to first
+  * Each UI action in sequence: what to click, what to type, what to select
+  * What the page should look like after each step (expected states)
+  * Explicit success criteria — how to know the task is done
+  * Error recovery: what to do if an element is missing or a page doesn't load
+  * Example: Instead of "Create a UML diagram on draw.io", write: "1. Navigate to https://app.diagrams.net 2. Click 'Create New Diagram' 3. Select 'Blank Diagram' 4. Use the UML shape library: drag a Class shape onto the canvas 5. Double-click the class shape and set the name to 'User' 6. Add attributes: id: int, name: string, email: string ..."
+- The quality of the browser_task prompt directly determines success. Spend effort making it thorough and unambiguous.
+
+DO NOT output a JSON DAG. Just work through the task step by step using the tools available.
+When you're done, summarize what was accomplished and whether it succeeded."""
 
 SEARCH_TOOL = {"name": "search_tools", "description": "Search Wisp for MCP tools matching a query.", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}
 LIST_SERVER_TOOLS = {"name": "list_server_tools", "description": "List ALL tools available on a specific MCP server. Use after search_tools to discover sibling tools on the same server.", "input_schema": {"type": "object", "properties": {"server_name": {"type": "string", "description": "The server name (e.g. 'com.browser-use/mcp')"}}, "required": ["server_name"]}}
 SEARCH_SERVERS = {"name": "search_servers", "description": "Search for MCP servers by name or description. Returns server names, descriptions, and tool counts. Use when you want to find which server provides a capability before listing its tools.", "input_schema": {"type": "object", "properties": {"query": {"type": "string", "description": "Search query (e.g. 'github', 'slack', 'browser')"}}, "required": ["query"]}}
-PLANNER_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS]
+EXECUTE_TOOL = {"name": "execute_tool", "description": "Execute an MCP tool and get its result. Use this to actually run tools, test them, and do real work. Returns the tool's output.", "input_schema": {"type": "object", "properties": {"server_name": {"type": "string", "description": "The MCP server name"}, "tool_name": {"type": "string", "description": "The tool to execute"}, "arguments": {"type": "object", "description": "Arguments to pass to the tool"}}, "required": ["server_name", "tool_name"]}}
+AGENT_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS, EXECUTE_TOOL]
+
+# Gemini-format tool declarations for the agentic planner
+def _anthropic_schema_to_gemini(schema: dict) -> dict:
+    """Convert Anthropic-style JSON schema to Gemini-compatible schema dict."""
+    out: dict[str, Any] = {}
+    t = schema.get("type", "STRING")
+    out["type"] = t.upper()
+    if "description" in schema:
+        out["description"] = schema["description"]
+    if t == "object":
+        props = schema.get("properties", {})
+        if props:
+            out["properties"] = {k: _anthropic_schema_to_gemini(v) for k, v in props.items()}
+        req = schema.get("required")
+        if req:
+            out["required"] = req
+    if t == "array" and "items" in schema:
+        out["items"] = _anthropic_schema_to_gemini(schema["items"])
+    return out
+
+GEMINI_TOOLS = [gtypes.Tool(function_declarations=[
+    gtypes.FunctionDeclaration(
+        name=t["name"],
+        description=t["description"],
+        parameters=_anthropic_schema_to_gemini(t["input_schema"]),
+    ) for t in AGENT_TOOLS
+])]
 
 async def search_tools(query: str, limit: int = 5) -> list[dict]:
     async with httpx.AsyncClient(timeout=30) as c:
@@ -242,6 +269,59 @@ async def search_servers(query: str) -> list[dict]:
         r.raise_for_status()
         data = r.json()
         return data.get("servers", [])
+
+MONITOR_POLL_WAIT = 10  # seconds between monitor_task polls (agent-side)
+MONITOR_MAX_AGENT_POLLS = 120  # max polls (~20 min)
+
+# Dedup: track launched browser_task by task prompt to prevent re-launching the same task
+_browser_task_cache: dict[str, dict] = {}  # key: task prompt hash -> result
+
+async def _call_router(server_name: str, tool_name: str, arguments: dict, timeout: float = 120) -> dict:
+    """Single call to the MCP router, returns normalized result."""
+    async with httpx.AsyncClient(timeout=timeout) as c:
+        r = await c.post(f"{WISP_URL}/call", json={"server_name": server_name, "tool_name": tool_name, "arguments": arguments})
+        r.raise_for_status()
+        return _normalize_mcp_result(r.json())
+
+async def execute_tool_call(server_name: str, tool_name: str, arguments: dict) -> dict:
+    """Execute an MCP tool via the router and return the normalized result."""
+    # Enforce browser_task defaults so the agent never under-provisions
+    if tool_name == "browser_task":
+        arguments["model"] = "bu-max"
+        if not arguments.get("max_steps") or int(arguments.get("max_steps", 0)) < 200:
+            arguments["max_steps"] = 200
+        # Dedup: don't launch the same browser_task twice
+        task_key = arguments.get("task", "")
+        if task_key and task_key in _browser_task_cache:
+            print(f"[browser_task] Dedup hit — returning cached result for task: {task_key[:80]}...")
+            return _browser_task_cache[task_key]
+    is_long_running = tool_name in ("monitor_task", "browser_task")
+    timeout = 600 if is_long_running else 120
+    result = await _call_router(server_name, tool_name, arguments, timeout)
+    # Cache browser_task result for dedup
+    if tool_name == "browser_task" and isinstance(result, dict):
+        task_key = arguments.get("task", "")
+        if task_key:
+            _browser_task_cache[task_key] = result
+
+    # Auto-poll monitor_task: the LLM doesn't need to waste turns polling.
+    # We block here until is_success is not null, then return the final result.
+    if tool_name == "monitor_task" and isinstance(result, dict):
+        poll = 0
+        while result.get("is_success") is None and poll < MONITOR_MAX_AGENT_POLLS:
+            poll += 1
+            status = result.get("status", "?")
+            steps = result.get("total_steps", "?")
+            print(f"[monitor-auto] Poll {poll}: status={status}, steps={steps}, is_success=None — waiting {MONITOR_POLL_WAIT}s...")
+            await asyncio.sleep(MONITOR_POLL_WAIT)
+            try:
+                result = await _call_router(server_name, tool_name, arguments, timeout)
+            except Exception as e:
+                print(f"[monitor-auto] Poll {poll} error: {e}")
+                continue
+        print(f"[monitor-auto] Done after {poll} polls. is_success={result.get('is_success')}")
+
+    return result
 
 async def run_planner(messages: list[dict], max_turns: int = 8) -> tuple[Optional[Workflow], list[dict], list[dict]]:
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
@@ -315,82 +395,137 @@ def _build_workflow(obj: dict) -> Workflow:
         id=wf_id,
         name=obj.get("name", "Workflow"),
         description=obj.get("description", ""),
+        objective=obj.get("objective", ""),
         nodes=nodes,
         browser_use_mode=obj.get("browser_use_mode", "local"),
     )
 
 
-async def run_planner_stream(messages: list[dict], max_turns: int = 8):
-    """Async generator that yields SSE-ready dicts at each planning step."""
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+async def run_planner_stream(messages: list[dict], max_turns: int = 30):
+    """Agentic loop using Gemini Flash: search, execute tools, iterate until done."""
+    print(f"[planner] Starting agentic loop (Gemini Flash), max_turns={max_turns}")
+    gclient = genai.Client(api_key=GEMINI_KEY)
     yield {"type": "planning_start", "max_turns": max_turns}
+    _call_cache: dict[str, str] = {}
+    executed_steps: list[dict] = []
+
+    # Convert initial messages to Gemini contents format
+    contents: list[gtypes.Content] = []
+    for m in messages:
+        role = "model" if m["role"] == "assistant" else "user"
+        text = m["content"] if isinstance(m["content"], str) else json.dumps(m["content"])
+        contents.append(gtypes.Content(role=role, parts=[gtypes.Part.from_text(text=text)]))
 
     for turn in range(max_turns):
+        print(f"[planner] Turn {turn+1}/{max_turns} — calling Gemini Flash...")
         yield {"type": "llm_call_start", "turn": turn + 1, "max_turns": max_turns}
-        resp = client.messages.create(model="claude-sonnet-4-20250514", max_tokens=4096, system=SYSTEM, tools=PLANNER_TOOLS, messages=messages)
+        resp = gclient.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=contents,
+            config=gtypes.GenerateContentConfig(
+                system_instruction=SYSTEM,
+                tools=GEMINI_TOOLS,
+                temperature=0.2,
+            ),
+        )
 
-        text = "".join(b.text for b in resp.content if hasattr(b, "text"))
-        yield {"type": "llm_call_complete", "turn": turn + 1, "stop_reason": resp.stop_reason,
-               "has_tool_calls": resp.stop_reason == "tool_use", "text_preview": text[:200]}
+        candidate = resp.candidates[0] if resp.candidates else None
+        if not candidate or not candidate.content or not candidate.content.parts:
+            print(f"[planner] No response from model on turn {turn+1}")
+            yield {"type": "planning_error", "message": "No response from model."}
+            return
 
-        if resp.stop_reason == "tool_use":
-            messages.append({"role": "assistant", "content": resp.content})
-            results = []
-            for b in resp.content:
-                if b.type == "tool_use":
-                    if b.name == "list_server_tools":
-                        sn = b.input.get("server_name", "")
-                        yield {"type": "tool_search_start", "query": f"[list] {sn}"}
-                        t0 = time.time()
-                        r = await list_server_tools(sn)
+        parts = candidate.content.parts
+        text = "".join(p.text for p in parts if p.text)
+        fn_calls = [p for p in parts if p.function_call]
+        has_tool_calls = len(fn_calls) > 0
+        finish = candidate.finish_reason if hasattr(candidate, "finish_reason") else "STOP"
+        print(f"[planner] Turn {turn+1}: finish={finish}, text_len={len(text)}, tool_calls={len(fn_calls)}")
+        yield {"type": "llm_call_complete", "turn": turn + 1, "stop_reason": str(finish),
+               "has_tool_calls": has_tool_calls, "text_preview": text[:200]}
+
+        if text.strip():
+            yield {"type": "planning_thinking", "text": text}
+
+        if has_tool_calls:
+            # Add model response to conversation
+            contents.append(candidate.content)
+            fn_response_parts: list[gtypes.Part] = []
+
+            for fc in fn_calls:
+                name = fc.function_call.name
+                inp = dict(fc.function_call.args) if fc.function_call.args else {}
+                cache_key = f"{name}:{json.dumps(inp, sort_keys=True)}"
+                if cache_key in _call_cache:
+                    fn_response_parts.append(gtypes.Part.from_function_response(
+                        name=name, response={"result": _call_cache[cache_key]}))
+                    continue
+
+                t0 = time.time()
+                if name == "execute_tool":
+                    sn = inp.get("server_name", "")
+                    tn = inp.get("tool_name", "")
+                    args = inp.get("arguments") or {}
+                    if isinstance(args, str):
+                        try: args = json.loads(args)
+                        except: args = {}
+                    yield {"type": "tool_exec_start", "server_name": sn, "tool_name": tn, "arguments": args}
+                    try:
+                        r = await execute_tool_call(sn, tn, args)
                         elapsed = round(time.time() - t0, 2)
-                        tool_names = [t.get("tool_name", "") for t in r]
-                        yield {"type": "tool_search_complete", "query": f"[list] {sn}", "count": len(r),
-                               "tool_names": tool_names, "elapsed": elapsed}
-                    elif b.name == "search_servers":
-                        q = b.input.get("query", "")
-                        yield {"type": "tool_search_start", "query": f"[servers] {q}"}
-                        t0 = time.time()
-                        r = await search_servers(q)
+                        executed_steps.append({"server_name": sn, "tool_name": tn, "arguments": args, "result": r, "elapsed": elapsed})
+                        yield {"type": "tool_exec_complete", "server_name": sn, "tool_name": tn,
+                               "result": r, "elapsed": elapsed, "success": True}
+                    except Exception as e:
                         elapsed = round(time.time() - t0, 2)
-                        server_names = [s.get("name", "") for s in r]
-                        yield {"type": "tool_search_complete", "query": f"[servers] {q}", "count": len(r),
-                               "tool_names": server_names, "elapsed": elapsed}
-                    else:
-                        q = b.input.get("query", "")
-                        yield {"type": "tool_search_start", "query": q}
-                        t0 = time.time()
-                        r = await search_tools(q)
-                        elapsed = round(time.time() - t0, 2)
-                        tool_names = [t.get("tool_name", "") for t in r]
-                        yield {"type": "tool_search_complete", "query": q, "count": len(r),
-                               "tool_names": tool_names, "elapsed": elapsed}
-                    results.append({"type": "tool_result", "tool_use_id": b.id, "content": json.dumps(r)})
-            messages.append({"role": "user", "content": results})
+                        r = {"error": str(e)}
+                        yield {"type": "tool_exec_complete", "server_name": sn, "tool_name": tn,
+                               "result": r, "elapsed": elapsed, "success": False}
+                elif name == "list_server_tools":
+                    sn = inp.get("server_name", "")
+                    yield {"type": "tool_search_start", "query": f"[list] {sn}"}
+                    r = await list_server_tools(sn)
+                    elapsed = round(time.time() - t0, 2)
+                    tool_names = [t.get("tool_name", "") for t in r]
+                    yield {"type": "tool_search_complete", "query": f"[list] {sn}", "count": len(r),
+                           "tool_names": tool_names, "elapsed": elapsed}
+                elif name == "search_servers":
+                    q = inp.get("query", "")
+                    yield {"type": "tool_search_start", "query": f"[servers] {q}"}
+                    r = await search_servers(q)
+                    elapsed = round(time.time() - t0, 2)
+                    server_names = [s.get("name", "") for s in r]
+                    yield {"type": "tool_search_complete", "query": f"[servers] {q}", "count": len(r),
+                           "tool_names": server_names, "elapsed": elapsed}
+                else:  # search_tools
+                    q = inp.get("query", "")
+                    yield {"type": "tool_search_start", "query": q}
+                    r = await search_tools(q)
+                    elapsed = round(time.time() - t0, 2)
+                    tool_names = [t.get("tool_name", "") for t in r]
+                    yield {"type": "tool_search_complete", "query": q, "count": len(r),
+                           "tool_names": tool_names, "elapsed": elapsed}
+                content_str = json.dumps(r)
+                _call_cache[cache_key] = content_str
+                fn_response_parts.append(gtypes.Part.from_function_response(
+                    name=name, response={"result": content_str}))
+
+            contents.append(gtypes.Content(role="user", parts=fn_response_parts))
             continue
 
-        messages.append({"role": "assistant", "content": resp.content})
-
-        obj = extract_json(text)
-        if obj and is_dag(obj):
-            # Extract warnings if present
-            warnings = obj.get("warnings", [])
-            if warnings:
-                yield {"type": "planning_warnings", "warnings": warnings}
-            wf = _build_workflow(obj)
-            workflows[wf.id] = wf
-            yield {"type": "dag_complete", "workflow": wf.model_dump()}
-            return
-
-        # Model responded with text — it's explaining something to the user
+        # No tool calls — agent is done
+        contents.append(candidate.content)
         if text.strip():
-            yield {"type": "planning_message", "text": text}
+            print(f"[planner] Agent done (turn {turn+1}). Steps executed: {len(executed_steps)}. Text: {text[:100]}...")
+            yield {"type": "agent_done", "text": text, "executed_steps": executed_steps}
             return
 
+        print(f"[planner] No text response from model on turn {turn+1}")
         yield {"type": "planning_error", "message": "No response from model."}
         return
 
-    yield {"type": "planning_error", "message": "No DAG produced after max turns."}
+    print(f"[planner] Reached max iterations ({max_turns})")
+    yield {"type": "agent_done", "text": "Reached max iterations.", "executed_steps": executed_steps}
 
 
 class PlanStreamReq(BaseModel):
@@ -1024,9 +1159,9 @@ async def run_workflow(wf: Workflow):
                         try:
                             result = await exec_node(node, outputs, on_credential_request)
                             consecutive_errors = 0
-                            total = result.get("total_steps", "?") if isinstance(result, dict) else "?"
+                            mon_total = result.get("total_steps", "?") if isinstance(result, dict) else "?"
                             done_flag = result.get("is_success") if isinstance(result, dict) else None
-                            print(f"[monitor] Poll {poll_count}: steps={total}, is_success={done_flag}")
+                            print(f"[monitor] Poll {poll_count}: steps={mon_total}, is_success={done_flag}")
                         except Exception as poll_err:
                             consecutive_errors += 1
                             print(f"[monitor] Poll {poll_count} error ({consecutive_errors}): {poll_err}")
@@ -1125,6 +1260,7 @@ async def chat(req: ChatReq):
 
 @app.post("/plan/stream")
 async def plan_stream(req: PlanStreamReq):
+    print(f"[plan/stream] Received request: prompt={req.prompt[:80]}... session_id={req.session_id}")
     sid = req.session_id or uuid.uuid4().hex[:8]
     s = sessions.get(sid)
     if s and req.session_id:
@@ -1138,17 +1274,23 @@ async def plan_stream(req: PlanStreamReq):
         wf = None
         msgs = messages
         try:
+            print(f"[plan/stream] Starting run_planner_stream for session {sid}")
             gen = run_planner_stream(msgs)
+            event_count = 0
             async for event in gen:
+                event_count += 1
+                etype = event.get("type", "?")
+                print(f"[plan/stream] Event #{event_count}: type={etype}")
                 yield sse(event)
-                if event.get("type") == "dag_complete":
+                if etype == "dag_complete":
                     wf_data = event.get("workflow")
                     if wf_data:
                         wf = workflows.get(wf_data["id"])
-            # The generator returns (messages, wf) via StopAsyncIteration value,
-            # but we already captured the workflow from the dag_complete event.
+            print(f"[plan/stream] Stream ended after {event_count} events")
             sessions[sid] = {"messages": msgs, "workflow": wf}
         except Exception as e:
+            print(f"[plan/stream] ERROR: {e}")
+            import traceback; traceback.print_exc()
             yield sse({"type": "planning_error", "message": str(e)})
             sessions[sid] = {"messages": msgs, "workflow": None}
 
@@ -1258,6 +1400,47 @@ async def delete_credential_profile(app_id: str):
     save_credential_profiles()
     return {"deleted": True, "app_id": key}
 
+class ConvertReq(BaseModel):
+    name: str = "Workflow"
+    description: str = ""
+    objective: str = ""
+    executed_steps: list[dict[str, Any]]
+
+@app.post("/convert-to-workflow")
+async def convert_to_workflow(req: ConvertReq):
+    """Convert executed agent steps into a reusable DAG workflow."""
+    nodes: list[DAGNode] = []
+    prev_id: str | None = None
+    for i, step in enumerate(req.executed_steps):
+        node_id = f"n{i+1}"
+        output_key = f"r{i+1}"
+        nodes.append(DAGNode(
+            id=node_id,
+            step=f"Step {i+1}: {step.get('tool_name', '')}",
+            server_name=step.get("server_name", ""),
+            tool_name=step.get("tool_name", ""),
+            arguments=step.get("arguments", {}),
+            depends_on=[prev_id] if prev_id else [],
+            output_key=output_key,
+        ))
+        prev_id = node_id
+    wf_id = uuid.uuid4().hex[:8]
+    wf = Workflow(
+        id=wf_id,
+        name=req.name or "Workflow",
+        description=req.description,
+        objective=req.objective,
+        nodes=nodes,
+    )
+    workflows[wf_id] = wf
+    return wf.model_dump()
+
+
 if __name__ == "__main__":
     import uvicorn
+    print("=" * 60)
+    print("[STARTUP] Wisp main server v2 (agentic mode)")
+    print(f"[STARTUP] AGENT_TOOLS: {[t['name'] for t in AGENT_TOOLS]}")
+    print(f"[STARTUP] SYSTEM prompt starts with: {SYSTEM[:80]}...")
+    print("=" * 60)
     uvicorn.run(app, host="0.0.0.0", port=8001)
