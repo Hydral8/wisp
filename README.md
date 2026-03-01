@@ -11,17 +11,14 @@ Natural-language workflow automation powered by 2000+ MCP tools. Describe what y
 │  Vercel     │  real- │  Auth, DB, Vector│        │  Railway     │
 └─────────────┘  time  │  Search, Actions │        └──────────────┘
                        └──────────────────┘              │
-                              │                          ▼
-                              │                    MCP Servers
-                              │                   (stdio + remote)
-                              │
-                              │  HTTP
-                              ▼
-                       ┌──────────────┐
-                       │  Composio    │
-                       │  Managed     │
-                       │  OAuth+Exec  │
-                       └──────────────┘
+                           │         │                   ▼
+                      HTTP │         │ HTTP         MCP Servers
+                           ▼         ▼            (stdio + remote)
+                  ┌────────────┐ ┌──────────────┐
+                  │ HuggingFace│ │  Composio    │
+                  │ Inference  │ │  Managed     │
+                  │ Embeddings │ │  OAuth+Exec  │
+                  └────────────┘ └──────────────┘
 ```
 
 **Tool execution routing:**
@@ -52,7 +49,7 @@ All orchestration, auth, database, and vector search logic runs in Convex.
 - **Credentials**: `convex/credentials.ts` — User-scoped manual credential storage (fallback)
 - **Workflows**: `convex/workflows.ts` — CRUD for saved workflows
 - **Webhooks**: `convex/webhooks.ts` — Webhook triggers for workflows
-- **Embeddings**: `convex/embeddings.ts` — HuggingFace Inference API for embedding generation
+- **Embeddings**: `convex/embeddings.ts` — 768D embeddings via HuggingFace Inference API (`google/embeddinggemma-300m`)
 
 ### `/router` — MCP Proxy (FastAPI)
 
@@ -91,7 +88,7 @@ Set environment variables in the Convex dashboard (or via `npx convex env set`):
 | Variable | Description |
 |---|---|
 | `ANTHROPIC_API_KEY` | Anthropic API key for Claude (planning) |
-| `HUGGINGFACE_API_KEY` | HuggingFace API key (tool embedding generation) |
+| `HUGGINGFACE_API_KEY` | HuggingFace API key — used for tool embeddings via `api-inference.huggingface.co` (`google/embeddinggemma-300m`, 768D) |
 | `MCP_PROXY_URL` | URL of the MCP proxy (e.g. `http://localhost:8000`) |
 | `BROWSER_USE_API_KEY` | Browser-Use API key (optional, for browser automation) |
 | `COMPOSIO_API_KEY` | Composio API key from [app.composio.dev](https://app.composio.dev) (optional, for managed OAuth integrations) |
@@ -142,8 +139,7 @@ Composio provides managed OAuth for popular apps so users can connect with one c
    ```bash
    npx convex env set COMPOSIO_API_KEY <your-key>
    ```
-4. In the Composio dashboard, set up **Auth Configs** (integration) for each app you want to support (e.g. GitHub, Gmail, Slack). This is where you configure the OAuth client ID/secret on Composio's side.
-5. Users can then click "Connect" in the Credentials tab to OAuth into each app — no API keys needed.
+4. Users can then click "Connect" in the Credentials tab to OAuth into each app — Composio handles the OAuth flow and token management automatically.
 
 Currently supported Composio apps: GitHub, Gmail, Slack, Notion, Linear, Google Calendar, Google Drive, Google Sheets. The mapping lives in `src/convex/composio.ts` and is easily extensible.
 

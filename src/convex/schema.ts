@@ -41,8 +41,8 @@ export default defineSchema({
 
   authVerifiers: defineTable({
     sessionId: v.optional(v.id("authSessions")),
-    signature: v.string(),
-    expirationTime: v.float64(),
+    signature: v.optional(v.string()),
+    expirationTime: v.optional(v.float64()),
   }).index("signature", ["signature"]),
 
   authRateLimits: defineTable({
