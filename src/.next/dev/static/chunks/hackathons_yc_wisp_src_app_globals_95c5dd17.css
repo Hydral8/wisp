@@ -1,3 +1,4 @@
+@import "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap";
 /* [project]/hackathons/yc/wisp/src/app/globals.css [app-client] (css) */
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
@@ -302,6 +303,10 @@
     inset-inline-start: var(--spacing);
   }
 
+  .mt-3 {
+    margin-top: calc(var(--spacing) * 3);
+  }
+
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
@@ -454,6 +459,12 @@
     gap: calc(var(--spacing) * 3);
   }
 
+  :where(.space-y-1 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 1) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
+  }
+
   :where(.space-y-2 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
     margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
@@ -493,6 +504,10 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
   }
 
   .p-3 {
@@ -568,6 +583,10 @@
     font-variant-numeric: var(--tw-ordinal, ) var(--tw-slashed-zero, ) var(--tw-numeric-figure, ) var(--tw-numeric-spacing, ) var(--tw-numeric-fraction, );
   }
 
+  .underline {
+    text-decoration-line: underline;
+  }
+
   .outline {
     outline-style: var(--tw-outline-style);
     outline-width: 1px;
@@ -603,12 +622,15 @@
 }
 
 :root {
-  --bg: #0a0a0f;
-  --bg-card: #12121a;
-  --bg-surface: #1a1a25;
-  --border: #2a2a3a;
-  --text: #e0e0e8;
-  --text-dim: #8888a0;
+  --bg: #0e0e0e;
+  --bg-card: #161616;
+  --bg-surface: #1c1c1c;
+  --bg-sidebar: #111;
+  --border: #252525;
+  --border-subtle: #1e1e1e;
+  --text: #e8e8e8;
+  --text-dim: #888;
+  --text-muted: #444;
   --accent: #7c6bf0;
   --accent-dim: #5a4fcf;
   --green: #34d399;
@@ -624,13 +646,19 @@
 body {
   background: var(--bg);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   margin: 0;
-  font-family: SF Mono, Fira Code, JetBrains Mono, monospace;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-mono {
+  font-family: Roboto Mono, SF Mono, Fira Code, monospace;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -639,7 +667,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 @keyframes pulse-dot {
@@ -655,7 +683,7 @@ body {
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
 
   to {
@@ -677,7 +705,7 @@ body {
 @keyframes slide-in-left {
   from {
     opacity: 0;
-    transform: translateX(-12px);
+    transform: translateX(-10px);
   }
 
   to {
@@ -689,7 +717,7 @@ body {
 @keyframes slide-in-right {
   from {
     opacity: 0;
-    transform: translateX(12px);
+    transform: translateX(10px);
   }
 
   to {
@@ -699,7 +727,7 @@ body {
 }
 
 .animate-fade-in {
-  animation: .3s ease-out fade-in;
+  animation: .25s ease-out fade-in;
 }
 
 .animate-fade-in-fast {
@@ -707,26 +735,24 @@ body {
 }
 
 .animate-slide-left {
-  animation: .3s ease-out slide-in-left;
+  animation: .25s ease-out slide-in-left;
 }
 
 .animate-slide-right {
-  animation: .3s ease-out slide-in-right;
+  animation: .25s ease-out slide-in-right;
 }
 
 .node-active {
-  border-color: var(--blue);
-  box-shadow: 0 0 12px #60a5fa4d;
+  box-shadow: 0 0 0 1px #60a5fa66;
+  border-color: #60a5fa80 !important;
 }
 
 .node-complete {
-  border-color: var(--green);
-  box-shadow: 0 0 12px #34d39933;
+  border-color: #34d3994d !important;
 }
 
 .node-error {
-  border-color: var(--red);
-  box-shadow: 0 0 12px #f8717133;
+  border-color: #f8717166 !important;
 }
 
 @property --tw-rotate-x {

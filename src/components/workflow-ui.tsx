@@ -620,7 +620,58 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
           className="animate-fade-in-fast"
           style={{ padding: "12px 16px 16px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12 }}
         >
-          {/* Result — readable text, no background box */}
+          {/* Action required banner */}
+          {node.actionRequired && (
+            <div style={{ padding: 8, borderRadius: 6, background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.4)" }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: "#f59e0b", marginBottom: 4 }}>
+                User action required in browser
+              </div>
+              {node.actionMessage && (
+                <div style={{ fontSize: 12, color: "var(--text-dim)" }}>{node.actionMessage}</div>
+              )}
+              {node.actionUrl && (
+                <a href={node.actionUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--blue)", textDecoration: "underline" }}>
+                  Open browser view
+                </a>
+              )}
+            </div>
+          )}
+
+          {/* Browser steps */}
+          {node.browserSteps && node.browserSteps.length > 0 && (
+            <Collapsible label="Browser steps" meta={`${node.browserSteps.length} steps`} defaultOpen={false}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {node.browserSteps.map((step, idx) => (
+                  <div key={`${step.number}-${idx}`} style={{ fontSize: 11, color: "var(--text-dim)", padding: "4px 0" }}>
+                    Step {step.number}: {step.next_goal}
+                    {step.url && (
+                      <a href={step.url} target="_blank" rel="noreferrer" style={{ color: "var(--blue)", textDecoration: "underline", marginLeft: 6 }}>
+                        {step.url}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Collapsible>
+          )}
+
+          {/* Live view links */}
+          {(node.browserLiveUrl || node.browserShareUrl) && (
+            <div style={{ display: "flex", gap: 12, fontSize: 12 }}>
+              {node.browserLiveUrl && (
+                <a href={node.browserLiveUrl} target="_blank" rel="noreferrer" style={{ color: "var(--blue)", textDecoration: "underline" }}>
+                  Live view
+                </a>
+              )}
+              {node.browserShareUrl && (
+                <a href={node.browserShareUrl} target="_blank" rel="noreferrer" style={{ color: "var(--blue)", textDecoration: "underline" }}>
+                  Share link
+                </a>
+              )}
+            </div>
+          )}
+
+          {/* Result — readable text */}
           {hasResult && (
             <p
               style={{
@@ -686,6 +737,8 @@ export function WorkflowPane({
   nodeStatuses,
   phase,
   runMode,
+  browserUseMode,
+  onChangeBrowserUseMode,
   onRun,
   onCreateWebhook,
   webhookUrl,
@@ -694,6 +747,8 @@ export function WorkflowPane({
   nodeStatuses: Map<string, NodeStatus>;
   phase: AppPhase;
   runMode: "deploy" | "test" | null;
+  browserUseMode: "local" | "remote";
+  onChangeBrowserUseMode: (mode: "local" | "remote") => void;
   onRun: (mode: "deploy" | "test") => void;
   onCreateWebhook: () => void;
   webhookUrl: string | null;
@@ -712,7 +767,27 @@ export function WorkflowPane({
             {workflow.description}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Browser</span>
+            <select
+              style={{
+                padding: "4px 8px",
+                borderRadius: 6,
+                fontSize: 11,
+                outline: "none",
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border)",
+                color: "var(--text)",
+                fontFamily: "inherit",
+              }}
+              value={browserUseMode}
+              onChange={(e) => onChangeBrowserUseMode(e.target.value as "local" | "remote")}
+            >
+              <option value="local">Local</option>
+              <option value="remote">Remote</option>
+            </select>
+          </div>
           {phase === "preview" && (
             <>
               <button

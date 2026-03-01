@@ -15,6 +15,7 @@ export interface Workflow {
   nodes: DAGNode[];
   status: string;
   webhook_id?: string;
+  browser_use_mode?: "local" | "remote";
 }
 
 export interface ExecutionEvent {
@@ -37,6 +38,17 @@ export interface NodeStatus {
   elapsed?: number;
   progress?: number;
   level?: number;
+  actionRequired?: boolean;
+  actionMessage?: string;
+  actionUrl?: string;
+  browserSessionId?: string;
+  browserLiveUrl?: string;
+  browserShareUrl?: string;
+  browserSteps?: Array<{
+    number: number;
+    next_goal: string;
+    url?: string;
+  }>;
 }
 
 export interface CredentialField {

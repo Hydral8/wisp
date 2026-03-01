@@ -12,6 +12,18 @@ interface WorkflowSummary {
   nodes: { id: string }[];
 }
 
+interface CredentialProfile {
+  app_id: string;
+  display_name: string;
+  username: string;
+  email: string;
+  password: string;
+  api_key: string;
+  token: string;
+  notes: string;
+  updated_at: string;
+}
+
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
 function IconCompose() {
@@ -44,6 +56,16 @@ function IconMarketplace() {
   );
 }
 
+function IconCredentials() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="2.25" y="6.75" width="13.5" height="8.25" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M5.25 6.75V5.25a3.75 3.75 0 0 1 7.5 0v1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <circle cx="9" cy="11.25" r="1.125" fill="currentColor"/>
+    </svg>
+  );
+}
+
 function IconSettings() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -66,6 +88,7 @@ function IconSend() {
 const NAV_ITEMS = [
   { id: "compose", label: "Compose", Icon: IconCompose },
   { id: "automations", label: "Automations", Icon: IconAutomations },
+  { id: "credentials", label: "Credentials", Icon: IconCredentials },
   { id: "marketplace", label: "Marketplace", Icon: IconMarketplace },
 ] as const;
 
@@ -409,7 +432,7 @@ function AutomationsPane() {
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{wf.nodes.length} steps</span>
-                  <span style={{ color: "var(--border)" }}>·</span>
+                  <span style={{ color: "var(--border)" }}>&middot;</span>
                   <span style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace" }}>
                     {wf.id.slice(0, 8)}
                   </span>
@@ -423,15 +446,254 @@ function AutomationsPane() {
   );
 }
 
+// ─── Credentials ─────────────────────────────────────────────────────────────
+
+const CREDENTIAL_FIELDS = [
+  { key: "appId", placeholder: "App id (e.g. github)", disabled: "editing" as const },
+  { key: "displayName", placeholder: "Display name" },
+  { key: "username", placeholder: "Username" },
+  { key: "email", placeholder: "Email" },
+  { key: "password", placeholder: "Password", type: "password" },
+  { key: "apiKey", placeholder: "API key" },
+  { key: "token", placeholder: "Token" },
+  { key: "notes", placeholder: "Notes" },
+] as const;
+
+function CredentialsPane() {
+  const [profiles, setProfiles] = useState<CredentialProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [editingAppId, setEditingAppId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    appId: "", displayName: "", username: "", email: "",
+    password: "", apiKey: "", token: "", notes: "",
+  });
+
+  useEffect(() => {
+    fetch(`${API}/credentials/profiles`)
+      .then((r) => r.json())
+      .then((d) => setProfiles(d.profiles ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const resetForm = () => {
+    setEditingAppId(null);
+    setForm({ appId: "", displayName: "", username: "", email: "", password: "", apiKey: "", token: "", notes: "" });
+  };
+
+  const handleSave = async () => {
+    const appId = form.appId.trim().toLowerCase();
+    if (!appId) return;
+    setSaving(true);
+    try {
+      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          display_name: form.displayName, username: form.username, email: form.email,
+          password: form.password, api_key: form.apiKey, token: form.token, notes: form.notes,
+        }),
+      });
+      const refreshed = await fetch(`${API}/credentials/profiles`).then((r) => r.json());
+      setProfiles(refreshed.profiles ?? []);
+      resetForm();
+    } catch { /* noop */ } finally { setSaving(false); }
+  };
+
+  const handleEdit = (p: CredentialProfile) => {
+    setEditingAppId(p.app_id);
+    setForm({
+      appId: p.app_id, displayName: p.display_name ?? "", username: p.username ?? "",
+      email: p.email ?? "", password: p.password ?? "", apiKey: p.api_key ?? "",
+      token: p.token ?? "", notes: p.notes ?? "",
+    });
+  };
+
+  const handleDelete = async (appId: string) => {
+    try {
+      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, { method: "DELETE" });
+      setProfiles((prev) => prev.filter((p) => p.app_id !== appId));
+      if (editingAppId === appId) resetForm();
+    } catch { /* noop */ }
+  };
+
+  return (
+    <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", maxWidth: 900, width: "100%" }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.3px", margin: "0 0 4px", color: "var(--text)" }}>
+          Credentials
+        </h1>
+        <p style={{ fontSize: 13, color: "var(--text-dim)", margin: 0 }}>
+          API keys and login profiles for your automations
+        </p>
+      </div>
+
+      {/* Form */}
+      <div
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
+          borderRadius: 10,
+          padding: 18,
+          marginBottom: 20,
+        }}
+      >
+        <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
+          {CREDENTIAL_FIELDS.map((f) => (
+            <input
+              key={f.key}
+              style={{
+                padding: "8px 12px",
+                borderRadius: 6,
+                border: "1px solid var(--border)",
+                background: "var(--bg-surface)",
+                color: "var(--text)",
+                fontSize: 12,
+                fontFamily: "inherit",
+                outline: "none",
+              }}
+              type={("type" in f && f.type) || "text"}
+              placeholder={f.placeholder}
+              value={form[f.key]}
+              onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+              disabled={"disabled" in f && f.disabled === "editing" && Boolean(editingAppId)}
+            />
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+          <button
+            onClick={handleSave}
+            disabled={saving || !form.appId.trim()}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 8,
+              border: "none",
+              fontSize: 12,
+              fontWeight: 500,
+              fontFamily: "inherit",
+              cursor: saving || !form.appId.trim() ? "not-allowed" : "pointer",
+              background: "var(--accent)",
+              color: "#fff",
+              opacity: saving || !form.appId.trim() ? 0.5 : 1,
+              transition: "opacity 0.15s",
+            }}
+          >
+            {editingAppId ? "Update" : "Save"}
+          </button>
+          {editingAppId && (
+            <button
+              onClick={resetForm}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 8,
+                border: "1px solid var(--border)",
+                background: "transparent",
+                color: "var(--text-dim)",
+                fontSize: 12,
+                fontFamily: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <div style={{ display: "flex", gap: 5, paddingTop: 40, justifyContent: "center" }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: `pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+          ))}
+        </div>
+      ) : profiles.length === 0 ? (
+        <div style={{ textAlign: "center", paddingTop: 40 }}>
+          <p style={{ color: "var(--text-dim)", fontSize: 13, margin: 0 }}>No credential profiles yet</p>
+        </div>
+      ) : (
+        <>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12, fontWeight: 500 }}>
+            {profiles.length} profile{profiles.length !== 1 ? "s" : ""}
+          </div>
+          <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+            {profiles.map((p) => (
+              <div
+                key={p.app_id}
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: 10,
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-card)",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>
+                    {p.display_name || p.app_id}
+                  </span>
+                  <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace" }}>
+                    {p.app_id}
+                  </span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-dim)" }}>
+                  {p.username && <div>Username: {p.username}</div>}
+                  {p.email && <div>Email: {p.email}</div>}
+                  {p.password && <div>Password: --------</div>}
+                  {p.api_key && <div>API key: --------</div>}
+                  {p.token && <div>Token: --------</div>}
+                  {p.notes && <div>Notes: {p.notes}</div>}
+                </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                  <button
+                    onClick={() => handleEdit(p)}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: 6,
+                      border: "1px solid var(--border)",
+                      background: "transparent",
+                      color: "var(--text-dim)",
+                      fontSize: 11,
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p.app_id)}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: 6,
+                      border: "1px solid rgba(248,113,113,0.3)",
+                      background: "rgba(248,113,113,0.08)",
+                      color: "var(--red)",
+                      fontSize: 11,
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Marketplace ─────────────────────────────────────────────────────────────
 
 const MARKETPLACE_ITEMS = [
-  { name: "GitHub Intelligence", description: "Search repos, read READMEs, analyze trends and generate reports.", tags: ["GitHub", "Research"], icon: "⬡" },
-  { name: "Competitive Analysis", description: "Scrape company homepages, compare features, output structured briefs.", tags: ["Web", "Analysis"], icon: "◈" },
-  { name: "Job Market Scanner", description: "Search job boards, extract salaries & skills, build comparison tables.", tags: ["LinkedIn", "Data"], icon: "◉" },
-  { name: "News Digest", description: "Aggregate top stories from multiple sources with sentiment analysis.", tags: ["News", "AI"], icon: "◎" },
-  { name: "Crypto Price Monitor", description: "Fetch real-time prices across exchanges and generate summaries.", tags: ["Finance", "API"], icon: "⬟" },
-  { name: "Code Review Pipeline", description: "Fetch PRs, analyze diffs, post structured review comments.", tags: ["GitHub", "DevTools"], icon: "◬" },
+  { name: "GitHub Intelligence", description: "Search repos, read READMEs, analyze trends and generate reports.", tags: ["GitHub", "Research"], icon: "\u2B21" },
+  { name: "Competitive Analysis", description: "Scrape company homepages, compare features, output structured briefs.", tags: ["Web", "Analysis"], icon: "\u25C8" },
+  { name: "Job Market Scanner", description: "Search job boards, extract salaries & skills, build comparison tables.", tags: ["LinkedIn", "Data"], icon: "\u25C9" },
+  { name: "News Digest", description: "Aggregate top stories from multiple sources with sentiment analysis.", tags: ["News", "AI"], icon: "\u25CE" },
+  { name: "Crypto Price Monitor", description: "Fetch real-time prices across exchanges and generate summaries.", tags: ["Finance", "API"], icon: "\u2B1F" },
+  { name: "Code Review Pipeline", description: "Fetch PRs, analyze diffs, post structured review comments.", tags: ["GitHub", "DevTools"], icon: "\u25EC" },
 ];
 
 function MarketplacePane() {
@@ -535,6 +797,7 @@ export default function Dashboard() {
       <div style={{ marginLeft: 56, flex: 1, display: "flex" }}>
         {active === "compose" && <ComposePane />}
         {active === "automations" && <AutomationsPane />}
+        {active === "credentials" && <CredentialsPane />}
         {active === "marketplace" && <MarketplacePane />}
       </div>
     </div>

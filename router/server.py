@@ -33,11 +33,15 @@ try:
     from data.retriever import Retriever
     from data.db import get_connection, DATABASE_PATH
     from data.mcp_client import resolve_env_vars
+    from data.nango_auth import maybe_inject_nango_auth_headers
+    from data.oauth_tokens import maybe_prepare_oauth_env
 except ImportError:
     # Fallback if run from data directory or if PYTHONPATH is set differently
     from retriever import Retriever
     from db import get_connection, DATABASE_PATH
     from mcp_client import resolve_env_vars
+    from nango_auth import maybe_inject_nango_auth_headers
+    from oauth_tokens import maybe_prepare_oauth_env
 
 from contextlib import asynccontextmanager
 
@@ -220,8 +224,12 @@ async def call_tool(request: CallRequest):
         if info["method"] == "remote":
             import httpx
             http_client = None
-            if info.get("headers"):
-                http_client = httpx.AsyncClient(headers=info.get("headers"))
+            headers = await maybe_inject_nango_auth_headers(
+                request.server_name,
+                info.get("headers"),
+            )
+            if headers:
+                http_client = httpx.AsyncClient(headers=headers)
                 
             async with streamable_http_client(info["url"], http_client=http_client) as (read, write, _):
                 async with ClientSession(read, write) as session:
@@ -243,6 +251,8 @@ async def call_tool(request: CallRequest):
                 env = os.environ.copy()
                 env.update(info["env"])
                 cwd = info["cwd"]
+
+            env = maybe_prepare_oauth_env(request.server_name, env)
             
             # Ensure API keys from current environment are passed
             # (they were already loaded via load_dotenv)

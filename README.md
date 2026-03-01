@@ -86,3 +86,25 @@ npm run dev
 |---|---|
 | `ANTHROPIC_API_KEY` | Anthropic API key for Claude (required by server) |
 | `WISP_GATEWAY_URL` | Router URL (default: `http://localhost:8000`) |
+| `NANGO_BASE_URL` | Nango API base URL (for OAuth token brokering), e.g. `https://api.nango.dev` |
+| `NANGO_SECRET_KEY` | Nango secret key used by router/extractor to fetch connection access tokens |
+| `NANGO_MCP_CONNECTIONS_JSON` | JSON map of `server_name` to Nango `provider_config_key` + `connection_id` for MCP auth injection |
+
+### Nango Mapping Example
+
+```json
+{
+  "com.mintmcp/gmail": {
+    "provider_config_key": "google-mail",
+    "connection_id": "default"
+  },
+  "com.notion/mcp": {
+    "provider_config_key": "notion",
+    "connection_id": "workspace_prod"
+  },
+  "ai.smithery/smithery-ai-slack": {
+    "provider_config_key": "slack",
+    "connection_id": "team_main"
+  }
+}
+```

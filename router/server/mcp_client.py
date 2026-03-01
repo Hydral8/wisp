@@ -27,6 +27,7 @@ load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 try:
     from mcp import ClientSession
     from mcp.client.stdio import stdio_client, StdioServerParameters
+    from mcp.client.sse import sse_client
     from mcp.client.streamable_http import streamable_http_client
     MCP_SDK_AVAILABLE = True
 except ImportError:
@@ -34,6 +35,8 @@ except ImportError:
     print("Warning: MCP SDK not installed. Install with: pip install mcp")
 
 from db import DATABASE_PATH, get_connection, init_database
+from nango_auth import maybe_inject_nango_auth_headers
+from oauth_tokens import maybe_prepare_oauth_env
 
 
 def save_tools(conn, server_name: str, tools: List[Dict]):
@@ -204,6 +207,7 @@ def categorize_failure(error_message: str) -> Tuple[str, str]:
         ("unauthorized", "unauthorized"),
         ("forbidden", "forbidden"),
         ("authentication required", "auth_required"),
+        ("missing required secret env vars", "missing_secret_env"),
     ]
     
     for pattern, reason in auth_patterns:
@@ -239,11 +243,20 @@ def categorize_failure(error_message: str) -> Tuple[str, str]:
         if pattern in error_lower:
             return "transient", reason
     
-    # MCP SDK / protocol errors - server implementation is broken, treat as permanent
-    protocol_errors = [
+    # TaskGroup/sub-exception style errors often come from transport/network/auth edges.
+    # Keep these retryable instead of permanently skipping those servers.
+    transient_protocol_errors = [
         ("taskgroup", "mcp_protocol_error"),
         ("sub-exception", "mcp_protocol_error"),
         ("unhandled errors", "mcp_protocol_error"),
+    ]
+
+    for pattern, reason in transient_protocol_errors:
+        if pattern in error_lower:
+            return "transient", reason
+
+    # Deterministic protocol/schema errors are still treated as permanent failures.
+    permanent_protocol_errors = [
         ("too many values to unpack", "mcp_response_error"),
         ("cannot unpack", "mcp_response_error"),
         ("not enough values", "mcp_response_error"),
@@ -253,10 +266,10 @@ def categorize_failure(error_message: str) -> Tuple[str, str]:
         ("json decode", "mcp_invalid_response"),
         ("invalid json", "mcp_invalid_response"),
     ]
-    
-    for pattern, reason in protocol_errors:
+
+    for pattern, reason in permanent_protocol_errors:
         if pattern in error_lower:
-            return "permanent", reason  # Server is broken, won't fix itself
+            return "permanent", reason  # Server implementation/schema likely incompatible
     
     # Default to transient for truly unknown errors
     return "transient", "unknown_error"
@@ -345,6 +358,7 @@ async def fetch_from_stdio(
         full_env = os.environ.copy()
         if env:
             full_env.update(env)
+        full_env = maybe_prepare_oauth_env(server_name, full_env)
             
         server_params = StdioServerParameters(
             command=command,
@@ -387,6 +401,7 @@ async def fetch_from_stdio(
 async def fetch_from_http(
     server_name: str,
     url: str,
+    transport_type: str = "streamable-http",
     headers: Optional[Dict[str, str]] = None,
     timeout: int = 30
 ) -> Tuple[List[Dict], List[Dict], List[Dict], Optional[str]]:
@@ -398,43 +413,66 @@ async def fetch_from_http(
     if not MCP_SDK_AVAILABLE:
         return [], [], [], "MCP SDK not installed"
     
+    async def _run_with_session(read, write):
+        async with ClientSession(read, write) as session:
+            await asyncio.wait_for(session.initialize(), timeout=timeout)
+
+            tools_result = await asyncio.wait_for(session.list_tools(), timeout=timeout)
+            tools = [t.model_dump() for t in tools_result.tools] if tools_result.tools else []
+
+            try:
+                resources_result = await asyncio.wait_for(session.list_resources(), timeout=timeout)
+                resources = [r.model_dump() for r in resources_result.resources] if resources_result.resources else []
+            except Exception:
+                resources = []
+
+            try:
+                prompts_result = await asyncio.wait_for(session.list_prompts(), timeout=timeout)
+                prompts = [p.model_dump() for p in prompts_result.prompts] if prompts_result.prompts else []
+            except Exception:
+                prompts = []
+
+            return tools, resources, prompts, None
+
+    def _format_exception(e: Exception) -> str:
+        # Unwrap ExceptionGroup/TaskGroup errors so we get useful root causes.
+        if hasattr(e, "exceptions"):
+            sub_errors = []
+            for sub in getattr(e, "exceptions", []):
+                sub_errors.append(str(sub))
+            if sub_errors:
+                return f"{e} | sub-errors: {' || '.join(sub_errors)}"
+        return str(e)
+
     try:
         import httpx
-        
-        # Create custom httpx client with headers if provided
-        http_client = None
-        if headers:
-            http_client = httpx.AsyncClient(headers=headers)
-        
-        async with streamable_http_client(url, http_client=http_client) as (read, write, _):
-            async with ClientSession(read, write) as session:
-                # Initialize the connection
-                await asyncio.wait_for(session.initialize(), timeout=timeout)
-                
-                # Fetch tools
-                tools_result = await asyncio.wait_for(session.list_tools(), timeout=timeout)
-                tools = [t.model_dump() for t in tools_result.tools] if tools_result.tools else []
-                
-                # Fetch resources
-                try:
-                    resources_result = await asyncio.wait_for(session.list_resources(), timeout=timeout)
-                    resources = [r.model_dump() for r in resources_result.resources] if resources_result.resources else []
-                except Exception:
-                    resources = []
-                
-                # Fetch prompts
-                try:
-                    prompts_result = await asyncio.wait_for(session.list_prompts(), timeout=timeout)
-                    prompts = [p.model_dump() for p in prompts_result.prompts] if prompts_result.prompts else []
-                except Exception:
-                    prompts = []
-                
-                return tools, resources, prompts, None
+
+        # Prefer the declared transport type, but fallback to the other common HTTP transport.
+        transports = ["sse", "streamable-http"] if transport_type == "sse" else ["streamable-http", "sse"]
+        last_error: Optional[str] = None
+
+        for transport in transports:
+            try:
+                if transport == "sse":
+                    async with sse_client(url, headers=headers, timeout=timeout) as (read, write):
+                        return await _run_with_session(read, write)
+                else:
+                    if headers:
+                        async with httpx.AsyncClient(headers=headers) as http_client:
+                            async with streamable_http_client(url, http_client=http_client) as (read, write, _):
+                                return await _run_with_session(read, write)
+                    else:
+                        async with streamable_http_client(url) as (read, write, _):
+                            return await _run_with_session(read, write)
+            except Exception as transport_error:
+                last_error = f"{transport}: {_format_exception(transport_error)}"
+
+        return [], [], [], last_error or "Unable to connect using HTTP transports"
                 
     except asyncio.TimeoutError:
         return [], [], [], f"Connection timed out after {timeout}s"
     except Exception as e:
-        return [], [], [], str(e)
+        return [], [], [], _format_exception(e)
 
 
 # ==================== EXTRACTION FUNCTIONS ====================
@@ -581,6 +619,21 @@ def get_connectable_servers(
     return servers
 
 
+def get_missing_required_secret_vars(conn, server_name: str) -> List[str]:
+    """Return required secret env vars for a server that are currently unset."""
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT var_name
+        FROM environment_variables
+        WHERE server_name = ? AND is_required = 1 AND is_secret = 1
+        """,
+        (server_name,),
+    )
+    required_vars = [row["var_name"] for row in cursor.fetchall()]
+    return [var for var in required_vars if not os.environ.get(var)]
+
+
 def build_stdio_command(server: Dict) -> Tuple[str, List[str]]:
     """Build the command and args for a stdio server based on registry type."""
     registry = server.get('registry_type', '')
@@ -650,20 +703,59 @@ async def extract_from_server(
         url = server.get('url', '')
         url_or_command = url
         transport_type = server.get('transport_type', 'streamable-http')
+
+        missing_vars = get_missing_required_secret_vars(conn, server_name)
+        if missing_vars:
+            error = f"Missing required secret env vars: {', '.join(missing_vars)}"
+            success = False
+            log_connection(
+                conn,
+                server_name,
+                connection_method,
+                url_or_command,
+                success,
+                error,
+                0,
+                0,
+                0,
+            )
+            update_extraction_status(conn, server_name, success, connection_method, error, 0, 0, 0)
+            print(f"  ✗ {server_name}: {error}")
+            return False
         
         headers = None
         if server.get('headers_json'):
             headers = json.loads(server['headers_json'])
             headers = resolve_env_vars(headers)
+        headers = await maybe_inject_nango_auth_headers(server_name, headers)
         
         print(f"  Connecting to {server_name} via {transport_type}...")
         tools, resources, prompts, error = await fetch_from_http(
-            server_name, url, headers=headers, timeout=timeout
+            server_name, url, transport_type=transport_type, headers=headers, timeout=timeout
         )
         
     elif connection_method == 'stdio':
         command, args = build_stdio_command(server)
         url_or_command = f"{command} {' '.join(args)}"
+
+        missing_vars = get_missing_required_secret_vars(conn, server_name)
+        if missing_vars:
+            error = f"Missing required secret env vars: {', '.join(missing_vars)}"
+            success = False
+            log_connection(
+                conn,
+                server_name,
+                connection_method,
+                url_or_command,
+                success,
+                error,
+                0,
+                0,
+                0,
+            )
+            update_extraction_status(conn, server_name, success, connection_method, error, 0, 0, 0)
+            print(f"  ✗ {server_name}: {error}")
+            return False
         
         print(f"  Starting {server_name} via {command}...")
         tools, resources, prompts, error = await fetch_from_stdio(
@@ -688,7 +780,9 @@ async def extract_from_server(
         )
     
     # Log the connection attempt
-    success = error is None and (len(tools) > 0 or len(resources) > 0 or len(prompts) > 0)
+    # Partial extraction is still useful and should be persisted as success.
+    has_any_data = len(tools) > 0 or len(resources) > 0 or len(prompts) > 0
+    success = has_any_data
     log_connection(
         conn,
         server_name,
