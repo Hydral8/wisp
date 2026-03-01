@@ -27,6 +27,8 @@ export default defineSchema({
   authRefreshTokens: defineTable({
     sessionId: v.id("authSessions"),
     expirationTime: v.float64(),
+    firstUsedTime: v.optional(v.float64()),
+    parentRefreshTokenId: v.optional(v.string())
   }).index("sessionId", ["sessionId"]),
 
   authVerificationCodes: defineTable({
@@ -216,7 +218,16 @@ export default defineSchema({
       filterFields: ["tags"],
     }),
 
-  // --- OAuth connections (Composio) ---
+  // --- Composio ---
+  composioApps: defineTable({
+    key: v.string(),            // e.g. "GITHUB", "GMAIL"
+    name: v.string(),           // Display name
+    description: v.string(),
+    logo: v.optional(v.string()),
+    categories: v.array(v.string()),
+    syncedAt: v.float64(),
+  }).index("by_key", ["key"]),
+
   oauthConnections: defineTable({
     userId: v.id("users"),
     provider: v.string(),

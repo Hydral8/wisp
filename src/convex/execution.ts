@@ -3,7 +3,6 @@ import { internal, api } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
-import { mapServerToComposioApp } from "./composio";
 
 // --- Types ---
 
@@ -439,7 +438,10 @@ export const startExecution = action({
             };
           } else {
             // Check if Composio can handle this tool
-            const composioApp = mapServerToComposioApp(node.server_name);
+            const composioApp = await ctx.runQuery(
+              internal.composio.resolveComposioApp,
+              { serverName: node.server_name }
+            );
             let usedComposio = false;
 
             if (composioApp) {

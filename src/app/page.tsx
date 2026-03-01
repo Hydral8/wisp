@@ -435,24 +435,21 @@ function AutomationsPane() {
 
 // ─── Credentials ─────────────────────────────────────────────────────────────
 
-// --- Composio app display metadata ---
-const COMPOSIO_APPS = [
-  { key: "GITHUB", label: "GitHub", color: "#333" },
-  { key: "GMAIL", label: "Gmail", color: "#EA4335" },
-  { key: "SLACK", label: "Slack", color: "#4A154B" },
-  { key: "NOTION", label: "Notion", color: "#000" },
-  { key: "LINEAR", label: "Linear", color: "#5E6AD2" },
-  { key: "GOOGLECALENDAR", label: "Google Calendar", color: "#4285F4" },
-  { key: "GOOGLEDRIVE", label: "Google Drive", color: "#0F9D58" },
-  { key: "GOOGLESHEETS", label: "Google Sheets", color: "#0F9D58" },
-];
-
 function IntegrationsSection() {
+  const composioApps = useQuery(api.composio.getApps) ?? [];
   const connections = useQuery(api.composio.getConnections) ?? [];
+  const syncApps = useAction(api.composio.syncApps);
   const initiate = useAction(api.composio.initiateConnection);
   const disconnect = useMutation(api.composio.removeConnection);
   const save = useMutation(api.composio.saveConnection);
   const [connecting, setConnecting] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try { await syncApps({}); } catch (err) { console.error("Sync error:", err); }
+    finally { setSyncing(false); }
+  };
 
   // Listen for OAuth callback postMessage
   useEffect(() => {
@@ -498,16 +495,42 @@ function IntegrationsSection() {
 
   return (
     <div style={{ marginBottom: 28 }}>
-      <div style={{ marginBottom: 14 }}>
-        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-          Integrations
-        </h2>
-        <p style={{ fontSize: 12, color: "var(--text-dim)", margin: 0 }}>
-          Connect apps via OAuth — no API keys needed
-        </p>
+      <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+        <div>
+          <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+            Integrations
+          </h2>
+          <p style={{ fontSize: 12, color: "var(--text-dim)", margin: 0 }}>
+            Connect apps via OAuth — no API keys needed
+          </p>
+        </div>
+        <button
+          onClick={handleSync}
+          disabled={syncing}
+          style={{
+            padding: "4px 12px",
+            borderRadius: 6,
+            border: "1px solid var(--border)",
+            background: "transparent",
+            color: "var(--text-dim)",
+            fontSize: 11,
+            fontFamily: "inherit",
+            cursor: syncing ? "not-allowed" : "pointer",
+            opacity: syncing ? 0.5 : 1,
+          }}
+        >
+          {syncing ? "Syncing..." : composioApps.length === 0 ? "Load Apps" : "Refresh"}
+        </button>
       </div>
+      {composioApps.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <p style={{ color: "var(--text-dim)", fontSize: 12, margin: 0 }}>
+            No apps loaded yet — click &quot;Load Apps&quot; to fetch available integrations from Composio
+          </p>
+        </div>
+      ) : (
       <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
-        {COMPOSIO_APPS.map((app) => {
+        {composioApps.map((app: any) => {
           const conn = connectedProviders.get(app.key);
           const isActive = conn?.status === "active";
           const isConnecting = connecting === app.key;
@@ -537,7 +560,7 @@ function IntegrationsSection() {
                   }}
                 />
                 <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>
-                  {app.label}
+                  {app.name}
                 </span>
               </div>
               {isActive ? (
@@ -580,6 +603,7 @@ function IntegrationsSection() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
-import { mapServerToComposioApp } from "./composio";
 
 // --- System prompt (ported from server/main.py) ---
 
@@ -178,15 +177,15 @@ export const startPlanning = action({
       event: { type: "session_init", session_id: sessionId },
     });
 
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
-    if (!anthropicKey) throw new Error("ANTHROPIC_API_KEY not set");
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
 
     const mcpProxyUrl = process.env.MCP_PROXY_URL;
     const browserUseApiKey = process.env.BROWSER_USE_API_KEY;
     const browserUseApi = "https://api.browser-use.com/api/v3";
 
     const maxTurns = 30;
-    const messages: Array<{ role: string; content: any }> = [
+    const messages: Array<any> = [
       { role: "user", content: args.prompt },
     ];
 
@@ -208,24 +207,27 @@ export const startPlanning = action({
         },
       });
 
-      // Call Anthropic API
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      // Call Gemini OpenAI API
+      const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
         method: "POST",
         headers: {
-          "x-api-key": anthropicKey,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
+          "Authorization": `Bearer ${geminiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 4096,
-          system: SYSTEM_PROMPT,
+          model: "gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...messages
+          ],
           tools: AGENT_TOOLS.map((t) => ({
-            name: t.name,
-            description: t.description,
-            input_schema: t.input_schema,
+            type: "function",
+            function: {
+              name: t.name,
+              description: t.description,
+              parameters: t.input_schema,
+            }
           })),
-          messages,
         }),
       });
 
@@ -242,15 +244,10 @@ export const startPlanning = action({
       }
 
       const data = await resp.json();
-      const stopReason = data.stop_reason;
-      const content = data.content || [];
-
-      // Extract text
-      const textParts = content
-        .filter((b: any) => b.type === "text")
-        .map((b: any) => b.text);
-      const text = textParts.join("");
-      const toolUses = content.filter((b: any) => b.type === "tool_use");
+      const message = data.choices[0].message;
+      const stopReason = data.choices[0].finish_reason;
+      const text = message.content || "";
+      const toolCalls = message.tool_calls || [];
 
       await ctx.runMutation(internal.planning.writePlanningEvent, {
         sessionId,
@@ -258,7 +255,7 @@ export const startPlanning = action({
           type: "llm_call_complete",
           turn: turn + 1,
           stop_reason: stopReason,
-          has_tool_calls: toolUses.length > 0,
+          has_tool_calls: toolCalls.length > 0,
           text_preview: text.slice(0, 200),
         },
       });
@@ -270,24 +267,22 @@ export const startPlanning = action({
         });
       }
 
-      if (stopReason === "tool_use" && toolUses.length > 0) {
-        messages.push({ role: "assistant", content });
+      messages.push(message);
 
-        const results: Array<{
-          type: string;
-          tool_use_id: string;
-          content: string;
-        }> = [];
-
-        for (const toolUse of toolUses) {
-          const name = toolUse.name;
-          const inp = toolUse.input || {};
+      if (toolCalls.length > 0) {
+        for (const toolCall of toolCalls) {
+          const name = toolCall.function.name;
+          let inp: any = {};
+          try {
+            inp = JSON.parse(toolCall.function.arguments || "{}");
+          } catch (e) { }
           const cacheKey = `${name}:${JSON.stringify(inp)}`;
 
           if (callCache.has(cacheKey)) {
-            results.push({
-              type: "tool_result",
-              tool_use_id: toolUse.id,
+            messages.push({
+              role: "tool",
+              tool_call_id: toolCall.id,
+              name: name,
               content: callCache.get(cacheKey)!,
             });
             continue;
@@ -380,7 +375,10 @@ export const startPlanning = action({
 
             try {
               // Check if Composio can handle this tool
-              const composioApp = mapServerToComposioApp(sn);
+              const composioApp = await ctx.runQuery(
+                internal.composio.resolveComposioApp,
+                { serverName: sn }
+              );
               let usedComposio = false;
 
               if (composioApp) {
@@ -570,19 +568,18 @@ export const startPlanning = action({
 
           const contentStr = JSON.stringify(result);
           callCache.set(cacheKey, contentStr);
-          results.push({
-            type: "tool_result",
-            tool_use_id: toolUse.id,
+          messages.push({
+            role: "tool",
+            tool_call_id: toolCall.id,
+            name: name,
             content: contentStr,
           });
         }
 
-        messages.push({ role: "user", content: results });
         continue;
       }
 
       // No tool calls — agent is done
-      messages.push({ role: "assistant", content });
 
       if (text.trim()) {
         await ctx.runMutation(internal.planning.writePlanningEvent, {
