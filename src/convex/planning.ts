@@ -662,6 +662,13 @@ export const startPlanning = action({
               // Fall back to MCP proxy only for non-Composio apps.
               if (!isComposioOAuthApp) {
                 if (!mcpProxyUrl) throw new Error("MCP_PROXY_URL not set");
+
+                // Look up connection info from Convex DB (proxy requires it)
+                const connInfo = await ctx.runQuery(
+                  internal.registry.getServerConnectionInfoInternal,
+                  { serverName: sn }
+                );
+
                 const callResp = await fetch(`${mcpProxyUrl}/call`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -669,6 +676,7 @@ export const startPlanning = action({
                     server_name: sn,
                     tool_name: tn,
                     arguments: toolArgs,
+                    connection_info: connInfo,
                   }),
                 });
                 result = await callResp.json();
