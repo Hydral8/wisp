@@ -285,8 +285,8 @@ export const startPlanning = action({
       event: { type: "session_init", session_id: sessionId },
     });
 
-    const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
+    const { chatCompletion } = await import("./llm");
+    if (!process.env.ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY not set");
 
     const mcpProxyUrl = process.env.MCP_PROXY_URL;
     const browserUseApiKey = process.env.BROWSER_USE_API_KEY;
@@ -347,43 +347,34 @@ export const startPlanning = action({
         },
       });
 
-      // Call Gemini OpenAI API
-      const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${geminiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gemini-3-flash-preview",
+      // Call Claude via Anthropic API
+      let data: any;
+      try {
+        data = await chatCompletion({
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
             ...messages
           ],
           tools: AGENT_TOOLS.map((t) => ({
-            type: "function",
+            type: "function" as const,
             function: {
               name: t.name,
               description: t.description,
               parameters: t.input_schema,
             }
           })),
-        }),
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
+        });
+      } catch (err: any) {
         await ctx.runMutation(internal.planning.writePlanningEvent, {
           sessionId,
           event: {
             type: "planning_error",
-            message: `API error: ${resp.status} ${errText}`,
+            message: `API error: ${err.message}`,
           },
         });
         return { sessionId };
       }
 
-      const data = await resp.json();
       const message = data.choices[0].message;
       const stopReason = data.choices[0].finish_reason;
       const text = message.content || "";

@@ -236,27 +236,16 @@ async function execLlm(args: Record<string, any>): Promise<Record<string, any>> 
   if (typeof inputData === "object") inputData = JSON.stringify(inputData, null, 2);
   const userMsg = inputData ? `${prompt}\n\nInput:\n${inputData}` : prompt;
 
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) return { error: "GEMINI_API_KEY not set" };
-
-  const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${geminiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gemini-3-flash-preview",
-      max_tokens: 8192,
+  try {
+    const { chatCompletion } = await import("./llm");
+    const data = await chatCompletion({
       messages: [{ role: "user", content: userMsg }],
-    }),
-  });
-
-  if (!resp.ok) return { error: `Gemini API error: ${resp.status}` };
-
-  const data = await resp.json();
-  const text = data.choices?.[0]?.message?.content || "";
-  return { result: text };
+    });
+    const text = data.choices?.[0]?.message?.content || "";
+    return { result: text };
+  } catch (err: any) {
+    return { error: `LLM error: ${err.message}` };
+  }
 }
 
 // --- Start execution action ---

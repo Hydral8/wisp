@@ -37,8 +37,7 @@ export const draftWorkflowConversion = action({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
 
-    const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
+    const { chatCompletion } = await import("./llm");
 
     // Include full step data with results and success/failure
     const stepsForPrompt = args.executedSteps.map((s: any, i: number) => {
@@ -180,30 +179,16 @@ Infer the most specific input type from context. Valid types: "string" | "number
 - Short free-text (names, queries, keywords) → "string"
 - Always include "placeholder" with a short helpful hint (e.g. "Enter recipient email", "Describe what to search for")`;
 
-    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${geminiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gemini-3-flash-preview",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 8192,
-      }),
+    const data = await chatCompletion({
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 8192,
     });
 
-    if (!resp.ok) {
-      throw new Error(`Gemini API error: ${resp.status} ${await resp.text()}`);
-    }
-
-    const data = await resp.json();
     const msg = data.choices?.[0]?.message;
     const text = msg?.content || "";
 
-    // Log for debugging
-    console.log("[draftWorkflowConversion] Gemini response length:", text.length);
-    console.log("[draftWorkflowConversion] Gemini finish_reason:", data.choices?.[0]?.finish_reason);
+    console.log("[draftWorkflowConversion] LLM response length:", text.length);
+    console.log("[draftWorkflowConversion] finish_reason:", data.choices?.[0]?.finish_reason);
     if (!text) {
       console.log("[draftWorkflowConversion] Empty content. Full message keys:", Object.keys(msg || {}));
     }

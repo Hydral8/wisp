@@ -17,6 +17,7 @@ import type * as embeddings from "../embeddings.js";
 import type * as execution from "../execution.js";
 import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
+import type * as llm from "../llm.js";
 import type * as marketplace from "../marketplace.js";
 import type * as migrations_seedRegistry from "../migrations/seedRegistry.js";
 import type * as planning from "../planning.js";
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   execution: typeof execution;
   helpers: typeof helpers;
   http: typeof http;
+  llm: typeof llm;
   marketplace: typeof marketplace;
   "migrations/seedRegistry": typeof migrations_seedRegistry;
   planning: typeof planning;

@@ -100,8 +100,7 @@ export const generateAppLayout = action({
     });
     if (!workflow) throw new Error("Workflow not found");
 
-    const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
+    const { chatCompletion } = await import("./llm");
 
     const params = workflow.configurableParams || [];
     const nodesDesc = JSON.stringify(workflow.nodes, null, 2);
@@ -156,28 +155,14 @@ Rules:
 
 Return ONLY valid JSON, no other text.`;
 
-    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${geminiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gemini-3-flash-preview",
-        messages: [{ role: "user", content: prompt }],
-      }),
+    const data = await chatCompletion({
+      messages: [{ role: "user", content: prompt }],
     });
-
-    if (!resp.ok) {
-      throw new Error(`Gemini API error: ${resp.status}`);
-    }
-
-    const data = await resp.json();
     const text = data.choices[0].message.content || "";
     const layout = extractJson(text);
 
     if (!layout || !layout.title || !layout.sections) {
-      throw new Error("Failed to generate valid layout from Gemini");
+      throw new Error("Failed to generate valid layout from LLM");
     }
 
     // Generate slug from name
