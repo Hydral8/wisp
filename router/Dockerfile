@@ -11,6 +11,8 @@ RUN apt-get update \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
 # Python dependencies

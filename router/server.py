@@ -10,16 +10,20 @@ Run: python server.py
 
 import json
 import os
+import sys
 import asyncio
 import time
 import logging
 from pathlib import Path
 from typing import Optional, Dict, Any
 
+# Force unbuffered output for Docker/containers
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s",
     datefmt="%H:%M:%S",
+    stream=sys.stdout,
+    force=True,
 )
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)

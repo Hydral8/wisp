@@ -672,7 +672,7 @@ export const startPlanning = action({
 
                 const proxyT0 = Date.now();
                 const controller = new AbortController();
-                const proxyTimeout = setTimeout(() => controller.abort(), 45000);
+                const proxyTimeout = setTimeout(() => controller.abort(), 120000);
                 try {
                   const callResp = await fetch(`${mcpProxyUrl}/call`, {
                     method: "POST",
