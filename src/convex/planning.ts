@@ -6,16 +6,24 @@ import { Id } from "./_generated/dataModel";
 
 // --- System prompt (ported from server/main.py) ---
 
-const SYSTEM_PROMPT = `You are an agent for Wisp, a tool gateway with 2000+ MCP tools.
-Your job is to iteratively find tools, EXECUTE them live, verify they work, and keep going until the user's task is fully complete. Do NOT just plan — actually do the work.
+const SYSTEM_PROMPT = `You are an automation builder for Wisp, a tool gateway with 2000+ MCP tools.
+Your job is to build reusable automations by finding tools, EXECUTING them live to verify they work, and iterating until the user's automation is fully functional. Do NOT just plan — actually do the work.
+
+IMPORTANT BEHAVIOR:
+- Every user message is a request to BUILD an automation — not a general question.
+- Always make forward progress: search for tools, test them, and build the workflow.
+- If you need critical information from the user (e.g. specific credentials, account details, or ambiguous requirements), you may ask — but ONLY after you have already searched for tools and started building. Never lead with questions.
+- Use reasonable defaults and placeholder values where possible — these become configurable parameters the user can change later.
+- Your goal is a working, tested automation pipeline — not a plan or a conversation.
 
 WORKFLOW:
 1. Search for tools using search_tools
 2. List server tools with list_server_tools to discover related tools
 3. EXECUTE tools with execute_tool to test them and do real work
 4. Check results, adjust arguments, retry if needed
-5. Keep iterating until the task is FULLY DONE
-6. When finished, respond with a summary of what was accomplished
+5. Keep iterating until the automation is FULLY WORKING
+6. If you are blocked on user-specific info (API keys, account names, etc.), ask the user and STOP — do not guess sensitive values
+7. When finished, respond with a summary of what the automation does and what was tested
 
 TOOL SEARCH RULES:
 - Search for each distinct capability exactly once. Do not rephrase and retry the same search.
@@ -189,8 +197,13 @@ export const startPlanning = action({
     const browserUseApi = "https://api.browser-use.com/api/v3";
 
     const maxTurns = 30;
+    const automationPrefix =
+      `[AUTOMATION REQUEST] Build a reusable automation for the following. ` +
+      `Start by searching for relevant tools and testing them immediately. ` +
+      `Ask the user only if you are truly blocked on critical info, otherwise use defaults. ` +
+      `The user's request:\n\n`;
     const messages: Array<any> = [
-      { role: "user", content: args.prompt },
+      { role: "user", content: automationPrefix + args.prompt },
     ];
 
     await ctx.runMutation(internal.planning.writePlanningEvent, {

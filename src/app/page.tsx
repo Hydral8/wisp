@@ -362,6 +362,8 @@ function AutomationsPane() {
   const router = useRouter();
   const rawWorkflows = useQuery(api.workflows.list);
   const loading = rawWorkflows === undefined;
+  const deleteWorkflow = useMutation(api.workflows.remove);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const workflows: Array<{ id: string; name: string; description: string; status: string; nodes: { id: string }[] }> =
     (rawWorkflows ?? []).map((wf: any) => ({
       id: wf._id,
@@ -400,43 +402,108 @@ function AutomationsPane() {
           </div>
           <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
             {workflows.map((wf) => (
-              <button
+              <div
                 key={wf.id}
-                onClick={() => router.push(`/workflow/${wf.id}`)}
                 className="animate-fade-in"
                 style={{
-                  textAlign: "left",
-                  padding: "16px 18px",
+                  position: "relative",
                   borderRadius: 10,
                   border: "1px solid var(--border)",
                   background: "var(--bg-card)",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
                   transition: "border-color 0.12s",
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--text-muted)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--text-muted)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6, gap: 12 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", lineHeight: 1.4 }}>
-                    {wf.name}
+                {/* Delete confirmation overlay */}
+                {confirmDeleteId === wf.id && (
+                  <div style={{
+                    position: "absolute", inset: 0, zIndex: 2, borderRadius: 10,
+                    background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10,
+                  }}>
+                    <span style={{ fontSize: 12, color: "#fff", fontWeight: 500 }}>Delete this automation?</span>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try { await deleteWorkflow({ id: wf.id as any }); } catch (err) { console.error(err); }
+                          setConfirmDeleteId(null);
+                        }}
+                        style={{
+                          fontSize: 11, fontWeight: 500, padding: "5px 14px", borderRadius: 6,
+                          border: "none", background: "var(--red, #ef4444)", color: "#fff",
+                          cursor: "pointer", fontFamily: "inherit",
+                        }}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
+                        style={{
+                          fontSize: 11, padding: "5px 14px", borderRadius: 6,
+                          border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "#fff",
+                          cursor: "pointer", fontFamily: "inherit",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: STATUS_COLOR[wf.status] ?? "var(--text-muted)" }} />
-                    <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{wf.status}</span>
+                )}
+
+                <button
+                  onClick={() => router.push(`/workflow/${wf.id}`)}
+                  style={{
+                    textAlign: "left",
+                    padding: "16px 18px",
+                    width: "100%",
+                    borderRadius: 10,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6, gap: 12 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", lineHeight: 1.4 }}>
+                      {wf.name}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: STATUS_COLOR[wf.status] ?? "var(--text-muted)" }} />
+                      <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{wf.status}</span>
+                    </div>
                   </div>
-                </div>
-                <p style={{ fontSize: 12, color: "var(--text-dim)", margin: "0 0 12px", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                  {wf.description}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{wf.nodes.length} steps</span>
-                  <span style={{ color: "var(--border)" }}>&middot;</span>
-                  <span style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace" }}>
-                    {wf.id.slice(0, 8)}
-                  </span>
-                </div>
-              </button>
+                  <p style={{ fontSize: 12, color: "var(--text-dim)", margin: "0 0 12px", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {wf.description}
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{wf.nodes.length} steps</span>
+                    <span style={{ color: "var(--border)" }}>&middot;</span>
+                    <span style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace" }}>
+                      {wf.id.slice(0, 8)}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Delete button — bottom-right */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(wf.id); }}
+                  title="Delete automation"
+                  style={{
+                    position: "absolute", bottom: 12, right: 14,
+                    background: "none", border: "none", cursor: "pointer", padding: 4,
+                    borderRadius: 4, color: "var(--text-muted)", transition: "color 0.12s",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--red, #ef4444)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-muted)"; }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 4h12M5.333 4V2.667a1.333 1.333 0 0 1 1.334-1.334h2.666a1.333 1.333 0 0 1 1.334 1.334V4m2 0v9.333a1.333 1.333 0 0 1-1.334 1.334H4.667a1.333 1.333 0 0 1-1.334-1.334V4h9.334z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             ))}
           </div>
         </>

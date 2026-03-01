@@ -309,9 +309,11 @@ export function ChatPane({
 export function PlanningFeed({
   events,
   onConvertToWorkflow,
+  convertingToWorkflow,
 }: {
   events: PlanningEvent[];
   onConvertToWorkflow?: () => void;
+  convertingToWorkflow?: boolean;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
   const isDone = events.some((e) => e.type === "agent_done" || e.type === "dag_complete" || e.type === "planning_error");
@@ -367,6 +369,7 @@ export function PlanningFeed({
           {isDone && onConvertToWorkflow && (
             <button
               onClick={onConvertToWorkflow}
+              disabled={convertingToWorkflow}
               style={{
                 padding: "5px 14px",
                 borderRadius: 8,
@@ -375,11 +378,21 @@ export function PlanningFeed({
                 border: "none",
                 background: "var(--accent)",
                 color: "#fff",
-                cursor: "pointer",
+                cursor: convertingToWorkflow ? "not-allowed" : "pointer",
                 fontFamily: "inherit",
+                opacity: convertingToWorkflow ? 0.7 : 1,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
             >
-              Convert to Workflow
+              {convertingToWorkflow && (
+                <svg width="14" height="14" viewBox="0 0 14 14" style={{ animation: "spin 1s linear infinite" }}>
+                  <circle cx="7" cy="7" r="5.5" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" />
+                  <path d="M12.5 7a5.5 5.5 0 0 0-5.5-5.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" fill="none" />
+                </svg>
+              )}
+              {convertingToWorkflow ? "Converting..." : "Convert to Workflow"}
             </button>
           )}
         </div>
@@ -741,6 +754,8 @@ function previewText(text: string, maxLen = 120): string {
 
 export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: boolean }) {
   const [expanded, setExpanded] = useState(!!isFinal);
+  const [showFullResult, setShowFullResult] = useState(false);
+  const isLlm = isLLMNode(node);
   const statusColor =
     node.status === "complete"
       ? "var(--green)"
@@ -761,6 +776,8 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
 
   const resultText = node.result !== undefined ? formatResult(node.result) : "";
   const hasResult = resultText.length > 0;
+  const isLongResult = resultText.length > 400;
+  const collapsedHeight = isFinal ? 320 : 180;
 
   return (
     <div
@@ -786,8 +803,18 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
             }}
           />
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>
-              {isFinal ? "Final Result" : friendlyLabel(node)}
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>
+                {isFinal ? "Final Result" : friendlyLabel(node)}
+              </span>
+              {isLlm && (
+                <span style={{
+                  fontSize: 9, padding: "1px 6px", borderRadius: 4, fontWeight: 500,
+                  background: "rgba(124,107,240,0.15)", color: "var(--accent)",
+                }}>
+                  LLM
+                </span>
+              )}
             </div>
             <div style={{ fontSize: 11, marginTop: 2, color: "var(--text-dim)" }}>
               {isFinal ? friendlyLabel(node) : friendlySubtitle(node)}
@@ -795,11 +822,19 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {node.status === "complete" && (
+            <span style={{
+              fontSize: 10, padding: "2px 8px", borderRadius: 4,
+              background: "rgba(74,222,128,0.12)", color: "var(--green)", fontWeight: 500,
+            }}>
+              Done
+            </span>
+          )}
           {node.status === "running" && (
             <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Running...</span>
           )}
           {node.elapsed !== undefined && node.status !== "running" && (
-            <span style={{ fontSize: 11, color: "var(--text-dim)", fontVariantNumeric: "tabular-nums" }}>
+            <span style={{ fontSize: 11, color: "var(--text-muted)", fontVariantNumeric: "tabular-nums" }}>
               {node.elapsed}s
             </span>
           )}
@@ -827,6 +862,21 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
           className="animate-fade-in-fast"
           style={{ padding: "12px 16px 16px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12 }}
         >
+          {/* LLM prompt preview */}
+          {isLlm && typeof node.arguments?.prompt === "string" && (
+            <div style={{
+              padding: "8px 12px", borderRadius: 8,
+              background: "rgba(124,107,240,0.06)", borderLeft: "2px solid var(--accent)",
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "var(--accent)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Prompt
+              </div>
+              <div style={{ fontSize: 12, color: "var(--text-dim)", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>
+                {node.arguments.prompt as string}
+              </div>
+            </div>
+          )}
+
           {/* Action required banner */}
           {node.actionRequired && (
             <div style={{ padding: 8, borderRadius: 6, background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.4)" }}>
@@ -878,21 +928,51 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
             </div>
           )}
 
-          {/* Result — readable text */}
+          {/* Result — rendered as markdown */}
           {hasResult && (
-            <p
-              style={{
-                margin: 0,
-                fontSize: 13,
-                lineHeight: 1.65,
-                color: "var(--text)",
-                whiteSpace: "pre-wrap",
-                maxHeight: isFinal ? 480 : 280,
-                overflow: "auto",
-              }}
-            >
-              {resultText}
-            </p>
+            <div style={{ position: "relative" }}>
+              <div
+                className="markdown-result"
+                style={{
+                  fontSize: 13,
+                  lineHeight: 1.7,
+                  color: "var(--text)",
+                  maxHeight: showFullResult ? "none" : collapsedHeight,
+                  overflow: "hidden",
+                }}
+              >
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{resultText}</ReactMarkdown>
+              </div>
+              {isLongResult && !showFullResult && (
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0, height: 60,
+                  background: "linear-gradient(transparent, var(--bg-card))",
+                  display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 4,
+                }}>
+                  <button
+                    onClick={() => setShowFullResult(true)}
+                    style={{
+                      fontSize: 11, fontWeight: 500, color: "var(--accent)", background: "var(--bg-card)",
+                      border: "1px solid var(--border)", borderRadius: 6, padding: "3px 12px",
+                      cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    Show more
+                  </button>
+                </div>
+              )}
+              {isLongResult && showFullResult && (
+                <button
+                  onClick={() => setShowFullResult(false)}
+                  style={{
+                    fontSize: 11, fontWeight: 500, color: "var(--text-muted)", background: "none",
+                    border: "none", cursor: "pointer", fontFamily: "inherit", marginTop: 4,
+                  }}
+                >
+                  Show less
+                </button>
+              )}
+            </div>
           )}
 
           {/* Error — left-border accent only */}
@@ -1051,8 +1131,8 @@ function WorkflowGraph({
       >
         {paths.map((p) => (
           <g key={p.key}>
-            <path d={p.d} fill="none" stroke="var(--border)" strokeWidth={1.5} opacity={0.6} />
-            <circle cx={p.cx} cy={p.cy} r={3} fill="var(--border)" opacity={0.6} />
+            <path d={p.d} fill="none" stroke="rgba(160,160,170,0.5)" strokeWidth={1.5} />
+            <circle cx={p.cx} cy={p.cy} r={3} fill="rgba(160,160,170,0.6)" />
           </g>
         ))}
       </svg>
@@ -1228,6 +1308,7 @@ export function WorkflowPane({
   freezing,
   onGenerateApp,
   generatingApp,
+  onRename,
 }: {
   workflow: Workflow;
   nodeStatuses: Map<string, NodeStatus>;
@@ -1243,6 +1324,7 @@ export function WorkflowPane({
   freezing?: boolean;
   onGenerateApp?: () => void;
   generatingApp?: boolean;
+  onRename?: (name: string) => void;
 }) {
   const showExecution = phase === "executing" || phase === "done";
   const [runtimeValues, setRuntimeValues] = useState<Record<string, any>>(() => {
@@ -1258,9 +1340,40 @@ export function WorkflowPane({
       <div
         style={{ borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px" }}
       >
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>{workflow.name}</div>
-          <div style={{ fontSize: 12, color: "var(--text-dim)", marginTop: 2, lineHeight: 1.4 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          {onRename ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                defaultValue={workflow.name}
+                key={workflow.id}
+                onBlur={(e) => {
+                  const v = e.target.value.trim();
+                  if (v && v !== workflow.name) onRename(v);
+                  e.target.style.background = "transparent";
+                  e.target.style.outline = "none";
+                }}
+                onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+                onFocus={(e) => {
+                  e.target.style.background = "var(--bg-surface)";
+                  e.target.style.outline = "1px solid var(--border)";
+                }}
+                style={{
+                  fontSize: 14, fontWeight: 500, color: "var(--text)", background: "transparent",
+                  border: "none", outline: "none", fontFamily: "inherit", padding: "1px 4px",
+                  borderRadius: 4, flex: 1, cursor: "text",
+                }}
+              />
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.4 }}>
+                <path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" stroke="var(--text-dim)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          ) : (
+            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>{workflow.name}</div>
+          )}
+          <div style={{
+            fontSize: 12, color: "var(--text-dim)", marginTop: 2, lineHeight: 1.4, paddingLeft: 4,
+            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>
             {workflow.description}
           </div>
         </div>

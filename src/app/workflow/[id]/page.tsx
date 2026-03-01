@@ -69,6 +69,7 @@ export default function WorkflowPage() {
 
   const draftWorkflowConversion = useAction(api.chat.draftWorkflowConversion);
   const saveWorkflow = useAction(api.chat.saveWorkflow);
+  const renameWorkflow = useMutation(api.workflows.rename);
   const createWebhookMutation = useMutation(api.webhooks.create);
   const publishToMarketplace = useMutation(api.marketplace.publish);
   const suggestConfigurable = useAction(api.marketplace.suggestConfigurable);
@@ -369,24 +370,34 @@ export default function WorkflowPage() {
     }
   }, [workflowId, createWebhookMutation]);
 
+  const handleRename = useCallback(async (newName: string) => {
+    if (!workflow) return;
+    setWorkflow({ ...workflow, name: newName });
+    if (workflowId) {
+      try {
+        await renameWorkflow({ id: workflowId, name: newName });
+      } catch (err) {
+        console.error("Rename error:", err);
+      }
+    }
+  }, [workflow, workflowId, renameWorkflow]);
+
   const isLoading = phase === "planning" || phase === "executing";
 
   const handleConvertToWorkflow = useCallback(async () => {
     if (executedSteps.length === 0) return;
     setDraftingWorkflow(true);
     try {
-      const name = agentSummary.slice(0, 60) || "Workflow";
-      const desc = agentSummary;
       const result = await draftWorkflowConversion({
-        name,
-        description: desc,
+        name: agentSummary.slice(0, 60) || "Workflow",
+        description: agentSummary,
         executedSteps,
       });
-      
+
       setDraftNodes(result?.nodes || []);
       setConfigurableParams(result?.configurableParams || []);
-      setDraftName(name);
-      setDraftDescription(desc);
+      setDraftName(result?.name || agentSummary.slice(0, 60) || "Workflow");
+      setDraftDescription(result?.description || "Workflow generated from agent session");
       setShowDraftModal(true);
     } catch (err) {
       console.error("Draft error:", err);
@@ -590,14 +601,43 @@ export default function WorkflowPage() {
         >
           &larr; All workflows
         </button>
-        {workflow && (
-          <span className="text-xs font-medium" style={{ color: "var(--text)" }}>
-            {workflow.name}
-          </span>
-        )}
-        {isNew && !workflow && (
+        {workflow ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <input
+              defaultValue={workflow.name}
+              key={workflow.id}
+              onBlur={(e) => {
+                const v = e.target.value.trim();
+                if (v && v !== workflow.name) handleRename(v);
+                e.target.style.background = "transparent";
+                e.target.style.outline = "none";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+              }}
+              onFocus={(e) => {
+                e.target.style.background = "var(--bg-surface)";
+                e.target.style.outline = "1px solid var(--border)";
+              }}
+              className="text-xs font-medium"
+              style={{
+                color: "var(--text)", background: "transparent", border: "none",
+                outline: "none", fontFamily: "inherit", padding: "2px 4px",
+                borderRadius: 4, minWidth: 100, maxWidth: 400,
+                cursor: "text",
+              }}
+            />
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.35 }}>
+              <path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" stroke="var(--text-dim)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        ) : isNew ? (
           <span className="text-xs" style={{ color: "var(--text-dim)" }}>
             New workflow
+          </span>
+        ) : (
+          <span className="text-xs" style={{ color: "var(--text-dim)" }}>
+            Loading workflow...
           </span>
         )}
       </div>
@@ -613,6 +653,7 @@ export default function WorkflowPage() {
           <PlanningFeed
             events={planningEventsList}
             onConvertToWorkflow={executedSteps.length > 0 ? handleConvertToWorkflow : undefined}
+            convertingToWorkflow={draftingWorkflow}
           />
         ) : workflow ? (
           <WorkflowPane
@@ -630,6 +671,7 @@ export default function WorkflowPage() {
             freezing={freezing}
             onGenerateApp={handleGenerateApp}
             generatingApp={generatingApp}
+            onRename={handleRename}
           />
         ) : (
           <div className="flex-1 flex items-center justify-center">

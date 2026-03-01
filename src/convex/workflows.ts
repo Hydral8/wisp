@@ -75,6 +75,27 @@ export const updateStatus = mutation({
   },
 });
 
+export const remove = mutation({
+  args: { id: v.id("workflows") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    const wf = await ctx.db.get(args.id);
+    if (!wf || wf.userId !== userId) throw new Error("Not found");
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const rename = mutation({
+  args: {
+    id: v.id("workflows"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { name: args.name });
+  },
+});
+
 export const updateNodes = mutation({
   args: {
     id: v.id("workflows"),

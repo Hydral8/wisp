@@ -55,6 +55,9 @@ body {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(6px); }
@@ -128,3 +131,27 @@ body {
 .markdown-body table { border-collapse: collapse; width: 100%; margin-bottom: 0.5em; }
 .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 6px 12px; }
 .markdown-body th { background: var(--bg-surface); font-weight: 500; text-align: left; }
+
+/* Compact markdown for execution results */
+.markdown-result { word-wrap: break-word; }
+.markdown-result p { margin: 0 0 0.4em; }
+.markdown-result p:last-child { margin-bottom: 0; }
+.markdown-result a { color: var(--blue); text-decoration: underline; }
+.markdown-result ul, .markdown-result ol { margin: 0 0 0.4em; padding-left: 1.4em; }
+.markdown-result ul { list-style-type: disc; }
+.markdown-result ol { list-style-type: decimal; }
+.markdown-result li { margin-bottom: 0.15em; font-size: 12px; }
+.markdown-result code { font-family: 'Roboto Mono', 'SF Mono', monospace; background: var(--bg-surface); padding: 0.15em 0.35em; border-radius: 3px; font-size: 85%; }
+.markdown-result pre { background: var(--bg-surface); padding: 0.6em; border-radius: 6px; overflow: auto; margin: 0 0 0.4em; font-size: 11px; }
+.markdown-result pre code { background: none; padding: 0; }
+.markdown-result h1, .markdown-result h2, .markdown-result h3, .markdown-result h4 { font-weight: 600; margin: 0.6em 0 0.3em; color: var(--text); }
+.markdown-result h1 { font-size: 1.1em; }
+.markdown-result h2 { font-size: 1.05em; }
+.markdown-result h3 { font-size: 1em; }
+.markdown-result h4 { font-size: 0.95em; }
+.markdown-result blockquote { border-left: 2px solid var(--accent); padding-left: 0.8em; color: var(--text-dim); margin: 0 0 0.4em; font-size: 12px; }
+.markdown-result table { border-collapse: collapse; width: 100%; margin: 0 0 0.4em; font-size: 12px; }
+.markdown-result th, .markdown-result td { border: 1px solid var(--border); padding: 4px 10px; }
+.markdown-result th { background: var(--bg-surface); font-weight: 500; text-align: left; }
+.markdown-result strong { color: var(--text); font-weight: 600; }
+.markdown-result hr { border: none; border-top: 1px solid var(--border); margin: 0.6em 0; }

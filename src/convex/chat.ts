@@ -55,8 +55,9 @@ Executed Steps:
 ${JSON.stringify(stepsForPrompt, null, 2)}
 
 Instructions:
-1. Filter: Drop any steps that are purely for formatting output (e.g. conversational LLM formatting steps at the very end). Keep only functional nodes that do real work, fetch data, or perform logical transformations.
-2. Nodes: For each functional step, create a node object with:
+1. Name & Description: Generate a short, clear name (max 60 chars) and a 1-2 sentence description of what this workflow does. Focus on the purpose, not implementation details.
+2. Filter: Drop any steps that are purely for formatting output (e.g. conversational LLM formatting steps at the very end). Keep only functional nodes that do real work, fetch data, or perform logical transformations.
+3. Nodes: For each functional step, create a node object with:
    - id: e.g. "n1", "n2"
    - step: A brief human-readable title (e.g. "Search Google")
    - server_name: The server name
@@ -64,7 +65,7 @@ Instructions:
    - arguments: The arguments object
    - depends_on: Array of node ids this node depends on (based on data flow)
    - output_key: e.g. "r1", "r2"
-3. Configurable Parameters: Analyze the nodes and suggest which arguments should be exposed to the user as adjustable inputs (e.g., search queries, URLs).
+4. Configurable Parameters: Analyze the nodes and suggest which arguments should be exposed to the user as adjustable inputs (e.g., search queries, URLs).
    For each suggested parameter, create an object with:
    - nodeId: the node it belongs to
    - paramKey: the argument key
@@ -75,6 +76,8 @@ Instructions:
 
 Return EXACTLY a JSON object with this schema, and NOTHING ELSE:
 {
+  "name": "Short workflow name",
+  "description": "1-2 sentence description of what this workflow does",
   "nodes": [...],
   "configurableParams": [...]
 }`;
