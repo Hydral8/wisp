@@ -31,9 +31,13 @@ TOOL SEARCH RULES:
 - Search for each distinct capability exactly once. Do not rephrase and retry the same search.
 - Use list_server_tools after finding a promising tool to discover sibling tools on the same server.
 
-SCRAPING & WEB SEARCH:
-- If the task requires scraping, getting text data from websites, or searching the web, actively look for and use web search tools (e.g., Brave, Google, Scrapeless, specific scraping APIs) available in the registry.
-- Do NOT just assume data is unavailable; leverage the available MCP tools to fetch the required information.
+WEB DATA & SEARCH (prefer search/fetch over scraping):
+- For finding information, data, or content from the web, ALWAYS prefer search and fetch tools first:
+  1. Use search_tools to find search APIs (Exa, Brave Search, Google Search, Tavily, etc.) — these return structured, reliable results.
+  2. Use search_tools to find fetch/read tools (website readers, URL fetchers, content extractors) — these cleanly extract page content.
+  3. Only use browser_use_run as a LAST RESORT when no search or fetch tool can accomplish the task (e.g., interactive forms, login-gated pages, screenshots).
+- Do NOT default to "scrape website" or "crawl" when a search or fetch tool exists — search/fetch tools are faster, cheaper, and more reliable.
+- Do NOT just assume data is unavailable; the registry has 2000+ tools including powerful search and data retrieval APIs.
 
 COMPOSIO (OAuth Apps) — ALWAYS PREFER FOR AUTH-BASED SERVICES:
 - For services that require user authentication (Gmail, Google Calendar, Google Drive, Google Sheets, GitHub, Slack, Notion, Discord, Trello, Asana, Jira, Salesforce, HubSpot, Outlook, LinkedIn, Twitter/X, Spotify, Dropbox, etc.), ALWAYS use search_composio_tools FIRST.
