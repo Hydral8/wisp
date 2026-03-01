@@ -212,7 +212,9 @@ function Sidebar({ active, onChange, user }: { active: NavId; onChange: (id: Nav
 function ComposePane() {
   const router = useRouter();
   const [input, setInput] = useState("");
+  const [listening, setListening] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -224,6 +226,31 @@ function ComposePane() {
   const handleSubmit = () => {
     if (!input.trim()) return;
     router.push(`/workflow/new?prompt=${encodeURIComponent(input.trim())}`);
+  };
+
+  const toggleVoice = () => {
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setListening(false);
+      return;
+    }
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) return;
+    const rec = new SR();
+    rec.lang = "en-US";
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.onresult = (e: any) => {
+      const transcript = Array.from(e.results as SpeechRecognitionResultList)
+        .map((r: any) => r[0].transcript)
+        .join("");
+      setInput(transcript);
+    };
+    rec.onend = () => setListening(false);
+    rec.onerror = () => setListening(false);
+    recognitionRef.current = rec;
+    rec.start();
+    setListening(true);
   };
 
   return (
@@ -287,27 +314,55 @@ function ComposePane() {
           />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontSize: 11, color: "var(--text-muted)" }}>Shift + Enter for new line</span>
-            <button
-              onClick={handleSubmit}
-              disabled={!input.trim()}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "6px 14px",
-                borderRadius: 8,
-                border: "none",
-                cursor: input.trim() ? "pointer" : "not-allowed",
-                fontSize: 13,
-                fontWeight: 500,
-                fontFamily: "inherit",
-                background: input.trim() ? "var(--accent)" : "var(--border)",
-                color: input.trim() ? "#fff" : "var(--text-muted)",
-                transition: "background 0.15s, color 0.15s",
-              }}
-            >
-              Run <IconSend />
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button
+                onClick={toggleVoice}
+                title={listening ? "Stop listening" : "Voice input"}
+                style={{
+                  width: 32, height: 32, borderRadius: 8, border: "none",
+                  background: listening ? "var(--red, #ef4444)" : "transparent",
+                  color: listening ? "#fff" : "var(--text-muted)",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                  position: "relative", transition: "all 0.15s",
+                }}
+                onMouseEnter={(e) => { if (!listening) e.currentTarget.style.color = "var(--text)"; }}
+                onMouseLeave={(e) => { if (!listening) e.currentTarget.style.color = "var(--text-muted)"; }}
+              >
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                  <rect x="5" y="1" width="6" height="9" rx="3" stroke="currentColor" strokeWidth="1.4" />
+                  <path d="M3 7.5a5 5 0 0 0 10 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  <path d="M8 13v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                </svg>
+                {listening && (
+                  <div style={{
+                    position: "absolute", inset: 0, borderRadius: 8,
+                    border: "2px solid var(--red, #ef4444)", animation: "pulse-dot 1s ease-in-out infinite",
+                    pointerEvents: "none",
+                  }} />
+                )}
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!input.trim()}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "6px 14px",
+                  borderRadius: 8,
+                  border: "none",
+                  cursor: input.trim() ? "pointer" : "not-allowed",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  fontFamily: "inherit",
+                  background: input.trim() ? "var(--accent)" : "var(--border)",
+                  color: input.trim() ? "#fff" : "var(--text-muted)",
+                  transition: "background 0.15s, color 0.15s",
+                }}
+              >
+                Run <IconSend />
+              </button>
+            </div>
           </div>
         </div>
 

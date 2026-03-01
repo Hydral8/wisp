@@ -388,10 +388,31 @@ export default function WorkflowPage() {
     if (executedSteps.length === 0) return;
     setDraftingWorkflow(true);
     try {
+      // Build a session trace from planning events for full context
+      const sessionTrace: Array<{ type: string; [k: string]: unknown }> = [];
+      for (const evtDoc of (planningEvents ?? [])) {
+        const e = evtDoc.event as any;
+        if (e.type === "planning_thinking" && e.text) {
+          sessionTrace.push({ type: "llm_thinking", text: e.text });
+        } else if (e.type === "tool_exec_complete") {
+          sessionTrace.push({
+            type: "tool_result",
+            server_name: e.server_name,
+            tool_name: e.tool_name,
+            success: e.success,
+            elapsed: e.elapsed,
+            result_preview: typeof e.result === "string"
+              ? e.result.slice(0, 500)
+              : JSON.stringify(e.result)?.slice(0, 500),
+          });
+        }
+      }
+
       const result = await draftWorkflowConversion({
         name: agentSummary.slice(0, 60) || "Workflow",
         description: agentSummary,
         executedSteps,
+        sessionTrace,
       });
 
       setDraftNodes(result?.nodes || []);
@@ -401,14 +422,13 @@ export default function WorkflowPage() {
       setShowDraftModal(true);
     } catch (err) {
       console.error("Draft error:", err);
-      // Fallback
       setDraftNodes([]);
       setConfigurableParams([]);
       setShowDraftModal(true);
     } finally {
       setDraftingWorkflow(false);
     }
-  }, [executedSteps, agentSummary, draftWorkflowConversion]);
+  }, [executedSteps, agentSummary, planningEvents, draftWorkflowConversion]);
 
   const handleConfirmSaveWorkflow = useCallback(async () => {
     setDraftingWorkflow(true);

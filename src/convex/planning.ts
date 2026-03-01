@@ -33,11 +33,21 @@ SCRAPING & WEB SEARCH:
 - If the task requires scraping, getting text data from websites, or searching the web, actively look for and use web search tools (e.g., Brave, Google, Scrapeless, specific scraping APIs) available in the registry.
 - Do NOT just assume data is unavailable; leverage the available MCP tools to fetch the required information.
 
+TOOL EXECUTION STRATEGY:
+- PREFER MCP tools via execute_tool whenever possible — they are faster, cheaper, and more reliable than browser automation.
+- Search the registry thoroughly before falling back to browser_use. There are 2000+ tools covering APIs for search, scraping, data fetching, social media, finance, email, and more.
+- Only use browser_use_run when the task genuinely requires interactive browser automation (e.g. logging into a site, filling forms, taking screenshots, or when no suitable MCP tool exists).
+
 EXECUTE_TOOL:
 - Use execute_tool to run MCP tools (non-browser). Do NOT use execute_tool for browser tasks.
 
-BROWSER TASKS — USE browser_use_run DIRECTLY:
-- For ANY task requiring a web browser, use the browser_use_run tool directly.
+TEXT-TO-SPEECH:
+- Use text_to_speech to convert any text into spoken audio. Returns an audio URL.
+- Use for: voiceovers, narration, reading content aloud, spoken translations, accessibility.
+- If the user asks to "say", "speak", "read aloud", "narrate", or anything audio-related, use this tool.
+
+BROWSER TASKS (last resort):
+- Only use browser_use_run when MCP tools cannot accomplish the task.
 - browser_use_run launches a cloud browser session. It returns a session_id and liveUrl.
 - After calling browser_use_run, call browser_use_status with the session_id.
 - NEVER call browser_use_run more than once per task.
@@ -134,6 +144,35 @@ const AGENT_TOOLS = [
         },
       },
       required: ["session_id"],
+    },
+  },
+  {
+    name: "text_to_speech",
+    description:
+      "Convert text to speech audio using MiniMax TTS. Returns an audio URL. Use for voiceovers, narration, reading content aloud, or any audio output.",
+    input_schema: {
+      type: "object",
+      properties: {
+        text: {
+          type: "string",
+          description: "The text to convert to speech (max 10000 chars)",
+        },
+        voice_id: {
+          type: "string",
+          description:
+            "Voice to use. Options: English_expressive_narrator (default), English_radiant_girl, English_magnetic_voiced_man, English_CalmWoman, English_Trustworth_Man, English_Comedian, English_ConfidentWoman",
+        },
+        speed: {
+          type: "number",
+          description: "Speech speed 0.5-2.0 (default 1.0)",
+        },
+        emotion: {
+          type: "string",
+          description:
+            "Emotion: neutral (default), happy, sad, angry, calm, surprised",
+        },
+      },
+      required: ["text"],
     },
   },
 ];
@@ -591,6 +630,83 @@ export const startPlanning = action({
                   type: "tool_exec_complete",
                   server_name: "browser-use",
                   tool_name: "status",
+                  result,
+                  elapsed: (Date.now() - t0) / 1000,
+                  success: false,
+                },
+              });
+            }
+          } else if (name === "text_to_speech") {
+            const text = (inp.text || "").slice(0, 10000);
+            const voiceId = inp.voice_id || "English_expressive_narrator";
+            const speed = inp.speed || 1.0;
+            const emotion = inp.emotion || "neutral";
+            await ctx.runMutation(internal.planning.writePlanningEvent, {
+              sessionId,
+              event: {
+                type: "tool_exec_start",
+                server_name: "minimax",
+                tool_name: "text_to_speech",
+                arguments: { text: text.slice(0, 80) + "...", voice_id: voiceId },
+              },
+            });
+            try {
+              const minimaxKey = process.env.MINIMAX_API_KEY;
+              const minimaxHost = process.env.MINIMAX_API_HOST || "https://api.minimax.io";
+              const minimaxGroup = process.env.MINIMAX_GROUP_ID || "";
+              if (!minimaxKey) throw new Error("MINIMAX_API_KEY not set");
+
+              let ttsUrl = `${minimaxHost}/v1/t2a_v2`;
+              if (minimaxGroup) ttsUrl += `?GroupId=${minimaxGroup}`;
+
+              const ttsResp = await fetch(ttsUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${minimaxKey}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  model: "speech-02-hd",
+                  text,
+                  stream: false,
+                  voice_setting: { voice_id: voiceId, speed, vol: 1.0, pitch: 0, emotion },
+                  audio_setting: { format: "mp3", sample_rate: 32000, bitrate: 128000, channel: 1 },
+                }),
+              });
+              const ttsData = await ttsResp.json();
+              if (ttsData.base_resp?.status_code !== 0) {
+                throw new Error(ttsData.base_resp?.status_msg || "TTS failed");
+              }
+              const audioHex = ttsData.data?.audio || "";
+              if (!audioHex) throw new Error("No audio data returned");
+
+              // Store audio in Convex storage
+              const audioBytes = new Uint8Array(audioHex.match(/.{1,2}/g)!.map((b: string) => parseInt(b, 16)));
+              const blob = new Blob([audioBytes], { type: "audio/mpeg" });
+              const storageId = await ctx.storage.store(blob);
+              const audioUrl = await ctx.storage.getUrl(storageId);
+
+              result = { audio_url: audioUrl, voice_id: voiceId, size_bytes: audioBytes.length, text_length: text.length };
+              const elapsed = (Date.now() - t0) / 1000;
+              await ctx.runMutation(internal.planning.writePlanningEvent, {
+                sessionId,
+                event: {
+                  type: "tool_exec_complete",
+                  server_name: "minimax",
+                  tool_name: "text_to_speech",
+                  result,
+                  elapsed,
+                  success: true,
+                },
+              });
+            } catch (e: any) {
+              result = { error: e.message };
+              await ctx.runMutation(internal.planning.writePlanningEvent, {
+                sessionId,
+                event: {
+                  type: "tool_exec_complete",
+                  server_name: "minimax",
+                  tool_name: "text_to_speech",
                   result,
                   elapsed: (Date.now() - t0) / 1000,
                   success: false,

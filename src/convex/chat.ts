@@ -31,6 +31,7 @@ export const draftWorkflowConversion = action({
     name: v.string(),
     description: v.string(),
     executedSteps: v.array(v.any()),
+    sessionTrace: v.optional(v.array(v.any())),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -39,47 +40,90 @@ export const draftWorkflowConversion = action({
     const geminiKey = process.env.GEMINI_API_KEY;
     if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
 
-    // Clean up executed steps for the prompt
-    const stepsForPrompt = args.executedSteps.map((s, i) => ({
-      index: i,
-      server_name: s.server_name,
-      tool_name: s.tool_name,
-      arguments: s.arguments,
-    }));
+    // Include full step data with results and success/failure
+    const stepsForPrompt = args.executedSteps.map((s: any, i: number) => {
+      const resultStr = typeof s.result === "string" ? s.result : JSON.stringify(s.result);
+      const hasError = s.result && typeof s.result === "object" && s.result.error;
+      return {
+        index: i,
+        server_name: s.server_name,
+        tool_name: s.tool_name,
+        arguments: s.arguments,
+        success: !hasError,
+        result_preview: resultStr?.slice(0, 400) || "(empty)",
+        elapsed: s.elapsed,
+      };
+    });
 
-    const prompt = `Analyze these executed steps from an AI agent session and convert them into a reusable DAG workflow graph.
+    const prompt = `You are converting an AI agent session into a reusable automation workflow (DAG graph).
 
-Objective: ${args.description}
+## Agent Summary
+${args.description}
 
-Executed Steps:
+## Session Trace (chronological: LLM thinking interleaved with tool calls)
+${JSON.stringify(args.sessionTrace?.slice(0, 60) || [], null, 2)}
+
+## Executed Tool Calls (with results)
 ${JSON.stringify(stepsForPrompt, null, 2)}
 
-Instructions:
-1. Name & Description: Generate a short, clear name (max 60 chars) and a 1-2 sentence description of what this workflow does. Focus on the purpose, not implementation details.
-2. Filter: Drop any steps that are purely for formatting output (e.g. conversational LLM formatting steps at the very end). Keep only functional nodes that do real work, fetch data, or perform logical transformations.
-3. Nodes: For each functional step, create a node object with:
-   - id: e.g. "n1", "n2"
-   - step: A brief human-readable title (e.g. "Search Google")
-   - server_name: The server name
-   - tool_name: The tool name
-   - arguments: The arguments object
-   - depends_on: Array of node ids this node depends on (based on data flow)
-   - output_key: e.g. "r1", "r2"
-4. Configurable Parameters: Analyze the nodes and suggest which arguments should be exposed to the user as adjustable inputs (e.g., search queries, URLs).
-   For each suggested parameter, create an object with:
-   - nodeId: the node it belongs to
-   - paramKey: the argument key
-   - label: a human-readable label
-   - description: why this is configurable
-   - defaultValue: the current value from the executed step
-   - type: "string", "number", or "boolean"
+## Your Task
 
-Return EXACTLY a JSON object with this schema, and NOTHING ELSE:
+Convert this into a clean, reusable DAG workflow. Follow these rules EXACTLY:
+
+### 1. FILTER — Remove bad nodes
+- DROP any tool call where success=false or the result contains an error
+- DROP any tool call whose result was empty, irrelevant, or not used by any later step
+- DROP duplicate tool calls (same server+tool+args) — keep only the first successful one
+- KEEP only the steps that actually contributed useful data toward the final output
+
+### 2. LLM ANALYSIS NODES — Add __llm__ nodes
+- When the agent's thinking shows it ANALYZING, COMPARING, SYNTHESIZING, or TRANSFORMING data from tool results into new insights, create an \`__llm__\` node for that step.
+- These are nodes where: server_name = "__llm__", tool_name = "generate"
+- The arguments should have a "prompt" key with a reusable instruction (not the agent's raw thinking — rewrite it as a clear prompt template that references input data via output_key names like "Use {{flight_results}} to...")
+- These nodes MUST list the tool result nodes they analyze in depends_on
+- Example: if the agent compared flight prices from two search results, add an __llm__ node that depends on both search nodes
+
+### 3. DEPENDENCY WIRING — Connect the graph
+- Wire depends_on based on actual data flow: if node B uses data from node A's result, B depends on A
+- In arguments, when a value should come from a previous node's output, use that node's output_key as the value (e.g., if node n1 has output_key "flight_data", then a downstream node referencing that data should have the value "flight_data" in its arguments)
+- Create a proper DAG — parallelizable nodes at the same level should NOT depend on each other
+
+### 4. CONFIGURABLE PARAMETERS — Identify user inputs
+- Find arguments that represent user-specific values (origins, destinations, search queries, dates, URLs, account names, etc.)
+- These are values the user would want to change each time they run the automation
+- For each, create a configurableParam entry
+
+### 5. NAME & DESCRIPTION
+- Generate a short, clear name (max 60 chars) describing the automation's purpose
+- Write a 1-2 sentence description focused on what it does, not how
+
+## Output Format
+
+Return EXACTLY a JSON object with this schema and NOTHING ELSE (no markdown fences):
 {
   "name": "Short workflow name",
-  "description": "1-2 sentence description of what this workflow does",
-  "nodes": [...],
-  "configurableParams": [...]
+  "description": "1-2 sentence description",
+  "nodes": [
+    {
+      "id": "n1",
+      "step": "Human-readable step title",
+      "server_name": "server.name",
+      "tool_name": "tool_name",
+      "arguments": { ... },
+      "depends_on": [],
+      "output_key": "descriptive_key_name"
+    }
+  ],
+  "configurableParams": [
+    {
+      "nodeId": "n1",
+      "paramKey": "argument_key",
+      "label": "Human Label",
+      "description": "Why this is configurable",
+      "defaultValue": "current value",
+      "type": "string"
+    }
+  ]
 }`;
 
     const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
@@ -91,6 +135,7 @@ Return EXACTLY a JSON object with this schema, and NOTHING ELSE:
       body: JSON.stringify({
         model: "gemini-3-flash-preview",
         messages: [{ role: "user", content: prompt }],
+        max_tokens: 8192,
       }),
     });
 
@@ -99,7 +144,15 @@ Return EXACTLY a JSON object with this schema, and NOTHING ELSE:
     }
 
     const data = await resp.json();
-    const text = data.choices[0].message.content || "";
+    const msg = data.choices?.[0]?.message;
+    const text = msg?.content || "";
+
+    // Log for debugging
+    console.log("[draftWorkflowConversion] Gemini response length:", text.length);
+    console.log("[draftWorkflowConversion] Gemini finish_reason:", data.choices?.[0]?.finish_reason);
+    if (!text) {
+      console.log("[draftWorkflowConversion] Empty content. Full message keys:", Object.keys(msg || {}));
+    }
 
     let parsed;
     try {
@@ -115,21 +168,31 @@ Return EXACTLY a JSON object with this schema, and NOTHING ELSE:
           parsed = JSON.parse(text.trim());
         }
       }
-    } catch {
-      // Fallback to naive linear mapping if JSON parsing fails
-      const nodes = args.executedSteps.map((step: any, i: number) => ({
-        id: `n${i + 1}`,
-        step: `Step ${i + 1}: ${step.tool_name || ""}`,
-        server_name: step.server_name || "",
-        tool_name: step.tool_name || "",
-        arguments: step.arguments || {},
-        depends_on: i > 0 ? [`n${i}`] : [],
-        output_key: `r${i + 1}`,
-      }));
-      return { nodes, configurableParams: [] };
+    } catch (e) {
+      console.log("[draftWorkflowConversion] JSON parse failed:", (e as Error).message);
+      console.log("[draftWorkflowConversion] Raw text preview:", text.slice(0, 500));
+      // Fallback: naive linear mapping of successful steps only
+      const nodes = args.executedSteps
+        .filter((s: any) => !(s.result && typeof s.result === "object" && s.result.error))
+        .map((step: any, i: number) => ({
+          id: `n${i + 1}`,
+          step: `${step.tool_name || "Step " + (i + 1)}`,
+          server_name: step.server_name || "",
+          tool_name: step.tool_name || "",
+          arguments: step.arguments || {},
+          depends_on: i > 0 ? [`n${i}`] : [],
+          output_key: `r${i + 1}`,
+        }));
+      return { name: args.name, description: "", nodes, configurableParams: [] };
     }
 
-    return parsed;
+    // Ensure all expected fields exist
+    return {
+      name: parsed.name || args.name,
+      description: parsed.description || "",
+      nodes: parsed.nodes || [],
+      configurableParams: parsed.configurableParams || [],
+    };
   },
 });
 

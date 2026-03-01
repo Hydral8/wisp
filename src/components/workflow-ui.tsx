@@ -199,6 +199,8 @@ export function ChatPane({
   loading: boolean;
 }) {
   const [input, setInput] = useState("");
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -210,6 +212,31 @@ export function ChatPane({
     onSend(input.trim());
     setInput("");
   };
+
+  const toggleVoice = useCallback(() => {
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setListening(false);
+      return;
+    }
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) return;
+    const rec = new SR();
+    rec.lang = "en-US";
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.onresult = (e: any) => {
+      const transcript = Array.from(e.results as SpeechRecognitionResultList)
+        .map((r: any) => r[0].transcript)
+        .join("");
+      setInput(transcript);
+    };
+    rec.onend = () => setListening(false);
+    rec.onerror = () => setListening(false);
+    recognitionRef.current = rec;
+    rec.start();
+    setListening(true);
+  }, [listening]);
 
   return (
     <div
@@ -270,14 +297,41 @@ export function ChatPane({
       </div>
 
       <div style={{ padding: "10px 12px", borderTop: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button
+            onClick={toggleVoice}
+            title={listening ? "Stop listening" : "Voice input"}
+            style={{
+              width: 34, height: 34, borderRadius: 8, border: "none",
+              background: listening ? "var(--red, #ef4444)" : "transparent",
+              color: listening ? "#fff" : "var(--text-muted)",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0, transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => { if (!listening) e.currentTarget.style.color = "var(--text)"; }}
+            onMouseLeave={(e) => { if (!listening) e.currentTarget.style.color = "var(--text-muted)"; }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="5" y="1" width="6" height="9" rx="3" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M3 7.5a5 5 0 0 0 10 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M8 13v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+            {listening && (
+              <div style={{
+                position: "absolute", width: 34, height: 34, borderRadius: 8,
+                border: "2px solid var(--red, #ef4444)", animation: "pulse-dot 1s ease-in-out infinite",
+                pointerEvents: "none",
+              }} />
+            )}
+          </button>
           <input
             style={{
               flex: 1, padding: "7px 12px", borderRadius: 8, fontSize: 13,
-              outline: "none", border: "1px solid var(--border)",
+              outline: "none", border: listening ? "1px solid var(--red, #ef4444)" : "1px solid var(--border)",
               background: "transparent", color: "var(--text)", fontFamily: "inherit",
+              transition: "border-color 0.15s",
             }}
-            placeholder="Follow up..."
+            placeholder={listening ? "Listening..." : "Follow up..."}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send()}
