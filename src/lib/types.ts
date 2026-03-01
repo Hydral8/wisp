@@ -118,6 +118,7 @@ export type PlanningEvent =
   | { type: "dag_complete"; workflow: Workflow }
   | { type: "planning_error"; message: string }
   | { type: "tool_exec_start"; server_name: string; tool_name: string; arguments: Record<string, unknown> }
+  | { type: "tool_exec_progress"; server_name: string; tool_name: string; result: unknown; elapsed: number }
   | { type: "tool_exec_complete"; server_name: string; tool_name: string; result: unknown; elapsed: number; success: boolean }
   | { type: "agent_done"; text: string; executed_steps: Record<string, unknown>[] };
 

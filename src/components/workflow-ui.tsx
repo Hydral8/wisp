@@ -401,7 +401,7 @@ export function PlanningFeed({
   const visible = events.filter((e) =>
     e.type === "tool_search_complete" || e.type === "planning_thinking" ||
     e.type === "planning_warnings" || e.type === "dag_complete" || e.type === "planning_error" ||
-    e.type === "tool_exec_start" || e.type === "tool_exec_complete" || e.type === "agent_done"
+    e.type === "tool_exec_start" || e.type === "tool_exec_progress" || e.type === "tool_exec_complete" || e.type === "agent_done"
   );
 
   return (
@@ -545,11 +545,80 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
       );
     }
 
+    case "tool_exec_progress": {
+      const resultObj = (event.result && typeof event.result === "object" && !Array.isArray(event.result))
+        ? event.result as Record<string, unknown> : null;
+      const totalSteps = resultObj && typeof resultObj.total_steps === "number"
+        ? resultObj.total_steps : 0;
+      const steps = resultObj && Array.isArray(resultObj.steps)
+        ? resultObj.steps as Array<Record<string, unknown>> : [];
+      const lastStep = steps.length > 0 ? steps[steps.length - 1] : null;
+      const lastGoal = lastStep && typeof lastStep.goal === "string" ? lastStep.goal : "";
+      return (
+        <div className="animate-fade-in-fast" style={{ padding: "4px 0" }}>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--blue, #3b82f6)" }} />
+            <span style={{ fontSize: 12, color: "var(--text)" }}>
+              Monitoring: {event.server_name} / {event.tool_name}
+              {totalSteps > 0 ? ` · ${totalSteps} step(s)` : " · starting"}
+            </span>
+          </div>
+          {lastGoal && (
+            <div style={{ fontSize: 12, color: "var(--text-dim)", marginTop: 2, marginLeft: 12, lineHeight: 1.5 }}>
+              Latest goal: {lastGoal}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     case "tool_exec_complete": {
       const result = event.result;
       const resultObj = (result && typeof result === "object" && !Array.isArray(result))
         ? result as Record<string, unknown> : null;
       const liveUrl = resultObj && typeof resultObj.live_url === "string" ? resultObj.live_url : undefined;
+      if (event.tool_name === "monitor_task" && resultObj) {
+        const outputText = typeof resultObj.task_output === "string" ? resultObj.task_output : "";
+        const totalSteps = typeof resultObj.total_steps === "number" ? resultObj.total_steps : undefined;
+        const isSuccess = resultObj.is_success;
+        const costUsd =
+          resultObj.cost && typeof resultObj.cost === "object" && !Array.isArray(resultObj.cost)
+            ? (resultObj.cost as Record<string, unknown>).usd
+            : undefined;
+        return (
+          <Collapsible
+            label={`${event.server_name} / ${event.tool_name}`}
+            meta={`${event.success ? "OK" : "FAIL"} · ${event.elapsed}s`}
+            defaultOpen={true}
+          >
+            <div style={{ fontSize: 13, color: "var(--text)", marginBottom: 8 }}>
+              {isSuccess === true && "Browser task completed successfully."}
+              {isSuccess === false && "Browser task failed."}
+              {isSuccess !== true && isSuccess !== false && "Browser task is still running."}
+              {typeof totalSteps === "number" && ` Total steps: ${totalSteps}.`}
+              {typeof costUsd === "number" && ` Cost: $${costUsd.toFixed(4)}.`}
+            </div>
+            {outputText && (
+              <div className="markdown-body" style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text)", marginBottom: 8 }}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{outputText}</ReactMarkdown>
+              </div>
+            )}
+            {liveUrl && (
+              <div style={{ marginBottom: 8 }}>
+                <a href={liveUrl} target="_blank" rel="noreferrer"
+                  style={{ fontSize: 12, color: "var(--blue)", textDecoration: "underline" }}>
+                  Open live browser view
+                </a>
+              </div>
+            )}
+            {!outputText && (
+              <pre style={{ fontSize: 11, lineHeight: 1.5, color: "var(--text-dim)", margin: 0, maxHeight: 220, overflow: "auto", whiteSpace: "pre-wrap" }}>
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            )}
+          </Collapsible>
+        );
+      }
       const preview = JSON.stringify(result, null, 2);
       return (
         <Collapsible
@@ -689,6 +758,27 @@ function BrowserLiveView({
   isRunning?: boolean;
 }) {
   const [maximized, setMaximized] = useState(false);
+  const [refreshTick, setRefreshTick] = useState(0);
+
+  useEffect(() => {
+    setRefreshTick(0);
+  }, [liveUrl]);
+
+  // Browser-use live view occasionally stalls on first embed load.
+  // While running, force a few gentle reconnects to recover automatically.
+  useEffect(() => {
+    if (!isRunning) return;
+    const id = setInterval(() => {
+      setRefreshTick((n) => (n < 3 ? n + 1 : n));
+    }, 15000);
+    return () => clearInterval(id);
+  }, [isRunning, liveUrl]);
+
+  const iframeSrc = useMemo(() => {
+    if (refreshTick <= 0) return liveUrl;
+    const sep = liveUrl.includes("?") ? "&" : "?";
+    return `${liveUrl}${sep}_embed_refresh=${refreshTick}`;
+  }, [liveUrl, refreshTick]);
 
   const iframeContent = (
     <div
@@ -725,6 +815,21 @@ function BrowserLiveView({
           <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Browser session</span>
         </div>
         <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+          <button
+            onClick={() => setRefreshTick((n) => n + 1)}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "2px 6px",
+              borderRadius: 4,
+              color: "var(--text-dim)",
+              fontSize: 11,
+            }}
+            title="Reload live view"
+          >
+            Reload
+          </button>
           <button
             onClick={() => setMaximized(!maximized)}
             style={{
@@ -763,7 +868,8 @@ function BrowserLiveView({
 
       {/* Iframe */}
       <iframe
-        src={liveUrl}
+        key={iframeSrc}
+        src={iframeSrc}
         style={{
           width: "100%",
           height: maximized ? "calc(100vh - 80px)" : 400,
