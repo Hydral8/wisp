@@ -229,28 +229,26 @@ async function execLlm(args: Record<string, any>): Promise<Record<string, any>> 
   if (typeof inputData === "object") inputData = JSON.stringify(inputData, null, 2);
   const userMsg = inputData ? `${prompt}\n\nInput:\n${inputData}` : prompt;
 
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicKey) return { error: "ANTHROPIC_API_KEY not set" };
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) return { error: "GEMINI_API_KEY not set" };
 
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+  const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
     method: "POST",
     headers: {
-      "x-api-key": anthropicKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
+      "Authorization": `Bearer ${geminiKey}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
+      model: "gemini-3-flash-preview",
+      max_tokens: 8192,
       messages: [{ role: "user", content: userMsg }],
     }),
   });
 
+  if (!resp.ok) return { error: `Gemini API error: ${resp.status}` };
+
   const data = await resp.json();
-  const text = (data.content || [])
-    .filter((b: any) => b.type === "text")
-    .map((b: any) => b.text)
-    .join("");
+  const text = data.choices?.[0]?.message?.content || "";
   return { result: text };
 }
 

@@ -1082,9 +1082,11 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
 function WorkflowGraph({
   nodes,
   configurableParams,
+  nodeStatuses,
 }: {
   nodes: DAGNode[];
   configurableParams?: ConfigurableParam[];
+  nodeStatuses?: Map<string, NodeStatus>;
 }) {
   const levels = getLevels(nodes);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1092,6 +1094,9 @@ function WorkflowGraph({
   const [paths, setPaths] = useState<
     { d: string; cx: number; cy: number; key: string }[]
   >([]);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const selectedNode = selectedNodeId ? nodes.find(n => n.id === selectedNodeId) : null;
+  const selectedStatus = selectedNodeId ? nodeStatuses?.get(selectedNodeId) : null;
 
   // Build a map: output_key → node id that produces it
   const outputKeyOwner = useMemo(() => {
@@ -1253,18 +1258,28 @@ function WorkflowGraph({
           </div>
           {level.filter((n) => n.server_name !== "__input__").map((node) => {
             const isLlm = node.server_name === "__llm__";
+            const status = nodeStatuses?.get(node.id);
+            const borderColor = status?.status === "complete" ? "var(--green)"
+              : status?.status === "running" ? "var(--blue)"
+              : status?.status === "error" ? "var(--red, #ef4444)"
+              : isLlm ? "var(--accent)" : "var(--blue)";
+            const isClickable = status && (status.status === "complete" || status.status === "error");
             return (
               <div
                 key={node.id}
                 ref={setNodeRef(node.id)}
+                className={status?.status === "running" ? "node-active" : ""}
+                onClick={isClickable ? () => setSelectedNodeId(node.id) : undefined}
                 style={{
                   width: 260,
                   padding: "12px 14px",
                   borderRadius: 12,
                   background: "var(--bg-card)",
                   border: "1px solid var(--border)",
-                  borderLeft: isLlm ? "3px solid var(--accent)" : "3px solid var(--blue)",
+                  borderLeft: `3px solid ${borderColor}`,
                   position: "relative",
+                  transition: "border-color 0.3s",
+                  cursor: isClickable ? "pointer" : "default",
                 }}
               >
                 {/* Left handle */}
@@ -1276,53 +1291,92 @@ function WorkflowGraph({
                   }} />
                 )}
 
-                {/* Title */}
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{node.step}</div>
+                {/* Title + status */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", minWidth: 0 }}>{node.step}</div>
+                  {status && (
+                    <div style={{
+                      width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                      background: status.status === "complete" ? "var(--green)"
+                        : status.status === "running" ? "var(--blue)"
+                        : status.status === "error" ? "var(--red, #ef4444)"
+                        : "var(--text-muted)",
+                      animation: status.status === "running" ? "pulse-dot 1s ease-in-out infinite" : "none",
+                    }} />
+                  )}
+                </div>
 
                 {/* Subtitle */}
                 <div style={{ fontSize: 11, marginTop: 3, color: isLlm ? "var(--accent)" : "var(--blue)" }}>
                   {isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`}
                 </div>
 
-                {/* Params / arguments */}
-                {isLlm && typeof node.arguments.prompt === "string" ? (
-                  <p style={{
-                    fontSize: 11, marginTop: 8, marginBottom: 0, color: "var(--text-dim)",
-                    lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical", overflow: "hidden",
+                {/* Execution result preview (replaces args when complete) */}
+                {status?.status === "complete" && status.result != null ? (
+                  <div style={{
+                    fontSize: 11, marginTop: 8, color: "var(--text-dim)", lineHeight: 1.5,
+                    display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
                   }}>
-                    {node.arguments.prompt}
-                  </p>
+                    {formatResult(status.result)}
+                  </div>
+                ) : status?.status === "error" ? (
+                  <div style={{ fontSize: 11, marginTop: 8, color: "var(--red, #ef4444)", lineHeight: 1.5 }}>
+                    {status.error || "Error"}
+                  </div>
+                ) : status?.status === "running" ? (
+                  <div style={{ fontSize: 11, marginTop: 8, color: "var(--text-muted)" }}>
+                    Running...
+                  </div>
                 ) : (
-                  Object.keys(node.arguments).length > 0 && (
-                    <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
-                      {Object.entries(node.arguments).map(([k, v]) => {
-                        const strVal = String(v);
-                        const refOwner = outputKeyOwner.get(strVal);
-                        return (
-                          <div key={k} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
-                            <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>{k}</span>
-                            {refOwner ? (
-                              <span style={{
-                                fontSize: 10, padding: "1px 7px", borderRadius: 8,
-                                background: "rgba(124,107,240,0.15)", color: "var(--accent)", fontWeight: 500,
-                              }}>
-                                {strVal}
-                              </span>
-                            ) : (
-                              <span style={{ color: "var(--text-dim)" }}>
-                                {strVal.length > 28 ? strVal.slice(0, 28) + "…" : strVal}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )
+                  /* Default: show arguments */
+                  <>
+                    {isLlm && typeof node.arguments.prompt === "string" ? (
+                      <p style={{
+                        fontSize: 11, marginTop: 8, marginBottom: 0, color: "var(--text-dim)",
+                        lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical", overflow: "hidden",
+                      }}>
+                        {node.arguments.prompt}
+                      </p>
+                    ) : (
+                      Object.keys(node.arguments).length > 0 && (
+                        <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
+                          {Object.entries(node.arguments).map(([k, v]) => {
+                            const strVal = String(v);
+                            const refOwner = outputKeyOwner.get(strVal);
+                            return (
+                              <div key={k} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
+                                <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>{k}</span>
+                                {refOwner ? (
+                                  <span style={{
+                                    fontSize: 10, padding: "1px 7px", borderRadius: 8,
+                                    background: "rgba(124,107,240,0.15)", color: "var(--accent)", fontWeight: 500,
+                                  }}>
+                                    {strVal}
+                                  </span>
+                                ) : (
+                                  <span style={{ color: "var(--text-dim)" }}>
+                                    {strVal.length > 28 ? strVal.slice(0, 28) + "…" : strVal}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )
+                    )}
+                  </>
+                )}
+
+                {/* Elapsed time */}
+                {status?.elapsed != null && (
+                  <div style={{ fontSize: 10, marginTop: 6, color: "var(--text-muted)", textAlign: "right" }}>
+                    {status.elapsed}s
+                  </div>
                 )}
 
                 {/* Output key badge */}
-                {node.output_key && (
+                {node.output_key && !status && (
                   <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                     <span style={{
                       fontSize: 10, fontFamily: "monospace", padding: "2px 8px", borderRadius: 6,
@@ -1338,13 +1392,87 @@ function WorkflowGraph({
                   position: "absolute", right: -5, top: "50%", transform: "translateY(-50%)",
                   width: 10, height: 10, borderRadius: "50%",
                   background: "var(--bg-card)",
-                  border: isLlm ? "2px solid var(--accent)" : "2px solid var(--blue)",
+                  border: `2px solid ${borderColor}`,
+                  transition: "border-color 0.3s",
                 }} />
               </div>
             );
           })}
         </div>
       ))}
+
+      {/* Node detail modal */}
+      {selectedNode && selectedStatus && (
+        <div
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+          onClick={() => setSelectedNodeId(null)}
+        >
+          <div
+            style={{
+              background: "var(--bg-card)", border: "1px solid var(--border)",
+              borderRadius: 14, padding: 24, minWidth: 420, maxWidth: 640,
+              maxHeight: "80vh", overflowY: "auto",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>{selectedNode.step}</div>
+                <div style={{ fontSize: 12, color: "var(--text-dim)", marginTop: 2 }}>
+                  {selectedNode.server_name === "__llm__" ? "Language model" : `${selectedNode.server_name} / ${selectedNode.tool_name}`}
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                {selectedStatus.elapsed != null && (
+                  <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{selectedStatus.elapsed}s</span>
+                )}
+                <span style={{
+                  fontSize: 10, padding: "2px 8px", borderRadius: 4, fontWeight: 500,
+                  background: selectedStatus.status === "complete" ? "rgba(74,222,128,0.12)" : "rgba(239,68,68,0.12)",
+                  color: selectedStatus.status === "complete" ? "var(--green)" : "var(--red, #ef4444)",
+                }}>
+                  {selectedStatus.status === "complete" ? "Done" : "Error"}
+                </span>
+              </div>
+            </div>
+
+            {selectedStatus.error ? (
+              <div style={{
+                padding: 14, borderRadius: 8, background: "rgba(239,68,68,0.06)",
+                border: "1px solid rgba(239,68,68,0.15)", fontSize: 12, color: "var(--red, #ef4444)",
+                lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-word",
+              }}>
+                {selectedStatus.error}
+              </div>
+            ) : selectedStatus.result != null ? (
+              <div style={{
+                padding: 14, borderRadius: 8, background: "var(--bg-surface)",
+                border: "1px solid var(--border)", fontSize: 12, color: "var(--text)",
+                lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-word",
+                maxHeight: 400, overflowY: "auto",
+              }}>
+                {formatResult(selectedStatus.result)}
+              </div>
+            ) : null}
+
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
+              <button
+                onClick={() => setSelectedNodeId(null)}
+                style={{
+                  padding: "6px 16px", borderRadius: 8, fontSize: 12,
+                  border: "1px solid var(--border)", background: "transparent",
+                  color: "var(--text-dim)", cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1403,6 +1531,8 @@ export function WorkflowPane({
         description: `Default: ${n.arguments?.default ?? n.arguments?.value ?? ""}`,
         defaultValue: n.arguments?.value ?? n.arguments?.default ?? "",
         type: "string" as const,
+        options: undefined as string[] | undefined,
+        placeholder: undefined as string | undefined,
       }));
   }, [workflow.configurableParams, workflow.nodes]);
 
@@ -1569,26 +1699,90 @@ export function WorkflowPane({
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
             {inputParams.map(cp => {
               const key = `${cp.nodeId}.${cp.paramKey}`;
+              const baseStyle: React.CSSProperties = {
+                padding: "6px 10px", borderRadius: 6, fontSize: 12, outline: "none",
+                border: "1px solid var(--border)", background: "var(--bg-surface)",
+                color: "var(--text)", fontFamily: "inherit", width: "100%",
+              };
+              const placeholder = cp.placeholder ?? cp.description;
+              const value = runtimeValues[key] ?? "";
+              const onChange = (v: unknown) => setRuntimeValues(prev => ({ ...prev, [key]: v }));
+
+              let input: React.ReactNode;
+              switch (cp.type) {
+                case "date":
+                  input = (
+                    <input type="date" value={String(value)} onChange={e => onChange(e.target.value)}
+                      style={baseStyle} title={cp.description} />
+                  );
+                  break;
+                case "select":
+                  input = (
+                    <select value={String(value)} onChange={e => onChange(e.target.value)}
+                      style={baseStyle} title={cp.description}>
+                      <option value="">{placeholder || "Select..."}</option>
+                      {(cp.options ?? []).map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  );
+                  break;
+                case "url":
+                  input = (
+                    <input type="url" value={String(value)} onChange={e => onChange(e.target.value)}
+                      placeholder={placeholder} style={baseStyle} title={cp.description} />
+                  );
+                  break;
+                case "email":
+                  input = (
+                    <input type="email" value={String(value)} onChange={e => onChange(e.target.value)}
+                      placeholder={placeholder} style={baseStyle} title={cp.description} />
+                  );
+                  break;
+                case "textarea":
+                  input = (
+                    <textarea rows={3} value={String(value)} onChange={e => onChange(e.target.value)}
+                      placeholder={placeholder} style={{ ...baseStyle, resize: "vertical" }} title={cp.description} />
+                  );
+                  break;
+                case "boolean":
+                  input = (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0" }}
+                      onClick={() => onChange(!value)} title={cp.description}>
+                      <div style={{
+                        width: 36, height: 20, borderRadius: 10, cursor: "pointer",
+                        background: value ? "var(--green)" : "var(--border)",
+                        position: "relative", transition: "background 0.2s",
+                      }}>
+                        <div style={{
+                          width: 16, height: 16, borderRadius: "50%", background: "#fff",
+                          position: "absolute", top: 2, left: value ? 18 : 2,
+                          transition: "left 0.2s",
+                        }} />
+                      </div>
+                      <span style={{ fontSize: 11, color: "var(--text-dim)" }}>{value ? "On" : "Off"}</span>
+                    </div>
+                  );
+                  break;
+                case "number":
+                  input = (
+                    <input type="number" value={String(value)} onChange={e => onChange(Number(e.target.value))}
+                      placeholder={placeholder} style={baseStyle} title={cp.description} />
+                  );
+                  break;
+                default:
+                  input = (
+                    <input type="text" value={String(value)} onChange={e => onChange(e.target.value)}
+                      placeholder={placeholder} style={baseStyle} title={cp.description} />
+                  );
+              }
+
               return (
                 <div key={key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <label style={{ fontSize: 11, fontWeight: 500, color: "var(--text-dim)" }}>
                     {cp.label} <span style={{ color: "var(--text-muted)", fontSize: 10 }}>({cp.type})</span>
                   </label>
-                  <input
-                    type={cp.type === "number" ? "number" : "text"}
-                    value={runtimeValues[key] ?? ""}
-                    onChange={e => setRuntimeValues(prev => ({
-                      ...prev,
-                      [key]: cp.type === "number" ? Number(e.target.value) : e.target.value
-                    }))}
-                    placeholder={cp.description}
-                    title={cp.description}
-                    style={{
-                      padding: "6px 10px", borderRadius: 6, fontSize: 12, outline: "none",
-                      border: "1px solid var(--border)", background: "var(--bg-surface)",
-                      color: "var(--text)", fontFamily: "inherit"
-                    }}
-                  />
+                  {input}
                 </div>
               );
             })}
@@ -1596,37 +1790,22 @@ export function WorkflowPane({
         </div>
       )}
 
-      {showExecution && <PipelineBar nodes={workflow.nodes} nodeStatuses={nodeStatuses} />}
-
       <div className="flex-1 overflow-auto p-4">
-        {showExecution ? (
-          <div className="space-y-3">
-            {(() => {
-              const visibleNodes = workflow.nodes.filter((n) => nodeStatuses.has(n.id));
-              const lastIdx = visibleNodes.length - 1;
-              const allDone = phase === "done";
-              return visibleNodes.map((n, i) => (
-                <ExecutionEntry
-                  key={n.id}
-                  node={nodeStatuses.get(n.id)!}
-                  isFinal={allDone && i === lastIdx}
-                />
-              ));
-            })()}
-            {webhookUrl && (
-              <div
-                className="p-3 rounded-lg text-xs animate-fade-in"
-                style={{ background: "rgba(124,107,240,0.1)", border: "1px solid var(--accent)" }}
-              >
-                <div className="font-medium mb-1" style={{ color: "var(--accent)" }}>
-                  Webhook Created
-                </div>
-                <code style={{ color: "var(--text-dim)" }}>{webhookUrl}</code>
-              </div>
-            )}
+        <WorkflowGraph
+          nodes={workflow.nodes}
+          configurableParams={workflow.configurableParams}
+          nodeStatuses={showExecution ? nodeStatuses : undefined}
+        />
+        {webhookUrl && (
+          <div
+            className="p-3 rounded-lg text-xs animate-fade-in mt-3"
+            style={{ background: "rgba(124,107,240,0.1)", border: "1px solid var(--accent)" }}
+          >
+            <div className="font-medium mb-1" style={{ color: "var(--accent)" }}>
+              Webhook Created
+            </div>
+            <code style={{ color: "var(--text-dim)" }}>{webhookUrl}</code>
           </div>
-        ) : (
-          <WorkflowGraph nodes={workflow.nodes} configurableParams={workflow.configurableParams} />
         )}
       </div>
     </div>

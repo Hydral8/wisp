@@ -71,7 +71,9 @@ export interface ConfigurableParam {
   label: string;
   description: string;
   defaultValue: unknown;
-  type: "string" | "number" | "boolean";
+  type: "string" | "number" | "boolean" | "date" | "select" | "url" | "email" | "textarea";
+  options?: string[];
+  placeholder?: string;
 }
 
 export interface MarketplaceItem {

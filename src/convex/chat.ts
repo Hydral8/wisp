@@ -135,10 +135,32 @@ Return EXACTLY a JSON object with this schema and NOTHING ELSE (no markdown fenc
       "label": "Origin City",
       "description": "The departure city",
       "defaultValue": "NYC",
-      "type": "string"
+      "type": "select",
+      "options": ["NYC", "LAX", "SFO", "ORD", "ATL", "DFW", "BOS", "SEA", "MIA", "DEN"],
+      "placeholder": "Choose departure city"
+    },
+    {
+      "nodeId": "input_2",
+      "paramKey": "value",
+      "label": "Departure Date",
+      "description": "When to depart",
+      "defaultValue": "2026-03-15",
+      "type": "date"
     }
   ]
-}`;
+}
+
+### Type Inference Guide for configurableParams
+Infer the most specific input type from context. Valid types: "string" | "number" | "boolean" | "date" | "select" | "url" | "email" | "textarea"
+- Dates (departure date, deadline, start/end date) → "date"
+- Airports, cities, countries, categories, or any fixed-set choice → "select" with an "options" array of common values
+- URLs, links, website addresses → "url"
+- Email addresses → "email"
+- Long text, prompts, descriptions, message bodies → "textarea"
+- On/off flags, toggles, yes/no → "boolean"
+- Counts, amounts, numeric values → "number"
+- Short free-text (names, queries, keywords) → "string"
+- Always include "placeholder" with a short hint for the user (e.g. "Enter your email", "Pick a date")`;
 
     const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
