@@ -182,11 +182,13 @@ export default defineSchema({
     toolId: v.id("tools"),
     fullDoc: v.string(),
     embedding: v.array(v.float64()),
-  }).vectorIndex("by_embedding", {
-    vectorField: "embedding",
-    dimensions: 768,
-    filterFields: [],
-  }),
+  })
+    .index("by_tool", ["toolId"])
+    .vectorIndex("by_embedding", {
+      vectorField: "embedding",
+      dimensions: 768,
+      filterFields: [],
+    }),
 
   marketRankings: defineTable({
     serverName: v.string(),

@@ -1,4 +1,4 @@
-import { query, action, internalQuery } from "./_generated/server";
+import { query, action, mutation, internalQuery } from "./_generated/server";
 import { internal, api } from "./_generated/api";
 import { v } from "convex/values";
 
@@ -196,6 +196,44 @@ export const getServerByName = query({
       .query("servers")
       .withIndex("by_name", (q) => q.eq("name", args.name))
       .unique();
+  },
+});
+
+/** Remove a server and all related data (tools, embeddings, packages, remotes, env vars). */
+export const removeServer = mutation({
+  args: { serverName: v.string() },
+  handler: async (ctx, args) => {
+    const server = await ctx.db
+      .query("servers")
+      .withIndex("by_name", (q) => q.eq("name", args.serverName))
+      .unique();
+    if (!server) throw new Error(`Server not found: ${args.serverName}`);
+
+    // Delete tools and their embeddings
+    const tools = await ctx.db
+      .query("tools")
+      .withIndex("by_server", (q) => q.eq("serverName", args.serverName))
+      .collect();
+    for (const tool of tools) {
+      const embs = await ctx.db
+        .query("toolEmbeddings")
+        .withIndex("by_tool", (q) => q.eq("toolId", tool._id))
+        .collect();
+      for (const e of embs) await ctx.db.delete(e._id);
+      await ctx.db.delete(tool._id);
+    }
+
+    // Delete packages, remotes, env vars
+    for (const table of ["serverPackages", "serverRemotes", "environmentVariables"] as const) {
+      const docs = await ctx.db
+        .query(table)
+        .withIndex("by_server", (q) => q.eq("serverName", args.serverName))
+        .collect();
+      for (const d of docs) await ctx.db.delete(d._id);
+    }
+
+    await ctx.db.delete(server._id);
+    return { deleted: args.serverName, toolsRemoved: tools.length };
   },
 });
 

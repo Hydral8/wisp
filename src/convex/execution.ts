@@ -359,75 +359,91 @@ export const startExecution = action({
             result = enrichedArgs?.value ?? enrichedArgs?.default ?? "";
           } else if (node.server_name === "__llm__") {
             result = await execLlm(enrichedArgs);
-          } else if (node.server_name === "__browser_use__") {
-            // Browser-Use API direct call
-            const task =
-              typeof enrichedArgs === "string"
-                ? enrichedArgs
-                : enrichedArgs?.task || enrichedArgs?.prompt || node.step;
+          } else if (node.server_name === "browser-use" || node.server_name === "__browser_use__") {
+            // Browser Use — intercept and use API directly with polling.
+            // The MCP status tool hangs, so we always use the direct API.
 
-            const buResp = await fetch(`${browserUseApi}/sessions`, {
-              method: "POST",
-              headers: {
-                "X-Browser-Use-API-Key": browserUseApiKey || "",
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ task, model: "bu-mini" }),
-            });
-            const buResult = await buResp.json();
-            const sessionId = buResult.id || "";
-
-            // Emit browser session info
-            if (buResult.liveUrl) {
-              await ctx.runMutation(internal.execution.writeExecutionEvent, {
-                workflowId: args.workflowId,
-                nodeId: node.id,
-                event: {
-                  type: "node_browser_session",
-                  workflow_id: args.workflowId,
-                  node_id: node.id,
-                  data: {
-                    session_id: sessionId,
-                    live_url: buResult.liveUrl,
-                  },
-                },
-              });
-            }
-
-            // Poll until done
-            let pollResult = buResult;
-            for (let poll = 0; poll < 120; poll++) {
-              await new Promise((r) => setTimeout(r, 10000));
-              const statusResp = await fetch(
-                `${browserUseApi}/sessions/${sessionId}`,
-                {
-                  headers: {
-                    "X-Browser-Use-API-Key": browserUseApiKey || "",
-                  },
-                }
+            if (node.tool_name === "status") {
+              // Status node is redundant — the run node already polls to completion.
+              // Just return the result from the run node's output (already in outputs).
+              const prevOutput = Object.values(outputs).find(
+                (o: any) => o && typeof o === "object" && o.session_id
               );
-              pollResult = await statusResp.json();
-              const status = pollResult?.status || "";
-              if (
-                [
-                  "stopped",
-                  "error",
-                  "timed_out",
-                  "idle",
-                  "completed",
-                ].includes(status)
-              ) {
-                break;
-              }
-            }
+              result = prevOutput || { status: "completed", note: "session already finished" };
+            } else {
+              // run / any other tool — create session + poll
+              const task =
+                typeof enrichedArgs === "string"
+                  ? enrichedArgs
+                  : enrichedArgs?.task || enrichedArgs?.prompt || enrichedArgs?.url || node.step;
 
-            result = {
-              task,
-              session_id: sessionId,
-              live_url: buResult.liveUrl || pollResult?.liveUrl,
-              output: pollResult?.output,
-              status: pollResult?.status,
-            };
+              const buResp = await fetch(`${browserUseApi}/sessions`, {
+                method: "POST",
+                headers: {
+                  "X-Browser-Use-API-Key": browserUseApiKey || "",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ task, model: "bu-mini" }),
+              });
+              const buResult = await buResp.json();
+              const sessionId = buResult.id || "";
+
+              if (buResult.liveUrl) {
+                await ctx.runMutation(internal.execution.writeExecutionEvent, {
+                  workflowId: args.workflowId,
+                  nodeId: node.id,
+                  event: {
+                    type: "node_browser_session",
+                    workflow_id: args.workflowId,
+                    node_id: node.id,
+                    data: {
+                      session_id: sessionId,
+                      live_url: buResult.liveUrl,
+                    },
+                  },
+                });
+              }
+
+              // Poll until done
+              let pollResult = buResult;
+              for (let poll = 0; poll < 120; poll++) {
+                await new Promise((r) => setTimeout(r, 10000));
+                const statusResp = await fetch(
+                  `${browserUseApi}/sessions/${sessionId}`,
+                  {
+                    headers: {
+                      "X-Browser-Use-API-Key": browserUseApiKey || "",
+                    },
+                  }
+                );
+                pollResult = await statusResp.json();
+                const status = pollResult?.status || "";
+
+                // Emit progress
+                await ctx.runMutation(internal.execution.writeExecutionEvent, {
+                  workflowId: args.workflowId,
+                  nodeId: node.id,
+                  event: {
+                    type: "node_progress",
+                    workflow_id: args.workflowId,
+                    node_id: node.id,
+                    data: { browser_status: status, poll: poll + 1 },
+                  },
+                });
+
+                if (["stopped", "error", "timed_out", "idle", "completed"].includes(status)) {
+                  break;
+                }
+              }
+
+              result = {
+                task,
+                session_id: sessionId,
+                live_url: buResult.liveUrl || pollResult?.liveUrl,
+                output: pollResult?.output,
+                status: pollResult?.status,
+              };
+            }
           } else if (node.server_name === "__user_input__") {
             // For user input nodes, emit a credential request and wait
             // In Convex, we handle this differently — set status to waiting_input

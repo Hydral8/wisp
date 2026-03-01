@@ -18,14 +18,20 @@ export async function GET(req: NextRequest) {
 <body>
 <p>Connection successful! This window will close automatically.</p>
 <script>
-  if (window.opener) {
-    window.opener.postMessage({
-      type: "composio_callback",
-      connectedAccountId: ${JSON.stringify(connectedAccountId)},
-      status: ${JSON.stringify(status)}
-    }, "*");
+  var msg = {
+    type: "composio_callback",
+    connectedAccountId: ${JSON.stringify(connectedAccountId)},
+    status: ${JSON.stringify(status)}
+  };
+  function notify() {
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage(msg, "*");
+    }
   }
-  setTimeout(() => window.close(), 1500);
+  notify();
+  setTimeout(notify, 300);
+  setTimeout(notify, 800);
+  setTimeout(function() { window.close(); }, 1500);
 </script>
 </body>
 </html>`;

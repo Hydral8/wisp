@@ -47,6 +47,8 @@ export const create = mutation({
         description: v.string(),
         defaultValue: v.any(),
         type: v.string(),
+        options: v.optional(v.array(v.string())),
+        placeholder: v.optional(v.string()),
       })
     )),
   },
@@ -59,6 +61,7 @@ export const create = mutation({
       description: args.description,
       objective: args.objective ?? "",
       nodes: args.nodes,
+      configurableParams: args.configurableParams,
       status: "planned",
       browserUseMode: args.browserUseMode ?? "local",
     });
