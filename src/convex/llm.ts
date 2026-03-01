@@ -6,7 +6,7 @@
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
-const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
+const GEMINI_MODEL = "gemini-3-flash-preview";
 
 interface OAIMessage {
   role: string;
