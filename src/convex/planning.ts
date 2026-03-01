@@ -68,7 +68,13 @@ BROWSER TASKS (last resort):
 - Rewrite and optimize the user's request into a detailed, step-by-step browser instruction prompt.
 
 DO NOT output a JSON DAG. Just work through the task step by step using the tools available.
-When you're done, summarize what was accomplished and whether it succeeded.`;
+When you're done, summarize what was accomplished and whether it succeeded.
+
+STYLE RULES:
+- Do NOT use emojis in your responses. Keep output clean and professional.
+- Do NOT hallucinate tool names, server names, or capabilities. Only use tools you have confirmed exist via search_tools or search_composio_tools.
+- If a tool search returns no results, say so — do not invent a tool that might exist.
+- Always verify tool names and argument schemas from actual search results before calling execute_tool.`;
 
 // --- Agent tool definitions (for Claude/Gemini function calling) ---
 
