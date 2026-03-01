@@ -1,59 +1,88 @@
-# Wisp Instant
+# Wisp
 
 Natural-language workflow automation powered by 2000+ MCP tools. Describe what you want done — Wisp finds the right tools, builds a parallel execution DAG, and runs it live.
 
 ## Architecture
 
 ```
-┌─────────────┐        ┌─────────────┐        ┌──────────────┐
-│   src/      │  HTTP  │   server/   │  HTTP   │   router/    │
-│  Next.js UI │──────▶ │  Orchestrator│───────▶│  MCP Gateway │
-│  :3001      │  SSE   │  :8001      │        │  :8000       │
-└─────────────┘◀───────└─────────────┘        └──────────────┘
+┌─────────────┐        ┌──────────────────┐        ┌──────────────┐
+│   src/      │  WS    │   Convex Cloud   │  HTTP   │   router/    │
+│  Next.js UI │◀──────▶│  (Backend)       │───────▶│  MCP Proxy   │
+│  Vercel     │  real- │  Auth, DB, Vector│        │  Railway     │
+└─────────────┘  time  │  Search, Actions │        └──────────────┘
+                       └──────────────────┘              │
+                                                         ▼
+                                                   MCP Servers
+                                                  (stdio + remote)
 ```
 
-### `/src` — Frontend (Next.js)
+### `/src` — Frontend (Next.js + Convex)
 
-React UI for describing workflows, viewing DAG plans, deploying, and monitoring execution in real time via SSE.
+React UI with real-time subscriptions via Convex. Includes chat-based planning, DAG visualization, and live execution monitoring.
 
-- **Stack**: Next.js 16, React 19, Tailwind CSS 4, TypeScript
+- **Stack**: Next.js 16, React 19, Tailwind CSS 4, TypeScript, Convex
 - **Entry**: `src/app/page.tsx` — chat pane + DAG visualization + execution feed
-- **Port**: 3001
+- **Auth**: Google + GitHub OAuth via `@convex-dev/auth`
 
-### `/server` — Orchestrator (FastAPI)
+### `/src/convex` — Backend (Convex)
 
-Takes a natural-language prompt, uses Claude to search for MCP tools and build an execution DAG, then runs it with parallel topological execution.
+All orchestration, auth, database, and vector search logic runs in Convex.
 
-- **Stack**: FastAPI, Anthropic SDK, httpx
-- **Entry**: `server/main.py`
-- **Port**: 8001
-- **Key flows**:
-  - `POST /plan` — Claude plans a DAG by searching tools via the router
-  - `POST /deploy` — Executes the DAG with SSE streaming of node progress
-  - `POST /automate` — Plan + execute in one call
-  - `POST /webhooks` — Create reusable webhook triggers for workflows
+- **Auth**: `convex/auth.ts` — Google + GitHub OAuth
+- **Planning**: `convex/planning.ts` — Claude-powered agentic loop that searches tools and builds execution DAGs
+- **Execution**: `convex/execution.ts` — Topological DAG execution with parallel levels, credential injection, browser automation
+- **Registry**: `convex/registry.ts` — Semantic tool search via 768D vector embeddings (HuggingFace)
+- **Credentials**: `convex/credentials.ts` — User-scoped credential storage
+- **Workflows**: `convex/workflows.ts` — CRUD for saved workflows
+- **Webhooks**: `convex/webhooks.ts` — Webhook triggers for workflows
+- **Embeddings**: `convex/embeddings.ts` — HuggingFace Inference API for embedding generation
 
-### `/router` — MCP Gateway (FastAPI)
+### `/router` — MCP Proxy (FastAPI)
 
-Tool discovery and execution layer. Embeds tool descriptions for semantic search and proxies calls to MCP servers (stdio, HTTP, local).
+Thin tool execution proxy. Maintains a persistent stdio MCP connection pool and exposes a single `/call` endpoint.
 
-- **Stack**: FastAPI, sentence-transformers, sqlite-vec, MCP SDK
+- **Stack**: FastAPI, MCP SDK, uvicorn
 - **Entry**: `router/server.py`
-- **Port**: 8000
-- **Key flows**:
-  - `GET /search?query=...` — Semantic search over indexed MCP tools
-  - `POST /call` — Execute a tool on any registered MCP server
-  - `GET /servers/{name}/tools` — List tools for a specific server
+- **Endpoints**:
+  - `POST /call` — Execute a tool on any registered MCP server (stdio or remote)
+  - `GET /health` — Health check
+
+### `/server` — Legacy Orchestrator (archived)
+
+The original Python orchestrator. Its logic has been migrated to Convex actions. Kept for reference.
 
 ## How to Run
 
 ### Prerequisites
 
-- Python 3.13+
 - Node.js 20+
+- Python 3.13+ (for MCP proxy only)
 - `uv` (Python package manager)
+- A Convex account (or local Convex backend for development)
 
-### 1. Router (MCP Gateway)
+### 1. Convex Backend
+
+```bash
+cd src
+npm install
+npx convex dev
+# Local backend runs at http://127.0.0.1:3210
+```
+
+Set environment variables in the Convex dashboard (or via `npx convex env set`):
+
+| Variable | Description |
+|---|---|
+| `ANTHROPIC_API_KEY` | Anthropic API key for Claude (planning) |
+| `HUGGINGFACE_API_KEY` | HuggingFace API key (tool embedding generation) |
+| `MCP_PROXY_URL` | URL of the MCP proxy (e.g. `http://localhost:8000`) |
+| `BROWSER_USE_API_KEY` | Browser-Use API key (optional, for browser automation) |
+| `AUTH_GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `AUTH_GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `AUTH_GITHUB_CLIENT_ID` | GitHub OAuth app client ID |
+| `AUTH_GITHUB_CLIENT_SECRET` | GitHub OAuth app secret |
+
+### 2. MCP Proxy
 
 ```bash
 cd router
@@ -62,49 +91,35 @@ uv run python server.py
 # Running on http://localhost:8000
 ```
 
-### 2. Server (Orchestrator)
-
-```bash
-cd server
-# Ensure ANTHROPIC_API_KEY is set in router/server/.env or environment
-uv run python main.py
-# Running on http://localhost:8001
-```
-
 ### 3. Frontend
 
 ```bash
 cd src
-npm install
 npm run dev
 # Running on http://localhost:3001
 ```
 
-### Environment Variables
+### Data Migration (from SQLite)
 
-| Variable | Description |
-|---|---|
-| `ANTHROPIC_API_KEY` | Anthropic API key for Claude (required by server) |
-| `WISP_GATEWAY_URL` | Router URL (default: `http://localhost:8000`) |
-| `NANGO_BASE_URL` | Nango API base URL (for OAuth token brokering), e.g. `https://api.nango.dev` |
-| `NANGO_SECRET_KEY` | Nango secret key used by router/extractor to fetch connection access tokens |
-| `NANGO_MCP_CONNECTIONS_JSON` | JSON map of `server_name` to Nango `provider_config_key` + `connection_id` for MCP auth injection |
+If migrating from the legacy SQLite-based registry:
 
-### Nango Mapping Example
+```bash
+# 1. Export SQLite data to JSON
+cd /path/to/wisp
+python scripts/export_registry.py
 
-```json
-{
-  "com.mintmcp/gmail": {
-    "provider_config_key": "google-mail",
-    "connection_id": "default"
-  },
-  "com.notion/mcp": {
-    "provider_config_key": "notion",
-    "connection_id": "workspace_prod"
-  },
-  "ai.smithery/smithery-ai-slack": {
-    "provider_config_key": "slack",
-    "connection_id": "team_main"
-  }
-}
+# 2. Import into Convex (with Convex dev running)
+node scripts/import_to_convex.mjs
 ```
+
+This imports ~364 servers, ~5,206 tools, and associated metadata. Tool embeddings are stored as zero vectors and need regeneration via HuggingFace.
+
+## MCP Registry
+
+Wisp includes a built-in registry of 364 MCP servers and 5,206 tools with semantic search. The registry is stored in Convex with 768-dimensional vector embeddings for tool discovery.
+
+Supported server types:
+- **npm** — launched via `npx -y <package>`
+- **PyPI** — launched via `uvx <package>`
+- **Remote (HTTP/SSE)** — connected via streamable HTTP or SSE
+- **Docker** — launched via `docker run`

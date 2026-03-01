@@ -2,27 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { API, PRESETS } from "@/components/workflow-ui";
-
-interface WorkflowSummary {
-  id: string;
-  name: string;
-  description: string;
-  status: string;
-  nodes: { id: string }[];
-}
-
-interface CredentialProfile {
-  app_id: string;
-  display_name: string;
-  username: string;
-  email: string;
-  password: string;
-  api_key: string;
-  token: string;
-  notes: string;
-  updated_at: string;
-}
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { SignIn, UserMenu } from "@/components/auth";
+import { PRESETS } from "@/components/workflow-ui";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -94,7 +77,7 @@ const NAV_ITEMS = [
 
 type NavId = (typeof NAV_ITEMS)[number]["id"];
 
-function Sidebar({ active, onChange }: { active: NavId; onChange: (id: NavId) => void }) {
+function Sidebar({ active, onChange, user }: { active: NavId; onChange: (id: NavId) => void; user?: { name?: string; image?: string; email?: string } | null }) {
   return (
     <div
       style={{
@@ -176,34 +159,38 @@ function Sidebar({ active, onChange }: { active: NavId; onChange: (id: NavId) =>
         })}
       </div>
 
-      {/* Settings at bottom */}
-      <button
-        title="Settings"
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 10,
-          border: "none",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "transparent",
-          color: "var(--text-muted)",
-          transition: "background 0.12s, color 0.12s",
-          fontFamily: "inherit",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)";
-          (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
-          (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-        }}
-      >
-        <IconSettings />
-      </button>
+      {/* User avatar + sign out at bottom */}
+      {user ? (
+        <UserMenu user={user} />
+      ) : (
+        <button
+          title="Settings"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "transparent",
+            color: "var(--text-muted)",
+            transition: "background 0.12s, color 0.12s",
+            fontFamily: "inherit",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)";
+            (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
+            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+          }}
+        >
+          <IconSettings />
+        </button>
+      )}
     </div>
   );
 }
@@ -361,16 +348,16 @@ const STATUS_COLOR: Record<string, string> = {
 
 function AutomationsPane() {
   const router = useRouter();
-  const [workflows, setWorkflows] = useState<WorkflowSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${API}/workflows`)
-      .then((r) => r.json())
-      .then((d) => setWorkflows(d.workflows ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const rawWorkflows = useQuery(api.workflows.list);
+  const loading = rawWorkflows === undefined;
+  const workflows: Array<{ id: string; name: string; description: string; status: string; nodes: { id: string }[] }> =
+    (rawWorkflows ?? []).map((wf: any) => ({
+      id: wf._id,
+      name: wf.name,
+      description: wf.description,
+      status: wf.status,
+      nodes: wf.nodes.map((n: any) => ({ id: n.id })),
+    }));
 
   return (
     <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", maxWidth: 900, width: "100%" }}>
@@ -460,22 +447,18 @@ const CREDENTIAL_FIELDS = [
 ] as const;
 
 function CredentialsPane() {
-  const [profiles, setProfiles] = useState<CredentialProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const rawProfiles = useQuery(api.credentials.list);
+  const profiles: Array<{ appId: string; displayName: string; username: string; email: string; password: string; apiKey: string; token: string; notes: string }> =
+    (rawProfiles ?? []) as any;
+  const upsertCredential = useMutation(api.credentials.upsert);
+  const removeCredential = useMutation(api.credentials.remove);
+  const loading = rawProfiles === undefined;
   const [saving, setSaving] = useState(false);
   const [editingAppId, setEditingAppId] = useState<string | null>(null);
   const [form, setForm] = useState({
     appId: "", displayName: "", username: "", email: "",
     password: "", apiKey: "", token: "", notes: "",
   });
-
-  useEffect(() => {
-    fetch(`${API}/credentials/profiles`)
-      .then((r) => r.json())
-      .then((d) => setProfiles(d.profiles ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
   const resetForm = () => {
     setEditingAppId(null);
@@ -487,33 +470,32 @@ function CredentialsPane() {
     if (!appId) return;
     setSaving(true);
     try {
-      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          display_name: form.displayName, username: form.username, email: form.email,
-          password: form.password, api_key: form.apiKey, token: form.token, notes: form.notes,
-        }),
+      await upsertCredential({
+        appId,
+        displayName: form.displayName,
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        apiKey: form.apiKey,
+        token: form.token,
+        notes: form.notes,
       });
-      const refreshed = await fetch(`${API}/credentials/profiles`).then((r) => r.json());
-      setProfiles(refreshed.profiles ?? []);
       resetForm();
     } catch { /* noop */ } finally { setSaving(false); }
   };
 
-  const handleEdit = (p: CredentialProfile) => {
-    setEditingAppId(p.app_id);
+  const handleEdit = (p: any) => {
+    setEditingAppId(p.appId);
     setForm({
-      appId: p.app_id, displayName: p.display_name ?? "", username: p.username ?? "",
-      email: p.email ?? "", password: p.password ?? "", apiKey: p.api_key ?? "",
+      appId: p.appId, displayName: p.displayName ?? "", username: p.username ?? "",
+      email: p.email ?? "", password: p.password ?? "", apiKey: p.apiKey ?? "",
       token: p.token ?? "", notes: p.notes ?? "",
     });
   };
 
   const handleDelete = async (appId: string) => {
     try {
-      await fetch(`${API}/credentials/profiles/${encodeURIComponent(appId)}`, { method: "DELETE" });
-      setProfiles((prev) => prev.filter((p) => p.app_id !== appId));
+      await removeCredential({ appId });
       if (editingAppId === appId) resetForm();
     } catch { /* noop */ }
   };
@@ -620,7 +602,7 @@ function CredentialsPane() {
           <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
             {profiles.map((p) => (
               <div
-                key={p.app_id}
+                key={p.appId}
                 style={{
                   padding: "14px 16px",
                   borderRadius: 10,
@@ -630,17 +612,17 @@ function CredentialsPane() {
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                   <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>
-                    {p.display_name || p.app_id}
+                    {p.displayName || p.appId}
                   </span>
                   <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace" }}>
-                    {p.app_id}
+                    {p.appId}
                   </span>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 12, color: "var(--text-dim)" }}>
                   {p.username && <div>Username: {p.username}</div>}
                   {p.email && <div>Email: {p.email}</div>}
                   {p.password && <div>Password: --------</div>}
-                  {p.api_key && <div>API key: --------</div>}
+                  {p.apiKey && <div>API key: --------</div>}
                   {p.token && <div>Token: --------</div>}
                   {p.notes && <div>Notes: {p.notes}</div>}
                 </div>
@@ -661,7 +643,7 @@ function CredentialsPane() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(p.app_id)}
+                    onClick={() => handleDelete(p.appId)}
                     style={{
                       padding: "4px 12px",
                       borderRadius: 6,
@@ -687,16 +669,52 @@ function CredentialsPane() {
 
 // ─── Marketplace ─────────────────────────────────────────────────────────────
 
-const MARKETPLACE_ITEMS = [
-  { name: "GitHub Intelligence", description: "Search repos, read READMEs, analyze trends and generate reports.", tags: ["GitHub", "Research"], icon: "\u2B21" },
-  { name: "Competitive Analysis", description: "Scrape company homepages, compare features, output structured briefs.", tags: ["Web", "Analysis"], icon: "\u25C8" },
-  { name: "Job Market Scanner", description: "Search job boards, extract salaries & skills, build comparison tables.", tags: ["LinkedIn", "Data"], icon: "\u25C9" },
-  { name: "News Digest", description: "Aggregate top stories from multiple sources with sentiment analysis.", tags: ["News", "AI"], icon: "\u25CE" },
-  { name: "Crypto Price Monitor", description: "Fetch real-time prices across exchanges and generate summaries.", tags: ["Finance", "API"], icon: "\u2B1F" },
-  { name: "Code Review Pipeline", description: "Fetch PRs, analyze diffs, post structured review comments.", tags: ["GitHub", "DevTools"], icon: "\u25EC" },
+const FALLBACK_MARKETPLACE = [
+  { name: "GitHub Intelligence", description: "Search repos, read READMEs, analyze trends and generate reports.", tags: ["GitHub", "Research"] },
+  { name: "Competitive Analysis", description: "Scrape company homepages, compare features, output structured briefs.", tags: ["Web", "Analysis"] },
+  { name: "Job Market Scanner", description: "Search job boards, extract salaries & skills, build comparison tables.", tags: ["LinkedIn", "Data"] },
+  { name: "News Digest", description: "Aggregate top stories from multiple sources with sentiment analysis.", tags: ["News", "AI"] },
 ];
 
 function MarketplacePane() {
+  const router = useRouter();
+  const rawItems = useQuery(api.marketplace.list, {});
+  const useMarketplaceItem = useMutation(api.marketplace.use);
+  const loading = rawItems === undefined;
+  const items = rawItems ?? [];
+  const [usingId, setUsingId] = useState<string | null>(null);
+
+  const handleUse = async (itemId: string) => {
+    setUsingId(itemId);
+    try {
+      const workflowId = await useMarketplaceItem({ marketplaceId: itemId as any });
+      router.push(`/workflow/${workflowId}`);
+    } catch (err) {
+      console.error("Use marketplace item error:", err);
+    } finally {
+      setUsingId(null);
+    }
+  };
+
+  // Show Convex items if available, otherwise show fallback
+  const displayItems = items.length > 0
+    ? items.map((item: any) => ({
+        _id: item._id,
+        name: item.name,
+        description: item.description,
+        tags: item.tags ?? [],
+        publisherName: item.publisherName,
+        usageCount: item.usageCount ?? 0,
+      }))
+    : FALLBACK_MARKETPLACE.map((item, i) => ({
+        _id: null,
+        name: item.name,
+        description: item.description,
+        tags: item.tags,
+        publisherName: null,
+        usageCount: 0,
+      }));
+
   return (
     <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", maxWidth: 900, width: "100%" }}>
       <div style={{ marginBottom: 28 }}>
@@ -708,80 +726,105 @@ function MarketplacePane() {
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
-        {MARKETPLACE_ITEMS.map((item) => (
-          <div
-            key={item.name}
-            style={{
-              padding: "18px 18px",
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--bg-card)",
-              cursor: "pointer",
-              transition: "border-color 0.12s",
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--text-muted)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)"; }}
-          >
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 20, lineHeight: 1 }}>{item.icon}</span>
-              <button
-                style={{
-                  padding: "4px 12px",
-                  borderRadius: 6,
-                  border: "1px solid var(--border)",
-                  background: "transparent",
-                  color: "var(--text-dim)",
-                  fontSize: 11,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  transition: "background 0.12s, color 0.12s",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#fff";
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)";
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-                }}
-              >
-                Use
-              </button>
-            </div>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", marginBottom: 4 }}>
-                {item.name}
+      {loading ? (
+        <div style={{ display: "flex", gap: 5, paddingTop: 40, justifyContent: "center" }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: `pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+          {displayItems.map((item: any) => (
+            <div
+              key={item._id ?? item.name}
+              style={{
+                padding: "18px 18px",
+                borderRadius: 10,
+                border: "1px solid var(--border)",
+                background: "var(--bg-card)",
+                cursor: item._id ? "pointer" : "default",
+                transition: "border-color 0.12s",
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--text-muted)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)"; }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>
+                  {item.name}
+                </div>
+                {item._id && (
+                  <button
+                    onClick={() => handleUse(item._id)}
+                    disabled={usingId === item._id}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: 6,
+                      border: "1px solid var(--border)",
+                      background: usingId === item._id ? "var(--border)" : "transparent",
+                      color: "var(--text-dim)",
+                      fontSize: 11,
+                      fontWeight: 500,
+                      cursor: usingId === item._id ? "not-allowed" : "pointer",
+                      fontFamily: "inherit",
+                      transition: "background 0.12s, color 0.12s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (usingId !== item._id) {
+                        (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
+                        (e.currentTarget as HTMLButtonElement).style.color = "#fff";
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (usingId !== item._id) {
+                        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                        (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)";
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                      }
+                    }}
+                  >
+                    {usingId === item._id ? "Cloning..." : "Use"}
+                  </button>
+                )}
               </div>
               <p style={{ fontSize: 12, color: "var(--text-dim)", margin: 0, lineHeight: 1.5 }}>
                 {item.description}
               </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1 }}>
+                  {item.tags.map((t: string) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontSize: 10,
+                        padding: "2px 8px",
+                        borderRadius: 12,
+                        border: "1px solid var(--border)",
+                        color: "var(--text-muted)",
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                {item.publisherName && (
+                  <span style={{ fontSize: 10, color: "var(--text-muted)" }}>
+                    by {item.publisherName}
+                  </span>
+                )}
+                {item.usageCount > 0 && (
+                  <span style={{ fontSize: 10, color: "var(--text-muted)" }}>
+                    {item.usageCount} use{item.usageCount !== 1 ? "s" : ""}
+                  </span>
+                )}
+              </div>
             </div>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {item.tags.map((t) => (
-                <span
-                  key={t}
-                  style={{
-                    fontSize: 10,
-                    padding: "2px 8px",
-                    borderRadius: 12,
-                    border: "1px solid var(--border)",
-                    color: "var(--text-muted)",
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -789,11 +832,32 @@ function MarketplacePane() {
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const user = useQuery(
+    api.users.currentUser,
+    isAuthenticated ? {} : "skip"
+  );
   const [active, setActive] = useState<NavId>("compose");
+
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)" }}>
+        <div style={{ display: "flex", gap: 5 }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: `pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <SignIn />;
+  }
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar active={active} onChange={setActive} />
+      <Sidebar active={active} onChange={setActive} user={user} />
       <div style={{ marginLeft: 56, flex: 1, display: "flex" }}>
         {active === "compose" && <ComposePane />}
         {active === "automations" && <AutomationsPane />}

@@ -10,8 +10,6 @@ import type {
   AppPhase,
 } from "@/lib/types";
 
-export const API = "http://localhost:8001";
-
 // Chat entries can be plain messages or planning events
 export type ChatEntry = ChatMessage & { planningEvent?: PlanningEvent };
 
@@ -43,31 +41,6 @@ export function getLevels(nodes: DAGNode[]): DAGNode[][] {
     }
   }
   return levels;
-}
-
-export async function consumeSSE(
-  response: Response,
-  onEvent: (event: Record<string, unknown>) => void,
-) {
-  const reader = response.body?.getReader();
-  if (!reader) return;
-  const decoder = new TextDecoder();
-  let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n\n");
-    buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      if (!line.startsWith("data: ")) continue;
-      try {
-        onEvent(JSON.parse(line.slice(6)));
-      } catch {
-        // skip malformed events
-      }
-    }
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -973,6 +946,9 @@ export function WorkflowPane({
   onRun,
   onCreateWebhook,
   webhookUrl,
+  onFreeze,
+  onPublish,
+  freezing,
 }: {
   workflow: Workflow;
   nodeStatuses: Map<string, NodeStatus>;
@@ -983,6 +959,9 @@ export function WorkflowPane({
   onRun: (mode: "deploy" | "test") => void;
   onCreateWebhook: () => void;
   webhookUrl: string | null;
+  onFreeze?: () => void;
+  onPublish?: () => void;
+  freezing?: boolean;
 }) {
   const levels = getLevels(workflow.nodes);
   const showExecution = phase === "executing" || phase === "done";
@@ -1059,6 +1038,33 @@ export function WorkflowPane({
               Create Webhook
             </button>
           )}
+          {onFreeze && (
+            <button
+              onClick={onFreeze}
+              disabled={freezing}
+              style={{
+                padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                border: "1px solid var(--border)", background: "transparent",
+                color: freezing ? "var(--text-muted)" : "var(--text)",
+                cursor: freezing ? "not-allowed" : "pointer", fontFamily: "inherit",
+                opacity: freezing ? 0.6 : 1,
+              }}
+            >
+              {freezing ? "Freezing..." : "Freeze"}
+            </button>
+          )}
+          {onPublish && (
+            <button
+              onClick={onPublish}
+              style={{
+                padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                border: "none", background: "var(--green, #22c55e)",
+                color: "#fff", cursor: "pointer", fontFamily: "inherit",
+              }}
+            >
+              Publish
+            </button>
+          )}
         </div>
       </div>
 
@@ -1087,7 +1093,7 @@ export function WorkflowPane({
                 <div className="font-medium mb-1" style={{ color: "var(--accent)" }}>
                   Webhook Created
                 </div>
-                <code style={{ color: "var(--text-dim)" }}>{API}{webhookUrl}</code>
+                <code style={{ color: "var(--text-dim)" }}>{webhookUrl}</code>
               </div>
             )}
           </div>

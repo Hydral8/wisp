@@ -64,6 +64,28 @@ export interface CredentialRequest {
   reason: string;
 }
 
+export interface ConfigurableParam {
+  nodeId: string;
+  paramKey: string;
+  label: string;
+  description: string;
+  defaultValue: unknown;
+  type: "string" | "number" | "boolean";
+}
+
+export interface MarketplaceItem {
+  _id: string;
+  publisherName: string;
+  name: string;
+  description: string;
+  objective: string;
+  nodes: DAGNode[];
+  configurableParams: ConfigurableParam[];
+  tags: string[];
+  usageCount: number;
+  createdAt: number;
+}
+
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
   content: string;

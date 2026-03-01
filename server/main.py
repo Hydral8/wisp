@@ -19,7 +19,7 @@ from google.genai import types as gtypes
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 # Load .env from router/server/.env (sibling directory)
@@ -32,6 +32,13 @@ ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
 BROWSER_USE_API_KEY = os.getenv("BROWSER_USE_API_KEY", "")
 BROWSER_USE_API = "https://api.browser-use.com/api/v3"
+MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY", "")
+MINIMAX_API_HOST = os.getenv("MINIMAX_API_HOST", "https://api.minimax.io")
+MINIMAX_GROUP_ID = os.getenv("MINIMAX_GROUP_ID", "")
+
+# Audio output directory
+AUDIO_DIR = Path(__file__).resolve().parent / "audio_out"
+AUDIO_DIR.mkdir(exist_ok=True)
 
 app = FastAPI(title="Wisp Instant", version="0.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -206,6 +213,12 @@ BROWSER TASKS — USE browser_use_run DIRECTLY:
   * Example: Instead of "Create a UML diagram on draw.io", write: "1. Navigate to https://app.diagrams.net 2. Click 'Create New Diagram' 3. Select 'Blank Diagram' 4. Use the UML shape library: drag a Class shape onto the canvas 5. Double-click the class shape and set the name to 'User' 6. Add attributes: id: int, name: string, email: string ..."
 - The quality of the browser_use_run prompt directly determines success. Spend effort making it thorough and unambiguous.
 
+TEXT-TO-SPEECH (TTS):
+- Use text_to_speech to convert any text into spoken audio. Returns an audio_url.
+- Great for: generating voiceovers, reading content aloud, spoken translations, narration, accessibility.
+- If the user asks to "say", "speak", "read aloud", "narrate", "translate and speak", or anything audio-related, use this tool.
+- You can choose different voices and emotions to match the context.
+
 DO NOT output a JSON DAG. Just work through the task step by step using the tools available.
 When you're done, summarize what was accomplished and whether it succeeded."""
 
@@ -216,7 +229,8 @@ EXECUTE_TOOL = {"name": "execute_tool", "description": "Execute an MCP tool and 
 BROWSER_USE_RUN_TOOL = {"name": "browser_use_run", "description": "Launch a browser automation task. Returns session_id and live_url immediately. Then call browser_use_status with the session_id to poll for completion. Do NOT call this twice for the same task.", "input_schema": {"type": "object", "properties": {"task": {"type": "string", "description": "Detailed step-by-step browser instructions. Must include exact URLs, UI actions, expected states, and success criteria."}, "session_id": {"type": "string", "description": "Optional: reuse an existing idle session instead of creating a new one"}}, "required": ["task"]}}
 BROWSER_USE_STATUS_TOOL = {"name": "browser_use_status", "description": "Get the status of a browser_use session. Automatically polls until the task is done — only call ONCE per session. Returns status, output, liveUrl, and cost info.", "input_schema": {"type": "object", "properties": {"session_id": {"type": "string", "description": "The session ID from browser_use_run"}}, "required": ["session_id"]}}
 BROWSER_USE_STOP_TOOL = {"name": "browser_use_stop", "description": "Stop a running browser_use session. Use when you want to terminate early.", "input_schema": {"type": "object", "properties": {"session_id": {"type": "string", "description": "The session ID to stop"}}, "required": ["session_id"]}}
-AGENT_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS, EXECUTE_TOOL, BROWSER_USE_RUN_TOOL, BROWSER_USE_STATUS_TOOL, BROWSER_USE_STOP_TOOL]
+TEXT_TO_SPEECH_TOOL = {"name": "text_to_speech", "description": "Convert text to speech audio using MiniMax TTS. Returns an audio_url you can share. Use for generating voiceovers, narration, spoken translations, or any audio output.", "input_schema": {"type": "object", "properties": {"text": {"type": "string", "description": "The text to convert to speech (max 10000 chars)"}, "voice_id": {"type": "string", "description": "Voice to use. Options: English_expressive_narrator, English_radiant_girl, English_magnetic_voiced_man, English_CalmWoman, English_Trustworth_Man, English_Comedian, English_ConfidentWoman. Default: English_expressive_narrator"}, "speed": {"type": "number", "description": "Speech speed 0.5-2.0. Default: 1.0"}, "emotion": {"type": "string", "description": "Emotion: neutral, happy, sad, angry, calm, surprised. Default: neutral"}}, "required": ["text"]}}
+AGENT_TOOLS = [SEARCH_TOOL, LIST_SERVER_TOOLS, SEARCH_SERVERS, EXECUTE_TOOL, BROWSER_USE_RUN_TOOL, BROWSER_USE_STATUS_TOOL, BROWSER_USE_STOP_TOOL, TEXT_TO_SPEECH_TOOL]
 
 # Gemini-format tool declarations for the agentic planner
 def _anthropic_schema_to_gemini(schema: dict) -> dict:
@@ -273,6 +287,56 @@ async def search_servers(query: str) -> list[dict]:
         r.raise_for_status()
         data = r.json()
         return data.get("servers", [])
+
+async def minimax_tts(text: str, voice_id: str = "English_expressive_narrator",
+                      speed: float = 1.0, emotion: str = "neutral") -> dict:
+    """Generate speech audio from text using MiniMax TTS API."""
+    if not MINIMAX_API_KEY:
+        return {"error": "MINIMAX_API_KEY not configured"}
+    url = f"{MINIMAX_API_HOST}/v1/t2a_v2"
+    if MINIMAX_GROUP_ID:
+        url += f"?GroupId={MINIMAX_GROUP_ID}"
+    headers = {"Authorization": f"Bearer {MINIMAX_API_KEY}", "Content-Type": "application/json"}
+    payload = {
+        "model": "speech-02-hd",
+        "text": text[:10000],
+        "stream": False,
+        "voice_setting": {
+            "voice_id": voice_id,
+            "speed": speed,
+            "vol": 1.0,
+            "pitch": 0,
+            "emotion": emotion,
+        },
+        "audio_setting": {
+            "format": "mp3",
+            "sample_rate": 32000,
+            "bitrate": 128000,
+            "channel": 1,
+        },
+    }
+    async with httpx.AsyncClient(timeout=60) as c:
+        r = await c.post(url, headers=headers, json=payload)
+        r.raise_for_status()
+        data = r.json()
+    if data.get("base_resp", {}).get("status_code", 0) != 0:
+        return {"error": data.get("base_resp", {}).get("status_msg", "TTS failed")}
+    audio_hex = data.get("data", {}).get("audio", "")
+    if not audio_hex:
+        return {"error": "No audio data returned"}
+    audio_bytes = bytes.fromhex(audio_hex)
+    filename = f"tts_{uuid.uuid4().hex[:8]}.mp3"
+    filepath = AUDIO_DIR / filename
+    filepath.write_bytes(audio_bytes)
+    audio_url = f"http://localhost:8001/audio/{filename}"
+    print(f"[minimax_tts] Generated {len(audio_bytes)} bytes -> {audio_url}")
+    return {
+        "audio_url": audio_url,
+        "filename": filename,
+        "size_bytes": len(audio_bytes),
+        "voice_id": voice_id,
+        "text_length": len(text),
+    }
 
 MONITOR_POLL_WAIT = 10  # seconds between monitor_task polls (agent-side)
 MONITOR_MAX_AGENT_POLLS = 120  # max polls (~20 min)
@@ -357,26 +421,29 @@ async def _call_router(server_name: str, tool_name: str, arguments: dict, timeou
         r.raise_for_status()
         return _normalize_mcp_result(r.json())
 
+_browser_task_used = False  # flips True after first browser_task call
+
 async def execute_tool_call(server_name: str, tool_name: str, arguments: dict) -> dict:
     """Execute an MCP tool via the router and return the normalized result."""
-    # Enforce browser_task defaults so the agent never under-provisions
+    global _browser_task_used
+
+    # Hard gate: browser_task can only run ONCE per session
     if tool_name == "browser_task":
+        if _browser_task_used:
+            print(f"[execute_tool] *** BLOCKED *** browser_task already used this session")
+            return {"error": "browser_task already ran this session. Only one call allowed."}
         arguments["model"] = "bu-mini"
         if not arguments.get("max_steps") or int(arguments.get("max_steps", 0)) < 200:
             arguments["max_steps"] = 200
-        # Dedup: don't launch the same browser_task twice
-        task_key = arguments.get("task", "")
-        if task_key and task_key in _browser_task_cache:
-            print(f"[browser_task] Dedup hit — returning cached result for task: {task_key[:80]}...")
-            return _browser_task_cache[task_key]
+
     is_long_running = tool_name in ("monitor_task", "browser_task")
     timeout = 600 if is_long_running else 120
     result = await _call_router(server_name, tool_name, arguments, timeout)
-    # Cache browser_task result for dedup
-    if tool_name == "browser_task" and isinstance(result, dict):
-        task_key = arguments.get("task", "")
-        if task_key:
-            _browser_task_cache[task_key] = result
+
+    # Lock after successful browser_task
+    if tool_name == "browser_task":
+        _browser_task_used = True
+        print(f"[execute_tool] browser_task done — locked for this session")
 
     # Auto-poll monitor_task: the LLM doesn't need to waste turns polling.
     # We block here until is_success is not null, then return the final result.
@@ -477,6 +544,8 @@ def _build_workflow(obj: dict) -> Workflow:
 
 async def run_planner_stream(messages: list[dict], max_turns: int = 30):
     """Agentic loop using Gemini Flash: search, execute tools, iterate until done."""
+    global _browser_task_used
+    _browser_task_used = False
     print(f"[planner] Starting agentic loop (Gemini Flash), max_turns={max_turns}")
     gclient = genai.Client(api_key=GEMINI_KEY)
     yield {"type": "planning_start", "max_turns": max_turns}
@@ -595,6 +664,23 @@ async def run_planner_stream(messages: list[dict], max_turns: int = 30):
                         elapsed = round(time.time() - t0, 2)
                         r = {"error": str(e)}
                         yield {"type": "tool_exec_complete", "server_name": "browser-use", "tool_name": "stop",
+                               "result": r, "elapsed": elapsed, "success": False}
+                elif name == "text_to_speech":
+                    tts_text = inp.get("text", "")
+                    voice = inp.get("voice_id", "English_expressive_narrator")
+                    spd = float(inp.get("speed", 1.0))
+                    emo = inp.get("emotion", "neutral")
+                    yield {"type": "tool_exec_start", "server_name": "minimax", "tool_name": "tts", "arguments": {"text": tts_text[:80], "voice": voice}}
+                    try:
+                        r = await minimax_tts(tts_text, voice, spd, emo)
+                        elapsed = round(time.time() - t0, 2)
+                        executed_steps.append({"server_name": "minimax", "tool_name": "text_to_speech", "arguments": {"text": tts_text[:200]}, "result": r, "elapsed": elapsed})
+                        yield {"type": "tool_exec_complete", "server_name": "minimax", "tool_name": "tts",
+                               "result": r, "elapsed": elapsed, "success": "error" not in r}
+                    except Exception as e:
+                        elapsed = round(time.time() - t0, 2)
+                        r = {"error": str(e)}
+                        yield {"type": "tool_exec_complete", "server_name": "minimax", "tool_name": "tts",
                                "result": r, "elapsed": elapsed, "success": False}
                 elif name == "list_server_tools":
                     sn = inp.get("server_name", "")
@@ -1345,6 +1431,13 @@ def stream_resp(gen):
 
 # --- Endpoints ---
 
+@app.get("/audio/{filename}")
+async def serve_audio(filename: str):
+    filepath = AUDIO_DIR / filename
+    if not filepath.exists():
+        raise HTTPException(404, "Audio file not found")
+    return FileResponse(filepath, media_type="audio/mpeg", filename=filename)
+
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
@@ -1549,6 +1642,209 @@ async def convert_to_workflow(req: ConvertReq):
     )
     workflows[wf_id] = wf
     return wf.model_dump()
+
+
+# --- Treeshake / Freeze / Suggest Configurable ---
+
+class TreeshakeReq(BaseModel):
+    workflow_id: str
+    node_statuses: dict[str, dict[str, Any]]  # {node_id: {status, result, error}}
+
+class FreezeReq(BaseModel):
+    workflow_id: str
+    node_statuses: dict[str, dict[str, Any]]
+
+class SuggestConfigurableReq(BaseModel):
+    nodes: list[dict[str, Any]]
+    objective: str = ""
+
+
+def _treeshake_nodes(nodes: list[dict], node_statuses: dict[str, dict]) -> list[dict]:
+    """Remove failed/redundant nodes, re-link dependencies."""
+    # Build lookup
+    node_map = {n["id"]: n for n in nodes}
+
+    # 1. Find which output_keys are consumed by other nodes' arguments
+    consumed_keys: set[str] = set()
+    for n in nodes:
+        args_str = json.dumps(n.get("arguments", {}))
+        for other in nodes:
+            ok = other.get("output_key", "")
+            if ok and (f"{{{{{ok}}}}}" in args_str or f"{{{{" + ok + "}}}}" in args_str or ok in args_str):
+                consumed_keys.add(ok)
+
+    # 2. Identify terminal nodes (no one depends on them OR their output_key is not consumed)
+    depended_on: set[str] = set()
+    for n in nodes:
+        for dep in n.get("depends_on", []):
+            depended_on.add(dep)
+
+    # 3. Determine which nodes to keep
+    keep_ids: set[str] = set()
+    for n in nodes:
+        nid = n["id"]
+        status_info = node_statuses.get(nid, {})
+        status = status_info.get("status", "complete")
+
+        # Remove errored nodes that have no successful downstream dependents
+        if status == "error":
+            has_successful_dependent = False
+            for other in nodes:
+                if nid in other.get("depends_on", []):
+                    other_status = node_statuses.get(other["id"], {}).get("status", "complete")
+                    if other_status == "complete":
+                        has_successful_dependent = True
+                        break
+            if not has_successful_dependent:
+                continue
+
+        # Remove intermediate __llm__ nodes whose output isn't consumed downstream
+        if n.get("server_name") == "__llm__" and n.get("output_key") not in consumed_keys and nid not in depended_on:
+            continue
+
+        keep_ids.add(nid)
+
+    # 4. Re-link dependencies around removed nodes
+    clean_nodes = []
+    for n in nodes:
+        if n["id"] not in keep_ids:
+            continue
+        new_deps = []
+        for dep in n.get("depends_on", []):
+            if dep in keep_ids:
+                new_deps.append(dep)
+            else:
+                # Inherit dependencies of the removed node
+                removed = node_map.get(dep)
+                if removed:
+                    for parent_dep in removed.get("depends_on", []):
+                        if parent_dep in keep_ids and parent_dep not in new_deps:
+                            new_deps.append(parent_dep)
+        clean = dict(n)
+        clean["depends_on"] = new_deps
+        clean_nodes.append(clean)
+
+    return clean_nodes
+
+
+def _generate_todo_md(name: str, description: str, nodes: list[dict], configurable_params: list[dict] | None = None) -> str:
+    """Generate a todo.md-style editable representation of a frozen workflow."""
+    lines = [f"# Workflow: {name}", f"> {description}", "", "## Nodes", ""]
+    for n in nodes:
+        deps = f" (depends: {', '.join(n.get('depends_on', []))})" if n.get("depends_on") else ""
+        lines.append(f"- [ ] **{n['id']}** — {n['server_name']}/{n['tool_name']}{deps}")
+        args = n.get("arguments", {})
+        cp_keys = set()
+        if configurable_params:
+            for cp in configurable_params:
+                if cp["nodeId"] == n["id"]:
+                    cp_keys.add(cp["paramKey"])
+        for k, v in args.items():
+            tag = " [CONFIGURABLE]" if k in cp_keys else ""
+            lines.append(f"  - {k}: {json.dumps(v) if not isinstance(v, str) else v}{tag}")
+        lines.append("")
+
+    if configurable_params:
+        lines.append("## Configurable Parameters")
+        for cp in configurable_params:
+            default = json.dumps(cp["defaultValue"]) if not isinstance(cp["defaultValue"], str) else cp["defaultValue"]
+            lines.append(f"- {cp['nodeId']}.{cp['paramKey']}: {cp['label']} (default: {default})")
+
+    return "\n".join(lines)
+
+
+@app.post("/treeshake")
+async def treeshake_workflow(req: TreeshakeReq):
+    """Remove failed/redundant nodes from an executed workflow."""
+    wf = workflows.get(req.workflow_id)
+    if not wf:
+        raise HTTPException(404, "Workflow not found")
+
+    raw_nodes = [n.model_dump() for n in wf.nodes]
+    clean_nodes = _treeshake_nodes(raw_nodes, req.node_statuses)
+    return {"nodes": clean_nodes, "removed_count": len(raw_nodes) - len(clean_nodes)}
+
+
+@app.post("/freeze")
+async def freeze_workflow(req: FreezeReq):
+    """Freeze a workflow into a clean, static node graph + todo.md."""
+    wf = workflows.get(req.workflow_id)
+    if not wf:
+        raise HTTPException(404, "Workflow not found")
+
+    raw_nodes = [n.model_dump() for n in wf.nodes]
+    clean_nodes = _treeshake_nodes(raw_nodes, req.node_statuses)
+    todo_md = _generate_todo_md(wf.name, wf.description, clean_nodes)
+
+    return {
+        "workflow_id": req.workflow_id,
+        "name": wf.name,
+        "description": wf.description,
+        "objective": wf.objective,
+        "frozen_nodes": clean_nodes,
+        "todo_md": todo_md,
+    }
+
+
+@app.post("/suggest-configurable/stream")
+async def suggest_configurable_stream(req: SuggestConfigurableReq):
+    """LLM suggests which params should be user-adjustable, streamed as SSE."""
+
+    # Extract level-1 nodes (no dependencies = entry points)
+    level1_nodes = [n for n in req.nodes if not n.get("depends_on")]
+    nodes_desc = json.dumps(req.nodes, indent=2)
+
+    prompt = f"""Analyze this workflow and suggest which parameters should be user-configurable.
+
+Objective: {req.objective}
+
+Workflow nodes:
+{nodes_desc}
+
+Focus on level-1 (entry) nodes whose arguments a user would likely want to customize.
+For each suggested parameter, provide:
+- nodeId: which node it belongs to
+- paramKey: the argument key
+- label: a human-readable label
+- description: why this is configurable
+- defaultValue: the current value
+- type: "string", "number", or "boolean"
+
+Return a JSON array of suggestions. Only include parameters that genuinely make sense for end-users to customize."""
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+
+    async def event_stream():
+        accumulated = ""
+        try:
+            with client.messages.stream(
+                model="claude-sonnet-4-20250514",
+                max_tokens=2000,
+                messages=[{"role": "user", "content": prompt}],
+            ) as stream:
+                for text in stream.text_stream:
+                    accumulated += text
+                    yield f"data: {json.dumps({'type': 'text', 'text': text})}\n\n"
+
+            # Parse the final result
+            parsed = extract_json(accumulated)
+            suggestions = []
+            if parsed:
+                suggestions = parsed.get("suggestions", parsed.get("parameters", []))
+                if isinstance(parsed, list):
+                    suggestions = parsed
+            elif accumulated.strip().startswith("["):
+                try:
+                    suggestions = json.loads(accumulated.strip())
+                except json.JSONDecodeError:
+                    pass
+
+            yield f"data: {json.dumps({'type': 'suggestions', 'suggestions': suggestions})}\n\n"
+            yield f"data: {json.dumps({'type': 'done'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 if __name__ == "__main__":
