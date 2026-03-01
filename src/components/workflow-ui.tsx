@@ -642,12 +642,18 @@ function isLLMNode(node: NodeStatus) {
   return node.server_name === "__llm__";
 }
 
+function isInputNode(node: NodeStatus) {
+  return node.server_name === "__input__";
+}
+
 function friendlyLabel(node: NodeStatus) {
+  if (isInputNode(node)) return node.step || "User Input";
   if (isLLMNode(node)) return node.step || "AI Analysis";
   return node.step || node.tool_name;
 }
 
 function friendlySubtitle(node: NodeStatus) {
+  if (isInputNode(node)) return "User input";
   if (isLLMNode(node)) return "Language model";
   return `${node.server_name} / ${node.tool_name}`;
 }
@@ -1245,7 +1251,7 @@ function WorkflowGraph({
           <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 4 }}>
             Level {li + 1}
           </div>
-          {level.map((node) => {
+          {level.filter((n) => n.server_name !== "__input__").map((node) => {
             const isLlm = node.server_name === "__llm__";
             return (
               <div
@@ -1381,9 +1387,28 @@ export function WorkflowPane({
   onRename?: (name: string) => void;
 }) {
   const showExecution = phase === "executing" || phase === "done";
+
+  // Derive input params from configurableParams or __input__ nodes
+  const inputParams = useMemo(() => {
+    if (workflow.configurableParams && workflow.configurableParams.length > 0) {
+      return workflow.configurableParams;
+    }
+    // Fallback: derive from __input__ nodes in the DAG
+    return workflow.nodes
+      .filter(n => n.server_name === "__input__")
+      .map(n => ({
+        nodeId: n.id,
+        paramKey: "value",
+        label: n.step || n.output_key || "Input",
+        description: `Default: ${n.arguments?.default ?? n.arguments?.value ?? ""}`,
+        defaultValue: n.arguments?.value ?? n.arguments?.default ?? "",
+        type: "string" as const,
+      }));
+  }, [workflow.configurableParams, workflow.nodes]);
+
   const [runtimeValues, setRuntimeValues] = useState<Record<string, any>>(() => {
     const init: Record<string, any> = {};
-    workflow.configurableParams?.forEach(cp => {
+    inputParams.forEach(cp => {
       init[`${cp.nodeId}.${cp.paramKey}`] = cp.defaultValue ?? "";
     });
     return init;
@@ -1519,7 +1544,7 @@ export function WorkflowPane({
               Publish
             </button>
           )}
-          {onGenerateApp && workflow.configurableParams && workflow.configurableParams.length > 0 && (
+          {onGenerateApp && inputParams.length > 0 && (
             <button
               onClick={onGenerateApp}
               disabled={generatingApp}
@@ -1536,13 +1561,13 @@ export function WorkflowPane({
         </div>
       </div>
 
-      {workflow.configurableParams && workflow.configurableParams.length > 0 && (
+      {inputParams.length > 0 && (
         <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-card)" }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>
-            Adjustable Inputs
+            Inputs
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
-            {workflow.configurableParams.map(cp => {
+            {inputParams.map(cp => {
               const key = `${cp.nodeId}.${cp.paramKey}`;
               return (
                 <div key={key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>

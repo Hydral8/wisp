@@ -1606,11 +1606,16 @@ _c5 = PipelineBar;
 function isLLMNode(node) {
     return node.server_name === "__llm__";
 }
+function isInputNode(node) {
+    return node.server_name === "__input__";
+}
 function friendlyLabel(node) {
+    if (isInputNode(node)) return node.step || "User Input";
     if (isLLMNode(node)) return node.step || "AI Analysis";
     return node.step || node.tool_name;
 }
 function friendlySubtitle(node) {
+    if (isInputNode(node)) return "User input";
     if (isLLMNode(node)) return "Language model";
     return `${node.server_name} / ${node.tool_name}`;
 }
@@ -1681,7 +1686,7 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 712,
+                                        lineNumber: 718,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1693,13 +1698,13 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                                         children: "LIVE"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 716,
+                                        lineNumber: 722,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 711,
+                                lineNumber: 717,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1710,13 +1715,13 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                                 children: "Browser session"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 719,
+                                lineNumber: 725,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 709,
+                        lineNumber: 715,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1741,7 +1746,7 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                                 children: maximized ? "↙" : "↗"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 722,
+                                lineNumber: 728,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1762,19 +1767,19 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                                 children: "↗ Open"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 737,
+                                lineNumber: 743,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 721,
+                        lineNumber: 727,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 699,
+                lineNumber: 705,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("iframe", {
@@ -1789,13 +1794,13 @@ function BrowserLiveView({ liveUrl, isRunning }) {
                 allow: "clipboard-read; clipboard-write"
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 759,
+                lineNumber: 765,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 688,
+        lineNumber: 694,
         columnNumber: 5
     }, this);
     // Maximized: render as fixed overlay
@@ -1816,7 +1821,7 @@ function BrowserLiveView({ liveUrl, isRunning }) {
             children: iframeContent
         }, void 0, false, {
             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-            lineNumber: 776,
+            lineNumber: 782,
             columnNumber: 7
         }, this);
     }
@@ -1863,7 +1868,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 851,
+                                lineNumber: 857,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1888,7 +1893,7 @@ function ExecutionEntry({ node, isFinal }) {
                                                 children: isFinal ? "Final Result" : friendlyLabel(node)
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 861,
+                                                lineNumber: 867,
                                                 columnNumber: 15
                                             }, this),
                                             isLlm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1903,13 +1908,13 @@ function ExecutionEntry({ node, isFinal }) {
                                                 children: "LLM"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 865,
+                                                lineNumber: 871,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 860,
+                                        lineNumber: 866,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1921,19 +1926,19 @@ function ExecutionEntry({ node, isFinal }) {
                                         children: isFinal ? friendlyLabel(node) : friendlySubtitle(node)
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 873,
+                                        lineNumber: 879,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 859,
+                                lineNumber: 865,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 850,
+                        lineNumber: 856,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1956,7 +1961,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Done"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 880,
+                                lineNumber: 886,
                                 columnNumber: 13
                             }, this),
                             node.status === "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1967,7 +1972,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Running..."
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 888,
+                                lineNumber: 894,
                                 columnNumber: 13
                             }, this),
                             node.elapsed !== undefined && node.status !== "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1982,7 +1987,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 891,
+                                lineNumber: 897,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
@@ -2003,24 +2008,24 @@ function ExecutionEntry({ node, isFinal }) {
                                     strokeLinejoin: "round"
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 899,
+                                    lineNumber: 905,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 895,
+                                lineNumber: 901,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 878,
+                        lineNumber: 884,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 846,
+                lineNumber: 852,
                 columnNumber: 7
             }, this),
             !expanded && hasResult && node.status === "complete" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2036,7 +2041,7 @@ function ExecutionEntry({ node, isFinal }) {
                 children: previewText(resultText)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 906,
+                lineNumber: 912,
                 columnNumber: 9
             }, this),
             expanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2069,7 +2074,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Prompt"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 925,
+                                lineNumber: 931,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2085,13 +2090,13 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: node.arguments.prompt
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 928,
+                                lineNumber: 934,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 921,
+                        lineNumber: 927,
                         columnNumber: 13
                     }, this),
                     node.actionRequired && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2112,7 +2117,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "User action required in browser"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 937,
+                                lineNumber: 943,
                                 columnNumber: 15
                             }, this),
                             node.actionMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2123,7 +2128,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: node.actionMessage
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 941,
+                                lineNumber: 947,
                                 columnNumber: 17
                             }, this),
                             node.actionUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -2138,13 +2143,13 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Open browser view"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 944,
+                                lineNumber: 950,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 936,
+                        lineNumber: 942,
                         columnNumber: 13
                     }, this),
                     node.browserSteps && node.browserSteps.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Collapsible, {
@@ -2180,23 +2185,23 @@ function ExecutionEntry({ node, isFinal }) {
                                             children: step.url
                                         }, void 0, false, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 959,
+                                            lineNumber: 965,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, `${step.number}-${idx}`, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 956,
+                                    lineNumber: 962,
                                     columnNumber: 19
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 954,
+                            lineNumber: 960,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 953,
+                        lineNumber: 959,
                         columnNumber: 13
                     }, this),
                     (node.browserLiveUrl || node.browserShareUrl) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2217,7 +2222,7 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Live view"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 973,
+                                lineNumber: 979,
                                 columnNumber: 17
                             }, this),
                             node.browserShareUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -2231,13 +2236,13 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Share link"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 978,
+                                lineNumber: 984,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 971,
+                        lineNumber: 977,
                         columnNumber: 13
                     }, this),
                     hasResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2261,12 +2266,12 @@ function ExecutionEntry({ node, isFinal }) {
                                     children: resultText
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 998,
+                                    lineNumber: 1004,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 988,
+                                lineNumber: 994,
                                 columnNumber: 15
                             }, this),
                             isLongResult && !showFullResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2298,12 +2303,12 @@ function ExecutionEntry({ node, isFinal }) {
                                     children: "Show more"
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1006,
+                                    lineNumber: 1012,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1001,
+                                lineNumber: 1007,
                                 columnNumber: 17
                             }, this),
                             isLongResult && showFullResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2321,13 +2326,13 @@ function ExecutionEntry({ node, isFinal }) {
                                 children: "Show less"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1019,
+                                lineNumber: 1025,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 987,
+                        lineNumber: 993,
                         columnNumber: 13
                     }, this),
                     node.error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2343,12 +2348,12 @@ function ExecutionEntry({ node, isFinal }) {
                             children: node.error
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 1035,
+                            lineNumber: 1041,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1034,
+                        lineNumber: 1040,
                         columnNumber: 13
                     }, this),
                     node.arguments && Object.keys(node.arguments).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Collapsible, {
@@ -2373,7 +2378,7 @@ function ExecutionEntry({ node, isFinal }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1045,
+                                    lineNumber: 1051,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -2391,30 +2396,30 @@ function ExecutionEntry({ node, isFinal }) {
                                     children: JSON.stringify(node.arguments, null, 2)
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1048,
+                                    lineNumber: 1054,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 1044,
+                            lineNumber: 1050,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1043,
+                        lineNumber: 1049,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 915,
+                lineNumber: 921,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 837,
+        lineNumber: 843,
         columnNumber: 5
     }, this);
 }
@@ -2546,7 +2551,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                 strokeWidth: 1.5
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1188,
+                                lineNumber: 1194,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2556,18 +2561,18 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                 fill: "rgba(160,160,170,0.6)"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1189,
+                                lineNumber: 1195,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, p.key, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1187,
+                        lineNumber: 1193,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1175,
+                lineNumber: 1181,
                 columnNumber: 7
             }, this),
             hasParams && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2591,7 +2596,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                         children: "Inputs"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1197,
+                        lineNumber: 1203,
                         columnNumber: 11
                     }, this),
                     configurableParams.map((cp)=>{
@@ -2617,7 +2622,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                     children: cp.label
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1216,
+                                    lineNumber: 1222,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2640,7 +2645,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                             children: cp.type
                                         }, void 0, false, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 1218,
+                                            lineNumber: 1224,
                                             columnNumber: 19
                                         }, this),
                                         cp.defaultValue != null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2654,13 +2659,13 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 1225,
+                                            lineNumber: 1231,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1217,
+                                    lineNumber: 1223,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2677,20 +2682,20 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1231,
+                                    lineNumber: 1237,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, paramId, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 1203,
+                            lineNumber: 1209,
                             columnNumber: 15
                         }, this);
                     })
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1196,
+                lineNumber: 1202,
                 columnNumber: 9
             }, this),
             levels.map((level, li)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2716,10 +2721,10 @@ function WorkflowGraph({ nodes, configurableParams }) {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 1245,
+                            lineNumber: 1251,
                             columnNumber: 11
                         }, this),
-                        level.map((node)=>{
+                        level.filter((n)=>n.server_name !== "__input__").map((node)=>{
                             const isLlm = node.server_name === "__llm__";
                             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 ref: setNodeRef(node.id),
@@ -2747,7 +2752,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1266,
+                                        lineNumber: 1272,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2759,7 +2764,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                         children: node.step
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1274,
+                                        lineNumber: 1280,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2771,7 +2776,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                         children: isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1277,
+                                        lineNumber: 1283,
                                         columnNumber: 17
                                     }, this),
                                     isLlm && typeof node.arguments.prompt === "string" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2789,7 +2794,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                         children: node.arguments.prompt
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1283,
+                                        lineNumber: 1289,
                                         columnNumber: 19
                                     }, this) : Object.keys(node.arguments).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
@@ -2817,7 +2822,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                                         children: k
                                                     }, void 0, false, {
                                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                        lineNumber: 1298,
+                                                        lineNumber: 1304,
                                                         columnNumber: 29
                                                     }, this),
                                                     refOwner ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2832,7 +2837,7 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                                         children: strVal
                                                     }, void 0, false, {
                                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                        lineNumber: 1300,
+                                                        lineNumber: 1306,
                                                         columnNumber: 31
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                         style: {
@@ -2841,19 +2846,19 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                                         children: strVal.length > 28 ? strVal.slice(0, 28) + "…" : strVal
                                                     }, void 0, false, {
                                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                        lineNumber: 1307,
+                                                        lineNumber: 1313,
                                                         columnNumber: 31
                                                     }, this)
                                                 ]
                                             }, k, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 1297,
+                                                lineNumber: 1303,
                                                 columnNumber: 27
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1292,
+                                        lineNumber: 1298,
                                         columnNumber: 21
                                     }, this),
                                     node.output_key && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2877,12 +2882,12 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 1321,
+                                            lineNumber: 1327,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1320,
+                                        lineNumber: 1326,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2899,26 +2904,26 @@ function WorkflowGraph({ nodes, configurableParams }) {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1331,
+                                        lineNumber: 1337,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, node.id, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1251,
+                                lineNumber: 1257,
                                 columnNumber: 15
                             }, this);
                         })
                     ]
                 }, li, true, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 1244,
+                    lineNumber: 1250,
                     columnNumber: 9
                 }, this))
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 1170,
+        lineNumber: 1176,
         columnNumber: 5
     }, this);
 }
@@ -2927,10 +2932,34 @@ _c8 = WorkflowGraph;
 function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, onChangeBrowserUseMode, onRun, onCreateWebhook, webhookUrl, onFreeze, onPublish, freezing, onGenerateApp, generatingApp, onRename }) {
     _s7();
     const showExecution = phase === "executing" || phase === "done";
+    // Derive input params from configurableParams or __input__ nodes
+    const inputParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "WorkflowPane.useMemo[inputParams]": ()=>{
+            if (workflow.configurableParams && workflow.configurableParams.length > 0) {
+                return workflow.configurableParams;
+            }
+            // Fallback: derive from __input__ nodes in the DAG
+            return workflow.nodes.filter({
+                "WorkflowPane.useMemo[inputParams]": (n)=>n.server_name === "__input__"
+            }["WorkflowPane.useMemo[inputParams]"]).map({
+                "WorkflowPane.useMemo[inputParams]": (n)=>({
+                        nodeId: n.id,
+                        paramKey: "value",
+                        label: n.step || n.output_key || "Input",
+                        description: `Default: ${n.arguments?.default ?? n.arguments?.value ?? ""}`,
+                        defaultValue: n.arguments?.value ?? n.arguments?.default ?? "",
+                        type: "string"
+                    })
+            }["WorkflowPane.useMemo[inputParams]"]);
+        }
+    }["WorkflowPane.useMemo[inputParams]"], [
+        workflow.configurableParams,
+        workflow.nodes
+    ]);
     const [runtimeValues, setRuntimeValues] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         "WorkflowPane.useState": ()=>{
             const init = {};
-            workflow.configurableParams?.forEach({
+            inputParams.forEach({
                 "WorkflowPane.useState": (cp)=>{
                     init[`${cp.nodeId}.${cp.paramKey}`] = cp.defaultValue ?? "";
                 }
@@ -2993,7 +3022,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         }
                                     }, workflow.id, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1400,
+                                        lineNumber: 1425,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
@@ -3013,18 +3042,18 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                             strokeLinejoin: "round"
                                         }, void 0, false, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 1421,
+                                            lineNumber: 1446,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1420,
+                                        lineNumber: 1445,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1399,
+                                lineNumber: 1424,
                                 columnNumber: 13
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -3035,7 +3064,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: workflow.name
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1425,
+                                lineNumber: 1450,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3053,13 +3082,13 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: workflow.description
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1427,
+                                lineNumber: 1452,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1397,
+                        lineNumber: 1422,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3084,7 +3113,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         children: "Browser"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1436,
+                                        lineNumber: 1461,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -3106,7 +3135,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                                 children: "Local"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 1451,
+                                                lineNumber: 1476,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -3114,19 +3143,19 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                                 children: "Remote"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 1452,
+                                                lineNumber: 1477,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1437,
+                                        lineNumber: 1462,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1435,
+                                lineNumber: 1460,
                                 columnNumber: 11
                             }, this),
                             phase === "preview" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -3147,7 +3176,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         children: "Test Run"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1457,
+                                        lineNumber: 1482,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3166,7 +3195,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         children: "Deploy"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1463,
+                                        lineNumber: 1488,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -3189,7 +3218,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         children: "Re-run"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1473,
+                                        lineNumber: 1498,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3208,7 +3237,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         children: "Deploy"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1479,
+                                        lineNumber: 1504,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -3229,7 +3258,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: "Create Webhook"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1488,
+                                lineNumber: 1513,
                                 columnNumber: 13
                             }, this),
                             onFreeze && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3250,7 +3279,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: freezing ? "Freezing..." : "Freeze"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1496,
+                                lineNumber: 1521,
                                 columnNumber: 13
                             }, this),
                             onPublish && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3269,10 +3298,10 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: "Publish"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1511,
+                                lineNumber: 1536,
                                 columnNumber: 13
                             }, this),
-                            onGenerateApp && workflow.configurableParams && workflow.configurableParams.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            onGenerateApp && inputParams.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: onGenerateApp,
                                 disabled: generatingApp,
                                 style: {
@@ -3290,22 +3319,22 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                 children: generatingApp ? "Generating..." : "Generate App"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1523,
+                                lineNumber: 1548,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1434,
+                        lineNumber: 1459,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1394,
+                lineNumber: 1419,
                 columnNumber: 7
             }, this),
-            workflow.configurableParams && workflow.configurableParams.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            inputParams.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
                     padding: "12px 16px",
                     borderBottom: "1px solid var(--border)",
@@ -3319,10 +3348,10 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                             color: "var(--text)",
                             marginBottom: 12
                         },
-                        children: "Adjustable Inputs"
+                        children: "Inputs"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1541,
+                        lineNumber: 1566,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3331,7 +3360,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                             gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
                             gap: 12
                         },
-                        children: workflow.configurableParams.map((cp)=>{
+                        children: inputParams.map((cp)=>{
                             const key = `${cp.nodeId}.${cp.paramKey}`;
                             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
@@ -3361,13 +3390,13 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                lineNumber: 1550,
+                                                lineNumber: 1575,
                                                 columnNumber: 32
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1549,
+                                        lineNumber: 1574,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -3391,25 +3420,25 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 1552,
+                                        lineNumber: 1577,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, key, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 1548,
+                                lineNumber: 1573,
                                 columnNumber: 17
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 1544,
+                        lineNumber: 1569,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1540,
+                lineNumber: 1565,
                 columnNumber: 9
             }, this),
             showExecution && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(PipelineBar, {
@@ -3417,7 +3446,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                 nodeStatuses: nodeStatuses
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1574,
+                lineNumber: 1599,
                 columnNumber: 25
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3434,7 +3463,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                     isFinal: allDone && i === lastIdx
                                 }, n.id, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1584,
+                                    lineNumber: 1609,
                                     columnNumber: 17
                                 }, this));
                         })(),
@@ -3453,7 +3482,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                     children: "Webhook Created"
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1596,
+                                    lineNumber: 1621,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
@@ -3463,41 +3492,41 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, browserUseMode, 
                                     children: webhookUrl
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 1599,
+                                    lineNumber: 1624,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 1592,
+                            lineNumber: 1617,
                             columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 1578,
+                    lineNumber: 1603,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(WorkflowGraph, {
                     nodes: workflow.nodes,
                     configurableParams: workflow.configurableParams
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 1604,
+                    lineNumber: 1629,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 1576,
+                lineNumber: 1601,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 1393,
+        lineNumber: 1418,
         columnNumber: 5
     }, this);
 }
-_s7(WorkflowPane, "2+pPcepjICTFx9uiEiuDIUiic5o=");
+_s7(WorkflowPane, "scb7/1n4J+EsmFalvjHoeQeENgQ=");
 _c9 = WorkflowPane;
 const PRESETS = [
     {

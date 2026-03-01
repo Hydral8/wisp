@@ -88,10 +88,15 @@ Convert this into a clean, reusable DAG workflow. Follow these rules EXACTLY:
 - In arguments, when a value should come from a previous node's output, use that node's output_key as the value (e.g., if node n1 has output_key "flight_data", then a downstream node referencing that data should have the value "flight_data" in its arguments)
 - Create a proper DAG — parallelizable nodes at the same level should NOT depend on each other
 
-### 4. CONFIGURABLE PARAMETERS — Identify user inputs
+### 4. INPUT NODES — User-configurable values as DAG nodes
 - Find arguments that represent user-specific values (origins, destinations, search queries, dates, URLs, account names, etc.)
-- These are values the user would want to change each time they run the automation
-- For each, create a configurableParam entry
+- For EACH such value, create a dedicated \`__input__\` node at the START of the DAG:
+  - server_name = "__input__", tool_name = "input"
+  - arguments = { "value": "<current default value>", "default": "<current default value>" }
+  - depends_on = [] (inputs are always roots)
+  - output_key = a descriptive name like "origin_city", "search_query", etc.
+- Then in the downstream node that previously had the hardcoded value, replace that argument's value with "{{output_key_of_input_node}}" so it references the input node's output
+- Also create a matching configurableParam entry pointing at the input node
 
 ### 5. NAME & DESCRIPTION
 - Generate a short, clear name (max 60 chars) describing the automation's purpose
@@ -105,22 +110,31 @@ Return EXACTLY a JSON object with this schema and NOTHING ELSE (no markdown fenc
   "description": "1-2 sentence description",
   "nodes": [
     {
-      "id": "n1",
-      "step": "Human-readable step title",
-      "server_name": "server.name",
-      "tool_name": "tool_name",
-      "arguments": { ... },
+      "id": "input_1",
+      "step": "Origin City",
+      "server_name": "__input__",
+      "tool_name": "input",
+      "arguments": { "value": "NYC", "default": "NYC" },
       "depends_on": [],
-      "output_key": "descriptive_key_name"
+      "output_key": "origin_city"
+    },
+    {
+      "id": "n1",
+      "step": "Search flights",
+      "server_name": "flights_server",
+      "tool_name": "search",
+      "arguments": { "origin": "{{origin_city}}", "destination": "{{destination_city}}" },
+      "depends_on": ["input_1", "input_2"],
+      "output_key": "flight_results"
     }
   ],
   "configurableParams": [
     {
-      "nodeId": "n1",
-      "paramKey": "argument_key",
-      "label": "Human Label",
-      "description": "Why this is configurable",
-      "defaultValue": "current value",
+      "nodeId": "input_1",
+      "paramKey": "value",
+      "label": "Origin City",
+      "description": "The departure city",
+      "defaultValue": "NYC",
       "type": "string"
     }
   ]

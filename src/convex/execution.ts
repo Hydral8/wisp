@@ -349,7 +349,10 @@ export const startExecution = action({
         try {
           let result: any;
 
-          if (node.server_name === "__llm__") {
+          if (node.server_name === "__input__") {
+            // Input nodes: value is already patched by runtimeParams override above
+            result = enrichedArgs?.value ?? enrichedArgs?.default ?? "";
+          } else if (node.server_name === "__llm__") {
             result = await execLlm(enrichedArgs);
           } else if (node.server_name === "__browser_use__") {
             // Browser-Use API direct call

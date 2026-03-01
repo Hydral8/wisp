@@ -275,6 +275,7 @@ export default function WorkflowPage() {
         nodes: wf.nodes,
         status: wf.status,
         browser_use_mode: wf.browserUseMode,
+        configurableParams: wf.configurableParams,
       });
       setBrowserUseMode(wf.browserUseMode ?? "local");
       setWorkflowId(wf._id);
