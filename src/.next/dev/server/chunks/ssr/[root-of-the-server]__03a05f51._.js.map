@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///Users/sbae703/dev/hackathons/yc/wisp/src/components/convex-provider.tsx"],"sourcesContent":["\"use client\";\n\nimport { ConvexAuthNextjsProvider } from \"@convex-dev/auth/nextjs\";\nimport { ConvexReactClient } from \"convex/react\";\nimport { ReactNode } from \"react\";\n\nconst convex = new ConvexReactClient(\n  process.env.NEXT_PUBLIC_CONVEX_URL as string\n);\n\nexport function ConvexClientProvider({ children }: { children: ReactNode }) {\n  return <ConvexAuthNextjsProvider client={convex}>{children}</ConvexAuthNextjsProvider>;\n}\n"],"names":[],"mappings":";;;;;AAEA;AACA;AAAA;AAHA;;;;AAMA,MAAM,SAAS,IAAI,gNAAiB;AAI7B,SAAS,qBAAqB,EAAE,QAAQ,EAA2B;IACxE,qBAAO,gZAAC,iOAAwB;QAAC,QAAQ;kBAAS;;;;;;AACpD"}}]
+}

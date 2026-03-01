@@ -31,6 +31,7 @@ export default defineSchema({
 
   authVerificationCodes: defineTable({
     accountId: v.id("authAccounts"),
+    provider: v.optional(v.string()),
     code: v.string(),
     expirationTime: v.float64(),
     verifier: v.optional(v.string()),
