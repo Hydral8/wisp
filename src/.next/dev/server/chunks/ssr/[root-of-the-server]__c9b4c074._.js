@@ -5,12 +5,50 @@ const mod = __turbopack_context__.x("next/dist/compiled/next-server/app-page-tur
 
 module.exports = mod;
 }),
-"[project]/hackathons/yc/wisp/src/app/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"[externals]/next/dist/server/app-render/action-async-storage.external.js [external] (next/dist/server/app-render/action-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/action-async-storage.external.js", () => require("next/dist/server/app-render/action-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-unit-async-storage.external.js [external] (next/dist/server/app-render/work-unit-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-unit-async-storage.external.js", () => require("next/dist/server/app-render/work-unit-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-async-storage.external.js [external] (next/dist/server/app-render/work-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-async-storage.external.js", () => require("next/dist/server/app-render/work-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s([
-    "default",
-    ()=>Home
+    "API",
+    ()=>API,
+    "ChatPane",
+    ()=>ChatPane,
+    "ChatPlanningStep",
+    ()=>ChatPlanningStep,
+    "Collapsible",
+    ()=>Collapsible,
+    "ExecutionEntry",
+    ()=>ExecutionEntry,
+    "PRESETS",
+    ()=>PRESETS,
+    "PipelineBar",
+    ()=>PipelineBar,
+    "PlanningFeed",
+    ()=>PlanningFeed,
+    "WorkflowPane",
+    ()=>WorkflowPane,
+    "consumeSSE",
+    ()=>consumeSSE,
+    "getLevels",
+    ()=>getLevels
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/node_modules/.pnpm/next@16.1.1_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/node_modules/.pnpm/next@16.1.1_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
@@ -18,9 +56,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$
 ;
 ;
 const API = "http://localhost:8001";
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 function getLevels(nodes) {
     const map = new Map(nodes.map((n)=>[
             n.id,
@@ -77,9 +112,6 @@ async function consumeSSE(response, onEvent) {
         }
     }
 }
-// ---------------------------------------------------------------------------
-// Collapsible — reusable toggle section
-// ---------------------------------------------------------------------------
 function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
     const [open, setOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(defaultOpen);
     const toggle = ()=>{
@@ -108,7 +140,7 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
                                 },
                                 children: label
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                                 lineNumber: 107,
                                 columnNumber: 11
                             }, this),
@@ -119,13 +151,13 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
                                 },
                                 children: meta
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                                 lineNumber: 108,
                                 columnNumber: 20
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                         lineNumber: 106,
                         columnNumber: 9
                     }, this),
@@ -139,13 +171,13 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
                         },
                         children: "v"
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                         lineNumber: 110,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 102,
                 columnNumber: 7
             }, this),
@@ -153,20 +185,17 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
                 className: "px-3 pb-2",
                 children: children
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 115,
                 columnNumber: 16
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
         lineNumber: 98,
         columnNumber: 5
     }, this);
 }
-// ---------------------------------------------------------------------------
-// ChatPlanningStep — minimal inline planning event for chat pane
-// ---------------------------------------------------------------------------
 function ChatPlanningStep({ event }) {
     const [expanded, setExpanded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     switch(event.type){
@@ -183,7 +212,7 @@ function ChatPlanningStep({ event }) {
                             background: "var(--text-dim)"
                         }
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                         lineNumber: 132,
                         columnNumber: 11
                     }, this),
@@ -191,7 +220,7 @@ function ChatPlanningStep({ event }) {
                     event.query
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 130,
                 columnNumber: 9
             }, this);
@@ -211,17 +240,17 @@ function ChatPlanningStep({ event }) {
                             },
                             children: name
                         }, i, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                             lineNumber: 147,
                             columnNumber: 17
                         }, this))
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                     lineNumber: 145,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 139,
                 columnNumber: 9
             }, this);
@@ -239,39 +268,13 @@ function ChatPlanningStep({ event }) {
                     },
                     children: event.text
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                     lineNumber: 160,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 159,
-                columnNumber: 9
-            }, this);
-        case "dag_complete":
-            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast",
-                style: {
-                    color: "var(--text)"
-                },
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-1.5 h-1.5 rounded-full",
-                        style: {
-                            background: "var(--text)"
-                        }
-                    }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 171,
-                        columnNumber: 11
-                    }, this),
-                    "Workflow ready — ",
-                    event.workflow.nodes.length,
-                    " steps"
-                ]
-            }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 169,
                 columnNumber: 9
             }, this);
         case "planning_warnings":
@@ -293,26 +296,52 @@ function ChatPlanningStep({ event }) {
                                 },
                                 children: "!"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 183,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 174,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: w
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 184,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 175,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, i, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 181,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 172,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 178,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 169,
+                columnNumber: 9
+            }, this);
+        case "dag_complete":
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast",
+                style: {
+                    color: "var(--text)"
+                },
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-1.5 h-1.5 rounded-full",
+                        style: {
+                            background: "var(--text)"
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 185,
+                        columnNumber: 11
+                    }, this),
+                    "Workflow ready — ",
+                    event.workflow.nodes.length,
+                    " steps"
+                ]
+            }, void 0, true, {
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 183,
                 columnNumber: 9
             }, this);
         case "planning_error":
@@ -323,7 +352,7 @@ function ChatPlanningStep({ event }) {
                 },
                 children: event.message.slice(0, 200)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                 lineNumber: 192,
                 columnNumber: 9
             }, this);
@@ -331,9 +360,6 @@ function ChatPlanningStep({ event }) {
             return null;
     }
 }
-// ---------------------------------------------------------------------------
-// ChatPane
-// ---------------------------------------------------------------------------
 function ChatPane({ messages, onSend, loading }) {
     const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const endRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
@@ -366,8 +392,8 @@ function ChatPane({ messages, onSend, loading }) {
                 },
                 children: "Chat"
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 240,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 239,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -378,8 +404,8 @@ function ChatPane({ messages, onSend, loading }) {
                             children: m.planningEvent ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ChatPlanningStep, {
                                 event: m.planningEvent
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 252,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 250,
                                 columnNumber: 15
                             }, this) : m.role === "user" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex justify-end",
@@ -391,13 +417,13 @@ function ChatPane({ messages, onSend, loading }) {
                                     },
                                     children: m.content
                                 }, void 0, false, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 255,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 253,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 254,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 252,
                                 columnNumber: 15
                             }, this) : m.role === "system" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "text-xs px-3 py-1.5 rounded",
@@ -407,8 +433,8 @@ function ChatPane({ messages, onSend, loading }) {
                                 },
                                 children: m.content
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 263,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 261,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "px-3 py-2 rounded-lg text-xs",
@@ -418,13 +444,13 @@ function ChatPane({ messages, onSend, loading }) {
                                 },
                                 children: m.content
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 270,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 268,
                                 columnNumber: 15
                             }, this)
                         }, i, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 250,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 248,
                             columnNumber: 11
                         }, this)),
                     loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -440,26 +466,26 @@ function ChatPane({ messages, onSend, loading }) {
                                     opacity: 0.4
                                 }
                             }, i, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 282,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 280,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 280,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 278,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         ref: endRef
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 290,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 288,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 248,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 246,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -483,8 +509,8 @@ function ChatPane({ messages, onSend, loading }) {
                             onKeyDown: (e)=>e.key === "Enter" && send(),
                             disabled: loading
                         }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 296,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 293,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -498,31 +524,28 @@ function ChatPane({ messages, onSend, loading }) {
                             },
                             children: "Send"
                         }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 309,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 306,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 295,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 292,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 294,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 291,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
         lineNumber: 230,
         columnNumber: 5
     }, this);
 }
-// ---------------------------------------------------------------------------
-// PlanningFeed — clean summary: tool searches, thinking (collapsible), result
-// ---------------------------------------------------------------------------
 function PlanningFeed({ events }) {
     const endRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const isDone = events.some((e)=>e.type === "dag_complete" || e.type === "planning_error");
@@ -533,7 +556,6 @@ function PlanningFeed({ events }) {
     }, [
         events
     ]);
-    // Filter to only meaningful events
     const visible = events.filter((e)=>e.type === "tool_search_complete" || e.type === "planning_thinking" || e.type === "planning_warnings" || e.type === "dag_complete" || e.type === "planning_error");
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex-1 flex flex-col h-full overflow-hidden animate-slide-right",
@@ -551,8 +573,8 @@ function PlanningFeed({ events }) {
                         },
                         children: "Planning"
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 351,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 347,
                         columnNumber: 9
                     }, this),
                     !isDone && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -565,8 +587,8 @@ function PlanningFeed({ events }) {
                                     opacity: 0.6
                                 }
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 356,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 352,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -576,20 +598,20 @@ function PlanningFeed({ events }) {
                                 },
                                 children: "Thinking..."
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 357,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 353,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 355,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 351,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 347,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 343,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -598,27 +620,27 @@ function PlanningFeed({ events }) {
                     visible.map((e, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PlanningFeedCard, {
                             event: e
                         }, i, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 363,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 359,
                             columnNumber: 11
                         }, this)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         ref: endRef
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 365,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 361,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 361,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 357,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 346,
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+        lineNumber: 342,
         columnNumber: 5
     }, this);
 }
@@ -640,18 +662,18 @@ function PlanningFeedCard({ event }) {
                             },
                             children: name
                         }, i, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 383,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 379,
                             columnNumber: 17
                         }, this))
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 381,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 377,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 375,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 371,
                 columnNumber: 9
             }, this);
         case "planning_thinking":
@@ -667,58 +689,13 @@ function PlanningFeedCard({ event }) {
                     },
                     children: event.text
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 396,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 392,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 395,
-                columnNumber: 9
-            }, this);
-        case "dag_complete":
-            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-3 rounded-lg text-xs animate-fade-in",
-                style: {
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)"
-                },
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex items-center gap-2",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "w-1.5 h-1.5 rounded-full",
-                            style: {
-                                background: "var(--text)"
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 408,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            style: {
-                                color: "var(--text)"
-                            },
-                            children: [
-                                "Workflow ready — ",
-                                event.workflow.nodes.length,
-                                " steps"
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 409,
-                            columnNumber: 13
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 407,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 405,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 391,
                 columnNumber: 9
             }, this);
         case "planning_warnings":
@@ -740,26 +717,71 @@ function PlanningFeedCard({ event }) {
                                 },
                                 children: "!"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 423,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 406,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: w
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 424,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 407,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, i, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 421,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 404,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 418,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 401,
+                columnNumber: 9
+            }, this);
+        case "dag_complete":
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "p-3 rounded-lg text-xs animate-fade-in",
+                style: {
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border)"
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "flex items-center gap-2",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "w-1.5 h-1.5 rounded-full",
+                            style: {
+                                background: "var(--text)"
+                            }
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 418,
+                            columnNumber: 13
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            style: {
+                                color: "var(--text)"
+                            },
+                            children: [
+                                "Workflow ready — ",
+                                event.workflow.nodes.length,
+                                " steps"
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 419,
+                            columnNumber: 13
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 417,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 415,
                 columnNumber: 9
             }, this);
         case "planning_error":
@@ -775,22 +797,19 @@ function PlanningFeedCard({ event }) {
                     },
                     children: event.message.slice(0, 300)
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 434,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 430,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 432,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 428,
                 columnNumber: 9
             }, this);
         default:
             return null;
     }
 }
-// ---------------------------------------------------------------------------
-// PipelineBar
-// ---------------------------------------------------------------------------
 function PipelineBar({ nodes, nodeStatuses }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex items-center gap-1 px-4 py-2 overflow-x-auto",
@@ -811,8 +830,8 @@ function PipelineBar({ nodes, nodeStatuses }) {
                             background: color
                         }
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 474,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 470,
                         columnNumber: 13
                     }, this),
                     i < nodes.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -821,26 +840,23 @@ function PipelineBar({ nodes, nodeStatuses }) {
                             background: "var(--border)"
                         }
                     }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 479,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 475,
                         columnNumber: 15
                     }, this)
                 ]
             }, n.id, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 473,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 469,
                 columnNumber: 11
             }, this);
         })
     }, void 0, false, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 457,
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+        lineNumber: 453,
         columnNumber: 5
     }, this);
 }
-// ---------------------------------------------------------------------------
-// ExecutionEntry
-// ---------------------------------------------------------------------------
 function ExecutionEntry({ node }) {
     const [expanded, setExpanded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const statusColor = node.status === "complete" ? "var(--green)" : node.status === "running" ? "var(--blue)" : node.status === "error" ? "var(--red)" : "var(--text-dim)";
@@ -866,8 +882,8 @@ function ExecutionEntry({ node }) {
                                     animation: node.status === "running" ? "pulse-dot 1s ease-in-out infinite" : "none"
                                 }
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 521,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 516,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -879,8 +895,8 @@ function ExecutionEntry({ node }) {
                                         },
                                         children: node.step || node.tool_name
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 530,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 525,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -894,20 +910,20 @@ function ExecutionEntry({ node }) {
                                             node.tool_name
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 533,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 528,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 529,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 524,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 520,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 515,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -923,8 +939,8 @@ function ExecutionEntry({ node }) {
                                     "s"
                                 ]
                             }, void 0, true, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 540,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 535,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -935,20 +951,20 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: "v"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 544,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 539,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 538,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 533,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 519,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 514,
                 columnNumber: 7
             }, this),
             expanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -963,8 +979,8 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: "Request"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 558,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 552,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -976,14 +992,14 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: JSON.stringify(node.arguments, null, 2)
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 561,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 555,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 557,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 551,
                         columnNumber: 13
                     }, this),
                     node.result !== undefined && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -995,8 +1011,8 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: "Response"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 575,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 569,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -1008,14 +1024,14 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: typeof node.result === "string" ? node.result : JSON.stringify(node.result, null, 2)
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 578,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 572,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 574,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 568,
                         columnNumber: 13
                     }, this),
                     node.error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1027,8 +1043,8 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: "Error"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 594,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 588,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -1039,32 +1055,29 @@ function ExecutionEntry({ node }) {
                                 },
                                 children: node.error
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 597,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 591,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 593,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 587,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 555,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 549,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 513,
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+        lineNumber: 509,
         columnNumber: 5
     }, this);
 }
-// ---------------------------------------------------------------------------
-// WorkflowPane
-// ---------------------------------------------------------------------------
 function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateWebhook, webhookUrl }) {
     const levels = getLevels(workflow.nodes);
     const showExecution = phase === "executing" || phase === "done";
@@ -1083,8 +1096,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                 className: "text-sm font-medium",
                                 children: workflow.name
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 643,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 636,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1094,14 +1107,14 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                 },
                                 children: workflow.description
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 644,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 637,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 642,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 635,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1118,8 +1131,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         },
                                         children: "Test Run"
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 651,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 644,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1131,8 +1144,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         },
                                         children: "Deploy"
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 658,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 651,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -1148,8 +1161,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         },
                                         children: "Re-run"
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 669,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 662,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1161,8 +1174,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         },
                                         children: "Deploy"
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 676,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 669,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -1176,28 +1189,28 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                 },
                                 children: "Create Webhook"
                             }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 686,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 679,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 648,
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 641,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 638,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 631,
                 columnNumber: 7
             }, this),
             showExecution && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PipelineBar, {
                 nodes: workflow.nodes,
                 nodeStatuses: nodeStatuses
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 698,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 690,
                 columnNumber: 25
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1208,8 +1221,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                         workflow.nodes.filter((n)=>nodeStatuses.has(n.id)).map((n)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ExecutionEntry, {
                                 node: nodeStatuses.get(n.id)
                             }, n.id, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 707,
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 698,
                                 columnNumber: 17
                             }, this)),
                         webhookUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1226,8 +1239,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     },
                                     children: "Webhook Created"
                                 }, void 0, false, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 714,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 705,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
@@ -1239,20 +1252,20 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         webhookUrl
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 717,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 708,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 710,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 701,
                             columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 703,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 694,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "space-y-4",
@@ -1268,8 +1281,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         li + 1
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 725,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 716,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1288,8 +1301,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                     className: "text-xs font-medium",
                                                     children: node.step
                                                 }, void 0, false, {
-                                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                    lineNumber: 738,
+                                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                                    lineNumber: 729,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1303,8 +1316,8 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                         node.tool_name
                                                     ]
                                                 }, void 0, true, {
-                                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                    lineNumber: 739,
+                                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                                    lineNumber: 730,
                                                     columnNumber: 23
                                                 }, this),
                                                 Object.keys(node.arguments).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -1316,19 +1329,19 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                     },
                                                     children: JSON.stringify(node.arguments, null, 2)
                                                 }, void 0, false, {
-                                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                    lineNumber: 743,
+                                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                                    lineNumber: 734,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, node.id, true, {
-                                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                            lineNumber: 733,
+                                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                            lineNumber: 724,
                                             columnNumber: 21
                                         }, this))
                                 }, void 0, false, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 731,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 722,
                                     columnNumber: 17
                                 }, this),
                                 li < levels.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1339,41 +1352,38 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                             background: "var(--border)"
                                         }
                                     }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 759,
+                                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                        lineNumber: 750,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 758,
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 749,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, li, true, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 724,
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 715,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 722,
+                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                    lineNumber: 713,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 701,
+                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                lineNumber: 692,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 636,
+        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+        lineNumber: 630,
         columnNumber: 5
     }, this);
 }
-// ---------------------------------------------------------------------------
-// Home (main page)
-// ---------------------------------------------------------------------------
 const PRESETS = [
     {
         label: "Competitive analysis pipeline",
@@ -1392,357 +1402,361 @@ const PRESETS = [
         prompt: "Scrape the front pages of Hacker News, TechCrunch, and The Verge, identify overlapping stories, then run sentiment analysis on coverage of the top 3 topics and generate a briefing with takeaways"
     }
 ];
-function Home() {
-    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(PRESETS[0].prompt);
-    const [started, setStarted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [phase, setPhase] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("idle");
-    const [sessionId, setSessionId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [workflow, setWorkflow] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [chatMessages, setChatMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [planningEvents, setPlanningEvents] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [nodeStatuses, setNodeStatuses] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Map());
-    const [runMode, setRunMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [webhookUrl, setWebhookUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+}),
+"[project]/hackathons/yc/wisp/src/app/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>Dashboard
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/node_modules/.pnpm/next@16.1.1_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/node_modules/.pnpm/next@16.1.1_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/node_modules/.pnpm/next@16.1.1_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/navigation.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx [app-ssr] (ecmascript)");
+"use client";
+;
+;
+;
+;
+function Dashboard() {
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
+    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PRESETS"][0].prompt);
+    const [workflows, setWorkflows] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [loadingList, setLoadingList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const textareaRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const streamPlan = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (prompt, existingSessionId)=>{
-        setPhase("planning");
-        setPlanningEvents([]);
-        const body = {
-            prompt
-        };
-        if (existingSessionId) body.session_id = existingSessionId;
-        try {
-            const res = await fetch(`${API}/plan/stream`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-            await consumeSSE(res, (raw)=>{
-                const event = raw;
-                if (event.type === "session_init") {
-                    setSessionId(event.session_id ?? null);
-                    return;
-                }
-                const pe = event;
-                // Accumulate planning events for the right-pane feed
-                setPlanningEvents((prev)=>[
-                        ...prev,
-                        pe
-                    ]);
-                // Push every planning event into chat as a collapsible entry
-                setChatMessages((prev)=>[
-                        ...prev,
-                        {
-                            role: "system",
-                            content: "",
-                            planningEvent: pe
-                        }
-                    ]);
-                // DAG complete — transition to preview
-                if (pe.type === "dag_complete") {
-                    setWorkflow(pe.workflow);
-                    setPhase("preview");
-                }
-                // Model is explaining why it can't do something — show as assistant message, stay conversational
-                if (pe.type === "planning_message") {
-                    setChatMessages((prev)=>[
-                            ...prev,
-                            {
-                                role: "assistant",
-                                content: pe.text
-                            }
-                        ]);
-                    setPhase("idle");
-                }
-                // Error
-                if (pe.type === "planning_error") {
-                    setPhase("idle");
-                }
-            });
-        } catch (err) {
-            setChatMessages((prev)=>[
-                    ...prev,
-                    {
-                        role: "assistant",
-                        content: `Error: ${err}`
-                    }
-                ]);
-            setPhase("idle");
-        }
+    // Fetch all workflows on mount
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["API"]}/workflows`).then((r)=>r.json()).then((data)=>{
+            setWorkflows(data.workflows ?? []);
+        }).catch(()=>{}).finally(()=>setLoadingList(false));
     }, []);
-    const handlePlan = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (prompt)=>{
-        setStarted(true);
-        setChatMessages((prev)=>[
-                ...prev,
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ]);
-        await streamPlan(prompt);
-    }, [
-        streamPlan
-    ]);
-    const handleChat = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (message)=>{
-        if (!sessionId) return;
-        setChatMessages((prev)=>[
-                ...prev,
-                {
-                    role: "user",
-                    content: message
-                }
-            ]);
-        await streamPlan(message, sessionId);
-    }, [
-        sessionId,
-        streamPlan
-    ]);
-    const handleRun = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (mode)=>{
-        if (!workflow) return;
-        setRunMode(mode);
-        setPhase("executing");
-        setNodeStatuses(new Map());
-        setWebhookUrl(null);
-        try {
-            const res = await fetch(`${API}/deploy`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    workflow_id: workflow.id
-                })
-            });
-            await consumeSSE(res, (event)=>{
-                if (event.type === "node_start") {
-                    const d = event.data;
-                    setNodeStatuses((prev)=>{
-                        const next = new Map(prev);
-                        next.set(event.node_id, {
-                            id: event.node_id,
-                            step: d.step,
-                            server_name: d.server_name,
-                            tool_name: d.tool_name,
-                            arguments: d.arguments,
-                            status: "running",
-                            level: d.level,
-                            progress: d.progress
-                        });
-                        return next;
-                    });
-                } else if (event.type === "node_complete") {
-                    const d = event.data;
-                    setNodeStatuses((prev)=>{
-                        const next = new Map(prev);
-                        const existing = next.get(event.node_id);
-                        next.set(event.node_id, {
-                            ...existing,
-                            status: "complete",
-                            result: d.result,
-                            elapsed: d.elapsed,
-                            progress: d.progress
-                        });
-                        return next;
-                    });
-                } else if (event.type === "node_error") {
-                    const d = event.data;
-                    setNodeStatuses((prev)=>{
-                        const next = new Map(prev);
-                        const existing = next.get(event.node_id);
-                        next.set(event.node_id, {
-                            ...existing,
-                            status: "error",
-                            error: d.error,
-                            progress: d.progress
-                        });
-                        return next;
-                    });
-                }
-            });
-        } catch (err) {
-            setChatMessages((prev)=>[
-                    ...prev,
-                    {
-                        role: "assistant",
-                        content: `Run error: ${err}`
-                    }
-                ]);
-        } finally{
-            setPhase("done");
+    const handleSubmit = ()=>{
+        if (!input.trim()) return;
+        router.push(`/workflow/new?prompt=${encodeURIComponent(input.trim())}`);
+    };
+    const statusColor = (status)=>{
+        switch(status){
+            case "completed":
+                return "var(--green)";
+            case "running":
+                return "var(--blue)";
+            case "planned":
+                return "var(--text-dim)";
+            default:
+                return "var(--text-dim)";
         }
-    }, [
-        workflow
-    ]);
-    const handleCreateWebhook = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
-        if (!workflow) return;
-        try {
-            const res = await fetch(`${API}/webhooks`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    workflow_id: workflow.id
-                })
-            });
-            const data = await res.json();
-            setWebhookUrl(data.url);
-        } catch (err) {
-            console.error("Webhook error:", err);
-        }
-    }, [
-        workflow
-    ]);
-    // Initial state: centered input
-    if (!started) {
-        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "h-screen flex flex-col items-center justify-center px-4",
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                    className: "text-2xl font-bold mb-2 tracking-tight",
-                    style: {
-                        color: "var(--text)"
-                    },
-                    children: "Wisp Instant"
-                }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 970,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "text-xs mb-8",
-                    style: {
-                        color: "var(--text-dim)"
-                    },
-                    children: "Describe a workflow — we'll find the right tools and run them."
-                }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 976,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "w-full max-w-xl",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
-                            ref: textareaRef,
-                            className: "w-full p-4 rounded-lg text-sm outline-none resize-none",
-                            style: {
-                                background: "var(--bg-card)",
-                                border: "1px solid var(--border)",
-                                color: "var(--text)",
-                                minHeight: 80
-                            },
-                            placeholder: "e.g. Search GitHub for trending AI repos this week...",
-                            value: input,
-                            onChange: (e)=>setInput(e.target.value),
-                            onKeyDown: (e)=>{
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    if (input.trim()) handlePlan(input.trim());
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen flex flex-col",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex flex-col items-center pt-16 pb-12 px-4",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                        className: "text-2xl font-bold mb-2 tracking-tight",
+                        style: {
+                            color: "var(--text)"
+                        },
+                        children: "Wisp Instant"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 52,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "text-xs mb-8",
+                        style: {
+                            color: "var(--text-dim)"
+                        },
+                        children: "Describe a workflow — we'll find the right tools and run them."
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 58,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-full max-w-xl",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                                ref: textareaRef,
+                                className: "w-full p-4 rounded-lg text-sm outline-none resize-none",
+                                style: {
+                                    background: "var(--bg-card)",
+                                    border: "1px solid var(--border)",
+                                    color: "var(--text)",
+                                    minHeight: 80
+                                },
+                                placeholder: "e.g. Search GitHub for trending AI repos this week...",
+                                value: input,
+                                onChange: (e)=>setInput(e.target.value),
+                                onKeyDown: (e)=>{
+                                    if (e.key === "Enter" && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSubmit();
+                                    }
                                 }
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 981,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex gap-2 mt-3 flex-wrap",
-                            children: PRESETS.map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>{
-                                        setInput(p.prompt);
-                                        textareaRef.current?.focus();
-                                    },
-                                    className: "px-3 py-1.5 rounded text-xs transition-colors",
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 63,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex gap-2 mt-3 flex-wrap",
+                                children: __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PRESETS"].map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>{
+                                            setInput(p.prompt);
+                                            textareaRef.current?.focus();
+                                        },
+                                        className: "px-3 py-1.5 rounded text-xs transition-colors",
+                                        style: {
+                                            background: "var(--bg-surface)",
+                                            border: "1px solid var(--border)",
+                                            color: "var(--text-dim)"
+                                        },
+                                        children: p.label
+                                    }, p.label, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 84,
+                                        columnNumber: 15
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 82,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 62,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 51,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex-1 px-4 pb-12 max-w-4xl mx-auto w-full",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mb-4 pb-2",
+                        style: {
+                            borderBottom: "1px solid var(--border)"
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                className: "text-xs font-bold tracking-wider uppercase",
+                                style: {
+                                    color: "var(--text-dim)"
+                                },
+                                children: "Your Workflows"
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 110,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-xs",
+                                style: {
+                                    color: "var(--text-dim)"
+                                },
+                                children: [
+                                    workflows.length,
+                                    " total"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 113,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 106,
+                        columnNumber: 9
+                    }, this),
+                    loadingList ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex justify-center py-8",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex gap-1",
+                            children: [
+                                0,
+                                1,
+                                2
+                            ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "w-1.5 h-1.5 rounded-full",
                                     style: {
-                                        background: "var(--bg-surface)",
-                                        border: "1px solid var(--border)",
-                                        color: "var(--text-dim)"
-                                    },
-                                    children: p.label
-                                }, p.label, false, {
+                                        background: "var(--text-dim)",
+                                        opacity: 0.4
+                                    }
+                                }, i, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 1002,
-                                    columnNumber: 15
+                                    lineNumber: 122,
+                                    columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 1000,
-                            columnNumber: 11
+                            lineNumber: 120,
+                            columnNumber: 13
                         }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 980,
-                    columnNumber: 9
-                }, this)
-            ]
-        }, void 0, true, {
-            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-            lineNumber: 969,
-            columnNumber: 7
-        }, this);
-    }
-    // Split-pane: chat left, right pane varies by phase
-    const isLoading = phase === "planning" || phase === "executing";
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "h-screen flex",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ChatPane, {
-                messages: chatMessages,
-                onSend: handleChat,
-                loading: isLoading
-            }, void 0, false, {
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 119,
+                        columnNumber: 11
+                    }, this) : workflows.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex flex-col items-center py-12",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "text-xs",
+                            style: {
+                                color: "var(--text-dim)"
+                            },
+                            children: "No workflows yet. Create one above to get started."
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            lineNumber: 132,
+                            columnNumber: 13
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 131,
+                        columnNumber: 11
+                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "grid gap-3",
+                        style: {
+                            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))"
+                        },
+                        children: workflows.map((wf)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>router.push(`/workflow/${wf.id}`),
+                                className: "text-left p-4 rounded-lg transition-all hover:scale-[1.01]",
+                                style: {
+                                    background: "var(--bg-card)",
+                                    border: "1px solid var(--border)"
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex items-center justify-between mb-2",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-sm font-medium",
+                                                style: {
+                                                    color: "var(--text)"
+                                                },
+                                                children: wf.name
+                                            }, void 0, false, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 149,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "flex items-center gap-1.5",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "w-1.5 h-1.5 rounded-full",
+                                                        style: {
+                                                            background: statusColor(wf.status)
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                        lineNumber: 153,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "text-xs",
+                                                        style: {
+                                                            color: "var(--text-dim)"
+                                                        },
+                                                        children: wf.status
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                        lineNumber: 157,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 152,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 148,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-xs mb-3 line-clamp-2",
+                                        style: {
+                                            color: "var(--text-dim)"
+                                        },
+                                        children: wf.description
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 162,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex items-center gap-2",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "text-xs px-2 py-0.5 rounded",
+                                                style: {
+                                                    background: "var(--bg-surface)",
+                                                    color: "var(--text-dim)"
+                                                },
+                                                children: [
+                                                    wf.nodes.length,
+                                                    " steps"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 169,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                className: "text-xs",
+                                                style: {
+                                                    color: "var(--text-dim)",
+                                                    opacity: 0.5
+                                                },
+                                                children: wf.id
+                                            }, void 0, false, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 175,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 168,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, wf.id, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 139,
+                                columnNumber: 15
+                            }, this))
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 137,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1029,
+                lineNumber: 105,
                 columnNumber: 7
-            }, this),
-            phase === "planning" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PlanningFeed, {
-                events: planningEvents
-            }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1035,
-                columnNumber: 9
-            }, this) : workflow ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(WorkflowPane, {
-                workflow: workflow,
-                nodeStatuses: nodeStatuses,
-                phase: phase,
-                runMode: runMode,
-                onRun: handleRun,
-                onCreateWebhook: handleCreateWebhook,
-                webhookUrl: webhookUrl
-            }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1037,
-                columnNumber: 9
-            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex-1 flex items-center justify-center",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "text-xs",
-                    style: {
-                        color: "var(--text-dim)"
-                    },
-                    children: "Waiting for workflow plan..."
-                }, void 0, false, {
-                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 1048,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1047,
-                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 1028,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }
 }),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__2b52ed7e._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__c9b4c074._.js.map
