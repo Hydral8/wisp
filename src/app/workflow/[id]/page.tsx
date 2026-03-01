@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import type {
   Workflow,
@@ -36,7 +36,7 @@ export default function WorkflowPage() {
   const [runMode, setRunMode] = useState<"deploy" | "test" | null>(null);
   const [browserUseMode, setBrowserUseMode] = useState<"local" | "remote">("local");
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const loadedRef = useRef(false);
   const [credentialRequest, setCredentialRequest] = useState<CredentialRequest | null>(null);
   const [credentialValues, setCredentialValues] = useState<Record<string, string>>({});
   const [executedSteps, setExecutedSteps] = useState<Record<string, unknown>[]>([]);
@@ -127,9 +127,9 @@ export default function WorkflowPage() {
 
   // Load existing workflow or start planning from prompt query param
   useEffect(() => {
-    if (loaded) return;
-    setLoaded(true);
-    console.log(`[init] id=${id} isNew=${isNew} loaded=${loaded}`);
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+    console.log(`[init] id=${id} isNew=${isNew}`);
 
     if (isNew) {
       const prompt = searchParams.get("prompt");
@@ -154,7 +154,7 @@ export default function WorkflowPage() {
           setChatMessages([{ role: "assistant", content: "Workflow not found." }]);
         });
     }
-  }, [id, isNew, searchParams, streamPlan, loaded]);
+  }, [id, isNew, searchParams, streamPlan]);
 
   const handleChat = useCallback(
     async (message: string) => {
