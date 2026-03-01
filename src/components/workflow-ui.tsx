@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type {
   Workflow,
   DAGNode,
@@ -340,6 +340,24 @@ export function PlanningFeed({
   const endRef = useRef<HTMLDivElement>(null);
   const isDone = events.some((e) => e.type === "agent_done" || e.type === "dag_complete" || e.type === "planning_error");
 
+  // Stable liveUrl — only changes when a new live_url actually appears
+  const liveUrl = useMemo(() => {
+    for (let i = events.length - 1; i >= 0; i--) {
+      const e = events[i];
+      if (e.type === "tool_exec_complete") {
+        const r = e.result;
+        if (r && typeof r === "object" && !Array.isArray(r)) {
+          const obj = r as Record<string, unknown>;
+          if (typeof obj.live_url === "string" && obj.live_url.startsWith("http")) {
+            console.log("[BrowserLiveView] Found live_url:", obj.live_url);
+            return obj.live_url;
+          }
+        }
+      }
+    }
+    return null;
+  }, [events]);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [events]);
@@ -386,35 +404,12 @@ export function PlanningFeed({
           )}
         </div>
       </div>
-      {/* Live browser iframe */}
-      {(() => {
-        // Find the latest live_url from tool_exec_complete results (browser_task returns live_url)
-        const liveUrl = [...events].reverse().reduce<string | null>((found, e) => {
-          if (found) return found;
-          if (e.type === "tool_exec_complete") {
-            const r = (e as unknown as Record<string, unknown>).result as Record<string, unknown> | undefined;
-            if (r?.live_url && typeof r.live_url === "string") return r.live_url;
-          }
-          return null;
-        }, null);
-        // Only show while agent is still working (not done yet)
-        if (liveUrl && !isDone) {
-          return (
-            <div style={{ borderBottom: "1px solid var(--border)", padding: "0" }}>
-              <div style={{ padding: "6px 16px", fontSize: 11, color: "var(--text-dim)", display: "flex", alignItems: "center", gap: 6 }}>
-                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22c55e" }} />
-                Live browser session
-              </div>
-              <iframe
-                src={liveUrl}
-                style={{ width: "100%", height: 400, border: "none", background: "#000" }}
-                allow="clipboard-read; clipboard-write"
-              />
-            </div>
-          );
-        }
-        return null;
-      })()}
+      {/* Live browser view — stable ref prevents iframe reload on re-render */}
+      {liveUrl && !isDone && (
+        <div style={{ borderBottom: "1px solid var(--border)", padding: 12 }}>
+          <BrowserLiveView liveUrl={liveUrl} isRunning={!isDone} />
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {visible.map((e, i) => (
           <PlanningFeedCard key={i} event={e} />
@@ -493,28 +488,27 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
       );
 
     case "tool_exec_start": {
-      const e = event as Record<string, unknown>;
       return (
         <div className="flex items-center gap-1.5 animate-fade-in-fast" style={{ padding: "4px 0" }}>
           <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--blue, #3b82f6)" }} />
           <span style={{ fontSize: 12, color: "var(--text)" }}>
-            Executing: {e.server_name as string} / {e.tool_name as string}
+            Executing: {event.server_name} / {event.tool_name}
           </span>
         </div>
       );
     }
 
     case "tool_exec_complete": {
-      const e = event as Record<string, unknown>;
-      const success = e.success as boolean;
-      const result = e.result as Record<string, unknown>;
-      const liveUrl = result?.live_url as string | undefined;
+      const result = event.result;
+      const resultObj = (result && typeof result === "object" && !Array.isArray(result))
+        ? result as Record<string, unknown> : null;
+      const liveUrl = resultObj && typeof resultObj.live_url === "string" ? resultObj.live_url : undefined;
       const preview = JSON.stringify(result, null, 2);
       return (
         <Collapsible
-          label={`${e.server_name as string} / ${e.tool_name as string}`}
-          meta={`${success ? "OK" : "FAIL"} · ${e.elapsed as number}s`}
-          defaultOpen={!success}
+          label={`${event.server_name} / ${event.tool_name}`}
+          meta={`${event.success ? "OK" : "FAIL"} · ${event.elapsed}s`}
+          defaultOpen={!event.success}
         >
           {liveUrl && (
             <div style={{ marginBottom: 8 }}>
@@ -532,7 +526,6 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
     }
 
     case "agent_done": {
-      const e = event as Record<string, unknown>;
       return (
         <div className="animate-fade-in" style={{ padding: "8px 0" }}>
           <div className="flex items-center gap-1.5" style={{ marginBottom: 6 }}>
@@ -540,7 +533,7 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
             <span style={{ fontSize: 12, color: "var(--text)", fontWeight: 500 }}>Agent complete</span>
           </div>
           <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, whiteSpace: "pre-wrap" }}>
-            {e.text as string}
+            {event.text}
           </p>
         </div>
       );
@@ -629,6 +622,130 @@ function formatResult(result: unknown): string {
   }
   // Fallback: pretty JSON
   return JSON.stringify(result, null, 2);
+}
+
+// ---------------------------------------------------------------------------
+// BrowserLiveView — embedded browser view via iframe
+// ---------------------------------------------------------------------------
+
+function BrowserLiveView({
+  liveUrl,
+  isRunning,
+}: {
+  liveUrl: string;
+  isRunning?: boolean;
+}) {
+  const [maximized, setMaximized] = useState(false);
+
+  const iframeContent = (
+    <div
+      className="animate-fade-in-fast"
+      style={{
+        position: "relative",
+        background: "#000",
+        borderRadius: maximized ? 0 : 8,
+        overflow: "hidden",
+        border: maximized ? "none" : "1px solid var(--border)",
+      }}
+    >
+      {/* Header bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "6px 10px",
+          background: "var(--bg-surface)",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+          {isRunning && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+              <div
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: "var(--green)", animation: "pulse-dot 1s ease-in-out infinite" }}
+              />
+              <span style={{ fontSize: 10, color: "var(--green)", fontWeight: 500 }}>LIVE</span>
+            </div>
+          )}
+          <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Browser session</span>
+        </div>
+        <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+          <button
+            onClick={() => setMaximized(!maximized)}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "2px 6px",
+              borderRadius: 4,
+              color: "var(--text-dim)",
+              fontSize: 11,
+            }}
+            title={maximized ? "Minimize" : "Maximize"}
+          >
+            {maximized ? "↙" : "↗"}
+          </button>
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "2px 6px",
+              borderRadius: 4,
+              color: "var(--text-dim)",
+              fontSize: 11,
+              textDecoration: "none",
+            }}
+            title="Open in new tab"
+          >
+            ↗ Open
+          </a>
+        </div>
+      </div>
+
+      {/* Iframe */}
+      <iframe
+        src={liveUrl}
+        style={{
+          width: "100%",
+          height: maximized ? "calc(100vh - 80px)" : 400,
+          border: "none",
+          display: "block",
+          background: "#111",
+        }}
+        allow="clipboard-read; clipboard-write"
+      />
+    </div>
+  );
+
+  // Maximized: render as fixed overlay
+  if (maximized) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 999,
+          background: "rgba(0,0,0,0.85)",
+          display: "flex",
+          flexDirection: "column",
+          padding: 16,
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setMaximized(false);
+        }}
+      >
+        {iframeContent}
+      </div>
+    );
+  }
+
+  return iframeContent;
 }
 
 /** Trim long text for a preview line. */
