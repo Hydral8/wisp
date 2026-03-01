@@ -6,10 +6,14 @@ import type {
   DAGNode,
   NodeStatus,
   ChatMessage,
-  PlanResponse,
+  PlanningEvent,
+  AppPhase,
 } from "@/lib/types";
 
 const API = "http://localhost:8001";
+
+// Chat entries can be plain messages or planning events
+type ChatEntry = ChatMessage & { planningEvent?: PlanningEvent };
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -41,6 +45,147 @@ function getLevels(nodes: DAGNode[]): DAGNode[][] {
   return levels;
 }
 
+async function consumeSSE(
+  response: Response,
+  onEvent: (event: Record<string, unknown>) => void,
+) {
+  const reader = response.body?.getReader();
+  if (!reader) return;
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      try {
+        onEvent(JSON.parse(line.slice(6)));
+      } catch {
+        // skip malformed events
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Collapsible — reusable toggle section
+// ---------------------------------------------------------------------------
+
+function Collapsible({
+  label,
+  meta,
+  defaultOpen = true,
+  onToggle,
+  children,
+}: {
+  label: string;
+  meta?: string;
+  defaultOpen?: boolean;
+  onToggle?: (open: boolean) => void;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const toggle = () => {
+    setOpen((v) => {
+      onToggle?.(!v);
+      return !v;
+    });
+  };
+  return (
+    <div
+      className="text-xs animate-fade-in-fast rounded"
+      style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+    >
+      <div
+        className="flex items-center justify-between px-3 py-1.5 cursor-pointer select-none"
+        onClick={toggle}
+      >
+        <div className="flex items-center gap-1.5">
+          <span style={{ color: "var(--text-dim)" }}>{label}</span>
+          {meta && <span style={{ color: "var(--text-dim)", opacity: 0.5 }}>{meta}</span>}
+        </div>
+        <span style={{
+          color: "var(--text-dim)", fontSize: 10, display: "inline-block",
+          transition: "transform 0.15s", transform: open ? "rotate(180deg)" : "none",
+        }}>v</span>
+      </div>
+      {open && <div className="px-3 pb-2">{children}</div>}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ChatPlanningStep — minimal inline planning event for chat pane
+// ---------------------------------------------------------------------------
+
+function ChatPlanningStep({ event }: { event: PlanningEvent }) {
+  const [expanded, setExpanded] = useState(true);
+
+  switch (event.type) {
+    case "tool_search_start":
+      return (
+        <div className="flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast"
+          style={{ color: "var(--text-dim)" }}>
+          <div className="w-1 h-1 rounded-full" style={{ background: "var(--text-dim)" }} />
+          Searching: {event.query}
+        </div>
+      );
+
+    case "tool_search_complete":
+      return (
+        <Collapsible
+          label={`${event.count} tools found`}
+          meta={`${event.elapsed}s`}
+          defaultOpen={false}
+        >
+          {event.tool_names.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {event.tool_names.map((name, i) => (
+                <span key={i} className="px-1.5 py-0.5 rounded"
+                  style={{ background: "var(--bg-surface)", color: "var(--text-dim)", fontSize: 10 }}>
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </Collapsible>
+      );
+
+    case "planning_thinking":
+      return (
+        <Collapsible label="Model response" defaultOpen={expanded} onToggle={setExpanded}>
+          <pre className="text-xs whitespace-pre-wrap"
+            style={{ color: "var(--text)", maxHeight: 200, overflow: "auto" }}>
+            {event.text}
+          </pre>
+        </Collapsible>
+      );
+
+    case "dag_complete":
+      return (
+        <div className="flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast"
+          style={{ color: "var(--text)" }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text)" }} />
+          Workflow ready — {event.workflow.nodes.length} steps
+        </div>
+      );
+
+    case "planning_error":
+      return (
+        <div className="text-xs px-3 py-1 animate-fade-in-fast"
+          style={{ color: "var(--red)" }}>
+          {event.message.slice(0, 200)}
+        </div>
+      );
+
+    default:
+      return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // ChatPane
 // ---------------------------------------------------------------------------
@@ -50,7 +195,7 @@ function ChatPane({
   onSend,
   loading,
 }: {
-  messages: ChatMessage[];
+  messages: ChatEntry[];
   onSend: (msg: string) => void;
   loading: boolean;
 }) {
@@ -86,10 +231,12 @@ function ChatPane({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
         {messages.map((m, i) => (
           <div key={i} className="animate-fade-in-fast">
-            {m.role === "user" ? (
+            {m.planningEvent ? (
+              <ChatPlanningStep event={m.planningEvent} />
+            ) : m.role === "user" ? (
               <div className="flex justify-end">
                 <div
                   className="px-3 py-2 rounded-lg text-xs max-w-[260px]"
@@ -121,10 +268,7 @@ function ChatPane({
               <div
                 key={i}
                 className="w-1.5 h-1.5 rounded-full"
-                style={{
-                  background: "var(--accent)",
-                  animation: `pulse-dot 1s ease-in-out ${i * 0.2}s infinite`,
-                }}
+                style={{ background: "var(--text-dim)", opacity: 0.4 }}
               />
             ))}
           </div>
@@ -164,6 +308,110 @@ function ChatPane({
       </div>
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// PlanningFeed — clean summary: tool searches, thinking (collapsible), result
+// ---------------------------------------------------------------------------
+
+function PlanningFeed({ events }: { events: PlanningEvent[] }) {
+  const endRef = useRef<HTMLDivElement>(null);
+  const isDone = events.some((e) => e.type === "dag_complete" || e.type === "planning_error");
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [events]);
+
+  // Filter to only meaningful events
+  const visible = events.filter((e) =>
+    e.type === "tool_search_complete" || e.type === "planning_thinking" ||
+    e.type === "dag_complete" || e.type === "planning_error"
+  );
+
+  return (
+    <div className="flex-1 flex flex-col h-full overflow-hidden animate-slide-right">
+      <div
+        className="flex items-center justify-between px-4 py-3"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
+        <div className="text-xs font-bold tracking-wider uppercase" style={{ color: "var(--text-dim)" }}>
+          Planning
+        </div>
+        {!isDone && (
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text-dim)", opacity: 0.6 }} />
+            <span className="text-xs" style={{ color: "var(--text-dim)" }}>Thinking...</span>
+          </div>
+        )}
+      </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {visible.map((e, i) => (
+          <PlanningFeedCard key={i} event={e} />
+        ))}
+        <div ref={endRef} />
+      </div>
+    </div>
+  );
+}
+
+function PlanningFeedCard({ event }: { event: PlanningEvent }) {
+  switch (event.type) {
+    case "tool_search_complete":
+      return (
+        <Collapsible
+          label={`"${event.query}"`}
+          meta={`${event.count} tools · ${event.elapsed}s`}
+          defaultOpen={true}
+        >
+          {event.tool_names.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {event.tool_names.map((name, i) => (
+                <span key={i} className="px-1.5 py-0.5 rounded"
+                  style={{ background: "var(--bg-surface)", color: "var(--text-dim)", fontSize: 10 }}>
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </Collapsible>
+      );
+
+    case "planning_thinking":
+      return (
+        <Collapsible label="Model response" defaultOpen={true}>
+          <pre className="text-xs whitespace-pre-wrap"
+            style={{ color: "var(--text-dim)", maxHeight: 200, overflow: "auto" }}>
+            {event.text}
+          </pre>
+        </Collapsible>
+      );
+
+    case "dag_complete":
+      return (
+        <div className="p-3 rounded-lg text-xs animate-fade-in"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text)" }} />
+            <span style={{ color: "var(--text)" }}>
+              Workflow ready — {event.workflow.nodes.length} steps
+            </span>
+          </div>
+        </div>
+      );
+
+    case "planning_error":
+      return (
+        <div className="p-3 rounded-lg text-xs animate-fade-in"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+          <span style={{ color: "var(--red)" }}>
+            {event.message.slice(0, 300)}
+          </span>
+        </div>
+      );
+
+    default:
+      return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -277,7 +525,6 @@ function ExecutionEntry({ node }: { node: NodeStatus }) {
       {/* Expanded content */}
       {expanded && (
         <div className="mt-3 space-y-2 animate-fade-in-fast">
-          {/* Request */}
           {node.arguments && Object.keys(node.arguments).length > 0 && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: "var(--blue)" }}>
@@ -295,8 +542,6 @@ function ExecutionEntry({ node }: { node: NodeStatus }) {
               </pre>
             </div>
           )}
-
-          {/* Response */}
           {node.result !== undefined && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: "var(--green)" }}>
@@ -316,8 +561,6 @@ function ExecutionEntry({ node }: { node: NodeStatus }) {
               </pre>
             </div>
           )}
-
-          {/* Error */}
           {node.error && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: "var(--red)" }}>
@@ -344,22 +587,22 @@ function ExecutionEntry({ node }: { node: NodeStatus }) {
 function WorkflowPane({
   workflow,
   nodeStatuses,
-  isExecuting,
-  executionDone,
-  onDeploy,
+  phase,
+  runMode,
+  onRun,
   onCreateWebhook,
   webhookUrl,
 }: {
   workflow: Workflow;
   nodeStatuses: Map<string, NodeStatus>;
-  isExecuting: boolean;
-  executionDone: boolean;
-  onDeploy: () => void;
+  phase: AppPhase;
+  runMode: "deploy" | "test" | null;
+  onRun: (mode: "deploy" | "test") => void;
   onCreateWebhook: () => void;
   webhookUrl: string | null;
 }) {
   const levels = getLevels(workflow.nodes);
-  const showExecution = isExecuting || executionDone;
+  const showExecution = phase === "executing" || phase === "done";
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden animate-slide-right">
@@ -375,16 +618,43 @@ function WorkflowPane({
           </div>
         </div>
         <div className="flex gap-2">
-          {!isExecuting && !executionDone && (
-            <button
-              onClick={onDeploy}
-              className="px-4 py-1.5 rounded text-xs font-medium"
-              style={{ background: "var(--green)", color: "#000" }}
-            >
-              Deploy
-            </button>
+          {phase === "preview" && (
+            <>
+              <button
+                onClick={() => onRun("test")}
+                className="px-4 py-1.5 rounded text-xs font-medium"
+                style={{ background: "var(--blue)", color: "#fff" }}
+              >
+                Test Run
+              </button>
+              <button
+                onClick={() => onRun("deploy")}
+                className="px-4 py-1.5 rounded text-xs font-medium"
+                style={{ background: "var(--green)", color: "#000" }}
+              >
+                Deploy
+              </button>
+            </>
           )}
-          {executionDone && !webhookUrl && (
+          {phase === "done" && runMode === "test" && (
+            <>
+              <button
+                onClick={() => onRun("test")}
+                className="px-4 py-1.5 rounded text-xs font-medium"
+                style={{ background: "var(--blue)", color: "#fff" }}
+              >
+                Re-run
+              </button>
+              <button
+                onClick={() => onRun("deploy")}
+                className="px-4 py-1.5 rounded text-xs font-medium"
+                style={{ background: "var(--green)", color: "#000" }}
+              >
+                Deploy
+              </button>
+            </>
+          )}
+          {phase === "done" && runMode === "deploy" && !webhookUrl && (
             <button
               onClick={onCreateWebhook}
               className="px-4 py-1.5 rounded text-xs font-medium"
@@ -402,7 +672,6 @@ function WorkflowPane({
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
         {showExecution ? (
-          /* Execution feed */
           <div className="space-y-3">
             {workflow.nodes
               .filter((n) => nodeStatuses.has(n.id))
@@ -422,7 +691,6 @@ function WorkflowPane({
             )}
           </div>
         ) : (
-          /* DAG preview */
           <div className="space-y-4">
             {levels.map((level, li) => (
               <div key={li}>
@@ -477,175 +745,171 @@ function WorkflowPane({
 // ---------------------------------------------------------------------------
 
 const PRESETS = [
-  { label: "GitHub trending AI repos", prompt: "Search GitHub for trending AI repositories this week" },
-  { label: "Crypto price check", prompt: "Get the current prices of Bitcoin, Ethereum, and Solana" },
-  { label: "Web scrape + summarize", prompt: "Scrape the Hacker News front page and summarize the top 5 stories" },
-  { label: "Weather comparison", prompt: "Compare the current weather in San Francisco, New York, and London" },
+  { label: "Competitive analysis pipeline", prompt: "Scrape the homepages of Stripe, Square, and Adyen, then compare their product offerings side-by-side and generate a competitive analysis summary with strengths and weaknesses" },
+  { label: "Multi-source research report", prompt: "Search GitHub for the top 5 trending AI repositories this week, fetch each repo's README, then synthesize a research briefing that covers what each project does, their tech stacks, and which problems they solve" },
+  { label: "Job market snapshot", prompt: "Search for senior backend engineer job postings on LinkedIn and Indeed, extract salary ranges and required skills, then produce a summary table comparing compensation across companies" },
+  { label: "News digest + sentiment", prompt: "Scrape the front pages of Hacker News, TechCrunch, and The Verge, identify overlapping stories, then run sentiment analysis on coverage of the top 3 topics and generate a briefing with takeaways" },
 ];
 
 export default function Home() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(PRESETS[0].prompt);
   const [started, setStarted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState<AppPhase>("idle");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [planningEvents, setPlanningEvents] = useState<PlanningEvent[]>([]);
   const [nodeStatuses, setNodeStatuses] = useState<Map<string, NodeStatus>>(new Map());
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [executionDone, setExecutionDone] = useState(false);
+  const [runMode, setRunMode] = useState<"deploy" | "test" | null>(null);
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handlePlan = useCallback(
-    async (prompt: string) => {
-      setStarted(true);
-      setLoading(true);
-      setChatMessages((prev) => [...prev, { role: "user", content: prompt }]);
+  const streamPlan = useCallback(
+    async (prompt: string, existingSessionId?: string | null) => {
+      setPhase("planning");
+      setPlanningEvents([]);
+
+      const body: Record<string, string> = { prompt };
+      if (existingSessionId) body.session_id = existingSessionId;
 
       try {
-        const res = await fetch(`${API}/plan`, {
+        const res = await fetch(`${API}/plan/stream`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt }),
+          body: JSON.stringify(body),
         });
-        const data: PlanResponse = await res.json();
 
-        setSessionId(data.session_id);
-        if (data.chat_messages) {
-          setChatMessages((prev) => [...prev, ...data.chat_messages]);
-        }
-        if (data.workflow) {
-          setWorkflow(data.workflow);
-        }
+        await consumeSSE(res, (raw) => {
+          const event = raw as unknown as PlanningEvent & { session_id?: string };
+
+          if (event.type === "session_init") {
+            setSessionId(event.session_id ?? null);
+            return;
+          }
+
+          const pe = event as PlanningEvent;
+
+          // Accumulate planning events for the right-pane feed
+          setPlanningEvents((prev) => [...prev, pe]);
+
+          // Push every planning event into chat as a collapsible entry
+          setChatMessages((prev) => [
+            ...prev,
+            { role: "system", content: "", planningEvent: pe },
+          ]);
+
+          // DAG complete — transition to preview
+          if (pe.type === "dag_complete") {
+            setWorkflow(pe.workflow);
+            setPhase("preview");
+          }
+
+          // Error
+          if (pe.type === "planning_error") {
+            setPhase("idle");
+          }
+        });
       } catch (err) {
         setChatMessages((prev) => [
           ...prev,
           { role: "assistant", content: `Error: ${err}` },
         ]);
-      } finally {
-        setLoading(false);
+        setPhase("idle");
       }
     },
-    []
+    [],
+  );
+
+  const handlePlan = useCallback(
+    async (prompt: string) => {
+      setStarted(true);
+      setChatMessages((prev) => [...prev, { role: "user", content: prompt }]);
+      await streamPlan(prompt);
+    },
+    [streamPlan],
   );
 
   const handleChat = useCallback(
     async (message: string) => {
       if (!sessionId) return;
-      setLoading(true);
       setChatMessages((prev) => [...prev, { role: "user", content: message }]);
+      await streamPlan(message, sessionId);
+    },
+    [sessionId, streamPlan],
+  );
+
+  const handleRun = useCallback(
+    async (mode: "deploy" | "test") => {
+      if (!workflow) return;
+      setRunMode(mode);
+      setPhase("executing");
+      setNodeStatuses(new Map());
+      setWebhookUrl(null);
 
       try {
-        const res = await fetch(`${API}/chat`, {
+        const res = await fetch(`${API}/deploy`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session_id: sessionId, message }),
+          body: JSON.stringify({ workflow_id: workflow.id }),
         });
-        const data: PlanResponse = await res.json();
 
-        if (data.chat_messages) {
-          setChatMessages((prev) => [...prev, ...data.chat_messages]);
-        }
-        if (data.workflow) {
-          setWorkflow(data.workflow);
-        }
+        await consumeSSE(res, (event) => {
+          if (event.type === "node_start") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              next.set(event.node_id as string, {
+                id: event.node_id as string,
+                step: d.step as string,
+                server_name: d.server_name as string,
+                tool_name: d.tool_name as string,
+                arguments: d.arguments as Record<string, unknown>,
+                status: "running",
+                level: d.level as number,
+                progress: d.progress as number,
+              });
+              return next;
+            });
+          } else if (event.type === "node_complete") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              next.set(event.node_id as string, {
+                ...existing!,
+                status: "complete",
+                result: d.result,
+                elapsed: d.elapsed as number,
+                progress: d.progress as number,
+              });
+              return next;
+            });
+          } else if (event.type === "node_error") {
+            const d = event.data as Record<string, unknown>;
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              next.set(event.node_id as string, {
+                ...existing!,
+                status: "error",
+                error: d.error as string,
+                progress: d.progress as number,
+              });
+              return next;
+            });
+          }
+        });
       } catch (err) {
         setChatMessages((prev) => [
           ...prev,
-          { role: "assistant", content: `Error: ${err}` },
+          { role: "assistant", content: `Run error: ${err}` },
         ]);
       } finally {
-        setLoading(false);
+        setPhase("done");
       }
     },
-    [sessionId]
+    [workflow],
   );
-
-  const handleDeploy = useCallback(async () => {
-    if (!workflow) return;
-    setIsExecuting(true);
-
-    try {
-      const res = await fetch(`${API}/deploy`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workflow_id: workflow.id }),
-      });
-
-      const reader = res.body?.getReader();
-      if (!reader) return;
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          try {
-            const event = JSON.parse(line.slice(6));
-
-            if (event.type === "node_start") {
-              setNodeStatuses((prev) => {
-                const next = new Map(prev);
-                next.set(event.node_id, {
-                  id: event.node_id,
-                  step: event.data.step,
-                  server_name: event.data.server_name,
-                  tool_name: event.data.tool_name,
-                  arguments: event.data.arguments,
-                  status: "running",
-                  level: event.data.level,
-                  progress: event.data.progress,
-                });
-                return next;
-              });
-            } else if (event.type === "node_complete") {
-              setNodeStatuses((prev) => {
-                const next = new Map(prev);
-                const existing = next.get(event.node_id);
-                next.set(event.node_id, {
-                  ...existing!,
-                  status: "complete",
-                  result: event.data.result,
-                  elapsed: event.data.elapsed,
-                  progress: event.data.progress,
-                });
-                return next;
-              });
-            } else if (event.type === "node_error") {
-              setNodeStatuses((prev) => {
-                const next = new Map(prev);
-                const existing = next.get(event.node_id);
-                next.set(event.node_id, {
-                  ...existing!,
-                  status: "error",
-                  error: event.data.error,
-                  progress: event.data.progress,
-                });
-                return next;
-              });
-            }
-          } catch {
-            // skip malformed events
-          }
-        }
-      }
-    } catch (err) {
-      setChatMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: `Deploy error: ${err}` },
-      ]);
-    } finally {
-      setIsExecuting(false);
-      setExecutionDone(true);
-    }
-  }, [workflow]);
 
   const handleCreateWebhook = useCallback(async () => {
     if (!workflow) return;
@@ -678,6 +942,7 @@ export default function Home() {
 
         <div className="w-full max-w-xl">
           <textarea
+            ref={textareaRef}
             className="w-full p-4 rounded-lg text-sm outline-none resize-none"
             style={{
               background: "var(--bg-card)",
@@ -699,7 +964,10 @@ export default function Home() {
             {PRESETS.map((p) => (
               <button
                 key={p.label}
-                onClick={() => handlePlan(p.prompt)}
+                onClick={() => {
+                  setInput(p.prompt);
+                  textareaRef.current?.focus();
+                }}
                 className="px-3 py-1.5 rounded text-xs transition-colors"
                 style={{
                   background: "var(--bg-surface)",
@@ -716,46 +984,33 @@ export default function Home() {
     );
   }
 
-  // Split-pane: chat left, workflow right
+  // Split-pane: chat left, right pane varies by phase
+  const isLoading = phase === "planning" || phase === "executing";
+
   return (
     <div className="h-screen flex">
       <ChatPane
         messages={chatMessages}
         onSend={handleChat}
-        loading={loading}
+        loading={isLoading}
       />
-      {workflow ? (
+      {phase === "planning" ? (
+        <PlanningFeed events={planningEvents} />
+      ) : workflow ? (
         <WorkflowPane
           workflow={workflow}
           nodeStatuses={nodeStatuses}
-          isExecuting={isExecuting}
-          executionDone={executionDone}
-          onDeploy={handleDeploy}
+          phase={phase}
+          runMode={runMode}
+          onRun={handleRun}
           onCreateWebhook={handleCreateWebhook}
           webhookUrl={webhookUrl}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            {loading ? (
-              <div className="flex gap-1.5 justify-center">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="w-2 h-2 rounded-full"
-                    style={{
-                      background: "var(--accent)",
-                      animation: `pulse-dot 1s ease-in-out ${i * 0.2}s infinite`,
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs" style={{ color: "var(--text-dim)" }}>
-                Waiting for workflow plan...
-              </p>
-            )}
-          </div>
+          <p className="text-xs" style={{ color: "var(--text-dim)" }}>
+            Waiting for workflow plan...
+          </p>
         </div>
       )}
     </div>

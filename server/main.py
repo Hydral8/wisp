@@ -107,7 +107,12 @@ def is_dag(obj: dict) -> bool:
 SYSTEM = """You are a workflow planner for Wisp, a tool gateway with 2000+ MCP tools.
 Search for real tools, then output a JSON DAG:
 {"name":"...","description":"...","nodes":[{"id":"n1","step":"...","server_name":"...","tool_name":"...","arguments":{},"depends_on":[],"output_key":"r1"}]}
-Rules: use search_tools to find real tools. depends_on controls ordering. {{output_key}} references previous results. Output ONLY JSON."""
+Rules:
+- Use search_tools to find real tools. One broad search per capability needed — do NOT repeat similar searches.
+- Once you have matching tools, immediately produce the DAG. Do not search again with rephrased queries.
+- For tasks an LLM handles natively (summarizing, formatting, analyzing, translating, classifying, comparing, writing), use server_name "__llm__" with tool_name "generate". Arguments: {"prompt": "your instruction here", "input": "{{previous_output_key}}"}. Do NOT search for tools for these tasks.
+- depends_on controls ordering. {{output_key}} references previous results.
+- Output ONLY the JSON DAG, no prose."""
 
 SEARCH_TOOL = {"name": "search_tools", "description": "Search Wisp for MCP tools matching a query.", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}
 
@@ -160,6 +165,68 @@ async def run_planner(messages: list[dict], max_turns: int = 8) -> tuple[Optiona
 
     raise PlanIncomplete("No DAG produced after max turns.")
 
+
+def _build_workflow(obj: dict) -> Workflow:
+    wf_id = uuid.uuid4().hex[:8]
+    nodes = [DAGNode(id=n.get("id", uuid.uuid4().hex[:6]), step=n.get("step", ""),
+                     server_name=n.get("server_name", ""), tool_name=n.get("tool_name", ""),
+                     arguments=n.get("arguments", {}), depends_on=n.get("depends_on", []),
+                     output_key=n.get("output_key", "")) for n in obj["nodes"]]
+    return Workflow(id=wf_id, name=obj.get("name", "Workflow"), description=obj.get("description", ""), nodes=nodes)
+
+
+async def run_planner_stream(messages: list[dict], max_turns: int = 8):
+    """Async generator that yields SSE-ready dicts at each planning step."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    yield {"type": "planning_start", "max_turns": max_turns}
+
+    for turn in range(max_turns):
+        yield {"type": "llm_call_start", "turn": turn + 1, "max_turns": max_turns}
+        resp = client.messages.create(model="claude-sonnet-4-20250514", max_tokens=4096, system=SYSTEM, tools=[SEARCH_TOOL], messages=messages)
+
+        text = "".join(b.text for b in resp.content if hasattr(b, "text"))
+        yield {"type": "llm_call_complete", "turn": turn + 1, "stop_reason": resp.stop_reason,
+               "has_tool_calls": resp.stop_reason == "tool_use", "text_preview": text[:200]}
+
+        if resp.stop_reason == "tool_use":
+            messages.append({"role": "assistant", "content": resp.content})
+            results = []
+            for b in resp.content:
+                if b.type == "tool_use":
+                    q = b.input.get("query", "")
+                    yield {"type": "tool_search_start", "query": q}
+                    t0 = time.time()
+                    r = await search_tools(q)
+                    elapsed = round(time.time() - t0, 2)
+                    tool_names = [t.get("tool_name", "") for t in r]
+                    yield {"type": "tool_search_complete", "query": q, "count": len(r),
+                           "tool_names": tool_names, "elapsed": elapsed}
+                    results.append({"type": "tool_result", "tool_use_id": b.id, "content": json.dumps(r)})
+            messages.append({"role": "user", "content": results})
+            continue
+
+        messages.append({"role": "assistant", "content": resp.content})
+
+        if text.strip():
+            yield {"type": "planning_thinking", "text": text}
+
+        obj = extract_json(text)
+        if obj and is_dag(obj):
+            wf = _build_workflow(obj)
+            workflows[wf.id] = wf
+            yield {"type": "dag_complete", "workflow": wf.model_dump()}
+            return
+
+        yield {"type": "planning_error", "message": text or "No DAG in response"}
+        return
+
+    yield {"type": "planning_error", "message": "No DAG produced after max turns."}
+
+
+class PlanStreamReq(BaseModel):
+    prompt: str
+    session_id: Optional[str] = None
+
 # --- Executor ---
 
 def topo_levels(nodes: list[DAGNode]) -> list[list[DAGNode]]:
@@ -186,10 +253,27 @@ def resolve(value: Any, outputs: dict) -> Any:
 
 async def exec_node(node: DAGNode, outputs: dict) -> dict:
     args = resolve(node.arguments, outputs)
+    if node.server_name == "__llm__":
+        return await exec_llm(args)
     async with httpx.AsyncClient(timeout=120) as c:
         r = await c.post(f"{WISP_URL}/call", json={"server_name": node.server_name, "tool_name": node.tool_name, "arguments": args})
         r.raise_for_status()
         return r.json()
+
+
+async def exec_llm(args: dict) -> dict:
+    prompt = args.get("prompt", "")
+    input_data = args.get("input", "")
+    if isinstance(input_data, (dict, list)):
+        input_data = json.dumps(input_data, indent=2)
+    user_msg = f"{prompt}\n\nInput:\n{input_data}" if input_data else prompt
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    resp = client.messages.create(
+        model="claude-sonnet-4-20250514", max_tokens=4096,
+        messages=[{"role": "user", "content": user_msg}],
+    )
+    text = "".join(b.text for b in resp.content if hasattr(b, "text"))
+    return {"result": text}
 
 def sse(data: dict) -> str:
     return f"data: {json.dumps(data)}\n\n"
@@ -262,6 +346,38 @@ async def chat(req: ChatReq):
         return {"workflow": wf.model_dump(), "session_id": req.session_id, "chat_messages": chat}
     except PlanIncomplete as e:
         return {"workflow": None, "session_id": req.session_id, "chat_messages": [{"role": "assistant", "content": e.message}], "needs_input": True}
+
+@app.post("/plan/stream")
+async def plan_stream(req: PlanStreamReq):
+    sid = req.session_id or uuid.uuid4().hex[:8]
+    s = sessions.get(sid)
+    if s and req.session_id:
+        messages = s["messages"]
+        messages.append({"role": "user", "content": req.prompt})
+    else:
+        messages = [{"role": "user", "content": req.prompt}]
+
+    async def stream():
+        yield sse({"type": "session_init", "session_id": sid})
+        wf = None
+        msgs = messages
+        try:
+            gen = run_planner_stream(msgs)
+            async for event in gen:
+                yield sse(event)
+                if event.get("type") == "dag_complete":
+                    wf_data = event.get("workflow")
+                    if wf_data:
+                        wf = workflows.get(wf_data["id"])
+            # The generator returns (messages, wf) via StopAsyncIteration value,
+            # but we already captured the workflow from the dag_complete event.
+            sessions[sid] = {"messages": msgs, "workflow": wf}
+        except Exception as e:
+            yield sse({"type": "planning_error", "message": str(e)})
+            sessions[sid] = {"messages": msgs, "workflow": None}
+
+    return stream_resp(stream())
+
 
 @app.post("/deploy")
 async def deploy(req: DeployReq):

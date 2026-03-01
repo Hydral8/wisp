@@ -266,7 +266,23 @@ async def call_tool(request: CallRequest):
     except asyncio.TimeoutError:
         raise HTTPException(status_code=504, detail="Tool execution timed out.")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        
+        # Unwrap ExceptionGroup from anyio so we can see the real error
+        error_msg = str(e)
+        if isinstance(e, ExceptionGroup):
+            msgs = []
+            for exc in getattr(e, "exceptions", []):
+                # If there's nested exception groups, grab the leaf exceptions
+                if isinstance(exc, ExceptionGroup):
+                    msgs.extend(str(sub) for sub in getattr(exc, "exceptions", []))
+                else:
+                    msgs.append(str(exc))
+            if msgs:
+                error_msg = " | ".join(msgs)
+                
+        raise HTTPException(status_code=500, detail=error_msg)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

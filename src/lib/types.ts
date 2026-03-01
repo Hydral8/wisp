@@ -50,3 +50,18 @@ export interface PlanResponse {
   chat_messages: ChatMessage[];
   needs_input?: boolean;
 }
+
+// --- Planning stream events ---
+
+export type AppPhase = "idle" | "planning" | "preview" | "executing" | "done";
+
+export type PlanningEvent =
+  | { type: "session_init"; session_id: string }
+  | { type: "planning_start"; max_turns: number }
+  | { type: "llm_call_start"; turn: number; max_turns: number }
+  | { type: "llm_call_complete"; turn: number; stop_reason: string; has_tool_calls: boolean; text_preview: string }
+  | { type: "tool_search_start"; query: string }
+  | { type: "tool_search_complete"; query: string; count: number; tool_names: string[]; elapsed: number }
+  | { type: "planning_thinking"; text: string }
+  | { type: "dag_complete"; workflow: Workflow }
+  | { type: "planning_error"; message: string };
