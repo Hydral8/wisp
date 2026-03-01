@@ -111,7 +111,7 @@ export function Collapsible({
 // ChatPlanningStep — minimal inline planning event for chat pane
 // ---------------------------------------------------------------------------
 
-export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
+export function ChatPlanningStep({ event, onContinue }: { event: PlanningEvent; onContinue?: (msg: string) => void }) {
   const [expanded, setExpanded] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -139,6 +139,16 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
   }, [connecting, event, saveConnection]);
+
+  // Auto-continue planning after successful connection
+  useEffect(() => {
+    if (!connected || !onContinue) return;
+    const appName = event.type === "user_action_required" ? event.app : "";
+    const timer = setTimeout(() => {
+      onContinue(`I've connected ${appName || "the app"}. Please continue where you left off.`);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [connected, onContinue, event]);
 
   switch (event.type) {
     case "tool_search_start":
@@ -240,7 +250,7 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M2.5 6.5L4.5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Connected! Send a message to continue.
+              Connected! Continuing...
             </div>
           ) : (event.action_url || event.app) ? (
             <button
@@ -365,7 +375,7 @@ export function ChatPane({
         {messages.map((m, i) => (
           <div key={i} className="animate-fade-in-fast">
             {m.planningEvent ? (
-              <ChatPlanningStep event={m.planningEvent} />
+              <ChatPlanningStep event={m.planningEvent} onContinue={onSend} />
             ) : m.role === "user" ? (
               <div className="flex justify-end">
                 <div
