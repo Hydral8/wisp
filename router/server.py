@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Wisp MCP Proxy — Thin tool execution proxy.
+Wisp MCP Proxy — Stateless tool execution proxy.
 
 Keeps a persistent stdio MCP connection pool and exposes a /call endpoint.
-All search/discovery logic has moved to Convex.
+All state (registry, connection info) lives in Convex — the proxy is stateless.
 
 Run: python server.py
 """
@@ -28,9 +28,10 @@ from mcp import ClientSession
 from mcp.client.stdio import stdio_client, StdioServerParameters
 from mcp.client.streamable_http import streamable_http_client
 
-# Load environment variables
-ENV_PATH = Path(__file__).parent / "server" / ".env"
-load_dotenv(dotenv_path=ENV_PATH)
+# Load environment variables (API keys for MCP servers)
+ENV_PATH = Path(__file__).parent / ".env"
+if ENV_PATH.exists():
+    load_dotenv(dotenv_path=ENV_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -188,8 +189,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Wisp MCP Proxy",
-    description="Thin MCP tool execution proxy.",
-    version="0.2.0",
+    description="Stateless MCP tool execution proxy.",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -210,29 +211,7 @@ class CallRequest(BaseModel):
     server_name: str
     tool_name: str
     arguments: Dict[str, Any] = {}
-    # Optional: connection info passed by Convex (makes proxy stateless)
     connection_info: Optional[Dict[str, Any]] = None
-
-class EmbedRequest(BaseModel):
-    text: str
-
-
-# ---------------------------------------------------------------------------
-# Embedding Support
-# ---------------------------------------------------------------------------
-
-_embedding_model = None
-
-def get_embedding_model():
-    global _embedding_model
-    if _embedding_model is None:
-        try:
-            from sentence_transformers import SentenceTransformer
-            log.info("Loading semantic embedding model: google/embeddinggemma-300m...")
-            _embedding_model = SentenceTransformer("google/embeddinggemma-300m")
-        except ImportError:
-            log.warning("sentence-transformers not installed; embeddings endpoint will fail.")
-    return _embedding_model
 
 
 # ---------------------------------------------------------------------------
@@ -276,37 +255,15 @@ def build_stdio_command(server_info: Dict) -> tuple[str, list[str]]:
 async def health_check():
     return {"status": "healthy"}
 
-@app.post("/embed")
-async def embed_text(req: EmbedRequest):
-    """Generate 768-D embeddings for the input text."""
-    model = get_embedding_model()
-    if not model:
-        raise HTTPException(
-            status_code=500, detail="SentenceTransformer is not available."
-        )
-    vec = model.encode(req.text)
-    return {"embedding": vec.tolist()}
-
 
 @app.post("/call")
 async def call_tool(request: CallRequest):
-    """Execute a tool on an MCP server."""
+    """Execute a tool on an MCP server. Requires connection_info from caller."""
     info = request.connection_info
     if not info:
-        # Fallback: try to read from local SQLite (for backward compatibility)
-        try:
-            import sys
-            sys.path.append(str(Path(__file__).parent / "server"))
-            from db import get_connection
-            info = await _get_server_connection_info_from_db(request.server_name)
-        except Exception:
-            pass
-
-    if not info:
         raise HTTPException(
-            status_code=404,
-            detail=f"Connection info for server '{request.server_name}' not found. "
-                   "Pass connection_info in the request body.",
+            status_code=400,
+            detail=f"connection_info is required for server '{request.server_name}'.",
         )
 
     is_long_running = request.tool_name in ("monitor_task", "browser_task")
@@ -356,6 +313,12 @@ async def call_tool(request: CallRequest):
             )
             return result.model_dump() if hasattr(result, "model_dump") else result
 
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown connection method: {info.get('method')}",
+            )
+
     except asyncio.TimeoutError:
         raise HTTPException(status_code=504, detail="Tool execution timed out.")
     except Exception as e:
@@ -372,48 +335,6 @@ async def call_tool(request: CallRequest):
             if msgs:
                 error_msg = " | ".join(msgs)
         raise HTTPException(status_code=500, detail=error_msg)
-
-
-async def _get_server_connection_info_from_db(server_name: str) -> Optional[Dict[str, Any]]:
-    """Fallback: read connection info from local SQLite."""
-    try:
-        from db import get_connection
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        # Check remotes
-        cursor.execute(
-            "SELECT transport_type, url, headers_json FROM server_remotes WHERE server_name = ?",
-            (server_name,),
-        )
-        remote = cursor.fetchone()
-        if remote:
-            headers = json.loads(remote["headers_json"]) if remote["headers_json"] else None
-            if headers:
-                headers = resolve_env_vars(headers)
-            conn.close()
-            return {"method": "remote", "url": remote["url"], "headers": headers}
-
-        # Check packages
-        cursor.execute(
-            "SELECT registry_type, identifier, runtime_hint "
-            "FROM server_packages WHERE server_name = ? AND transport_type = 'stdio'",
-            (server_name,),
-        )
-        pkg = cursor.fetchone()
-        if pkg:
-            conn.close()
-            return {
-                "method": "stdio",
-                "registry": pkg["registry_type"],
-                "identifier": pkg["identifier"],
-                "runtime_hint": pkg["runtime_hint"],
-            }
-
-        conn.close()
-    except Exception:
-        pass
-    return None
 
 
 if __name__ == "__main__":
