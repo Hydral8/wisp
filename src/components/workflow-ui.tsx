@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type {
@@ -10,6 +10,7 @@ import type {
   ChatMessage,
   PlanningEvent,
   AppPhase,
+  ConfigurableParam,
 } from "@/lib/types";
 
 // Chat entries can be plain messages or planning events
@@ -935,6 +936,280 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
 }
 
 // ---------------------------------------------------------------------------
+// WorkflowGraph — n8n-style horizontal DAG visualization
+// ---------------------------------------------------------------------------
+
+function WorkflowGraph({
+  nodes,
+  configurableParams,
+}: {
+  nodes: DAGNode[];
+  configurableParams?: ConfigurableParam[];
+}) {
+  const levels = getLevels(nodes);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const [paths, setPaths] = useState<
+    { d: string; cx: number; cy: number; key: string }[]
+  >([]);
+
+  // Build a map: output_key → node id that produces it
+  const outputKeyOwner = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const n of nodes) if (n.output_key) m.set(n.output_key, n.id);
+    return m;
+  }, [nodes]);
+
+  // Compute SVG bezier paths from DOM positions
+  const computePaths = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const next: typeof paths = [];
+
+    // Dependency edges
+    for (const n of nodes) {
+      for (const depId of n.depends_on) {
+        const srcEl = nodeRefs.current.get(depId);
+        const tgtEl = nodeRefs.current.get(n.id);
+        if (!srcEl || !tgtEl) continue;
+        const sr = srcEl.getBoundingClientRect();
+        const tr = tgtEl.getBoundingClientRect();
+        const x1 = sr.right - cRect.left;
+        const y1 = sr.top + sr.height / 2 - cRect.top;
+        const x2 = tr.left - cRect.left;
+        const y2 = tr.top + tr.height / 2 - cRect.top;
+        const cpx = Math.abs(x2 - x1) * 0.45;
+        next.push({
+          d: `M ${x1} ${y1} C ${x1 + cpx} ${y1}, ${x2 - cpx} ${y2}, ${x2} ${y2}`,
+          cx: x2,
+          cy: y2,
+          key: `dep-${depId}-${n.id}`,
+        });
+      }
+    }
+
+    // Configurable param edges
+    if (configurableParams) {
+      for (const cp of configurableParams) {
+        const paramId = `param-${cp.nodeId}-${cp.paramKey}`;
+        const srcEl = nodeRefs.current.get(paramId);
+        const tgtEl = nodeRefs.current.get(cp.nodeId);
+        if (!srcEl || !tgtEl) continue;
+        const sr = srcEl.getBoundingClientRect();
+        const tr = tgtEl.getBoundingClientRect();
+        const x1 = sr.right - cRect.left;
+        const y1 = sr.top + sr.height / 2 - cRect.top;
+        const x2 = tr.left - cRect.left;
+        const y2 = tr.top + tr.height / 2 - cRect.top;
+        const cpx = Math.abs(x2 - x1) * 0.45;
+        next.push({
+          d: `M ${x1} ${y1} C ${x1 + cpx} ${y1}, ${x2 - cpx} ${y2}, ${x2} ${y2}`,
+          cx: x2,
+          cy: y2,
+          key: `param-${cp.nodeId}-${cp.paramKey}`,
+        });
+      }
+    }
+
+    setPaths(next);
+  }, [nodes, configurableParams]);
+
+  useEffect(() => {
+    requestAnimationFrame(computePaths);
+    const ro = new ResizeObserver(computePaths);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, [computePaths, nodes]);
+
+  const setNodeRef = useCallback(
+    (id: string) => (el: HTMLDivElement | null) => {
+      if (el) nodeRefs.current.set(id, el);
+      else nodeRefs.current.delete(id);
+    },
+    [],
+  );
+
+  const hasParams = configurableParams && configurableParams.length > 0;
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ position: "relative", display: "flex", gap: 80, padding: "16px 8px", minWidth: "fit-content" }}
+    >
+      {/* SVG overlay */}
+      <svg
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          overflow: "visible",
+          pointerEvents: "none",
+        }}
+      >
+        {paths.map((p) => (
+          <g key={p.key}>
+            <path d={p.d} fill="none" stroke="var(--border)" strokeWidth={1.5} opacity={0.6} />
+            <circle cx={p.cx} cy={p.cy} r={3} fill="var(--border)" opacity={0.6} />
+          </g>
+        ))}
+      </svg>
+
+      {/* Input param column */}
+      {hasParams && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", minWidth: 200 }}>
+          <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 4 }}>
+            Inputs
+          </div>
+          {configurableParams.map((cp) => {
+            const paramId = `param-${cp.nodeId}-${cp.paramKey}`;
+            return (
+              <div
+                key={paramId}
+                ref={setNodeRef(paramId)}
+                style={{
+                  width: 200,
+                  padding: "10px 12px",
+                  borderRadius: 12,
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                  borderLeft: "3px solid var(--green)",
+                  position: "relative",
+                }}
+              >
+                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>{cp.label}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+                  <span style={{
+                    fontSize: 10, padding: "1px 6px", borderRadius: 4,
+                    background: "rgba(74,222,128,0.12)", color: "var(--green)", fontWeight: 500,
+                  }}>
+                    {cp.type}
+                  </span>
+                  {cp.defaultValue != null && (
+                    <span style={{ fontSize: 10, color: "var(--text-muted)" }}>
+                      = {String(cp.defaultValue).slice(0, 20)}
+                    </span>
+                  )}
+                </div>
+                {/* Right handle */}
+                <div style={{
+                  position: "absolute", right: -5, top: "50%", transform: "translateY(-50%)",
+                  width: 10, height: 10, borderRadius: "50%",
+                  background: "var(--bg-card)", border: "2px solid var(--green)",
+                }} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* DAG columns */}
+      {levels.map((level, li) => (
+        <div key={li} style={{ display: "flex", flexDirection: "column", gap: 12, justifyContent: "center" }}>
+          <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 4 }}>
+            Level {li + 1}
+          </div>
+          {level.map((node) => {
+            const isLlm = node.server_name === "__llm__";
+            return (
+              <div
+                key={node.id}
+                ref={setNodeRef(node.id)}
+                style={{
+                  width: 260,
+                  padding: "12px 14px",
+                  borderRadius: 12,
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border)",
+                  borderLeft: isLlm ? "3px solid var(--accent)" : "3px solid var(--blue)",
+                  position: "relative",
+                }}
+              >
+                {/* Left handle */}
+                {node.depends_on.length > 0 && (
+                  <div style={{
+                    position: "absolute", left: -5, top: "50%", transform: "translateY(-50%)",
+                    width: 10, height: 10, borderRadius: "50%",
+                    background: "var(--bg-card)", border: "2px solid var(--border)",
+                  }} />
+                )}
+
+                {/* Title */}
+                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{node.step}</div>
+
+                {/* Subtitle */}
+                <div style={{ fontSize: 11, marginTop: 3, color: isLlm ? "var(--accent)" : "var(--blue)" }}>
+                  {isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`}
+                </div>
+
+                {/* Params / arguments */}
+                {isLlm && typeof node.arguments.prompt === "string" ? (
+                  <p style={{
+                    fontSize: 11, marginTop: 8, marginBottom: 0, color: "var(--text-dim)",
+                    lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical", overflow: "hidden",
+                  }}>
+                    {node.arguments.prompt}
+                  </p>
+                ) : (
+                  Object.keys(node.arguments).length > 0 && (
+                    <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
+                      {Object.entries(node.arguments).map(([k, v]) => {
+                        const strVal = String(v);
+                        const refOwner = outputKeyOwner.get(strVal);
+                        return (
+                          <div key={k} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
+                            <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>{k}</span>
+                            {refOwner ? (
+                              <span style={{
+                                fontSize: 10, padding: "1px 7px", borderRadius: 8,
+                                background: "rgba(124,107,240,0.15)", color: "var(--accent)", fontWeight: 500,
+                              }}>
+                                {strVal}
+                              </span>
+                            ) : (
+                              <span style={{ color: "var(--text-dim)" }}>
+                                {strVal.length > 28 ? strVal.slice(0, 28) + "…" : strVal}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )
+                )}
+
+                {/* Output key badge */}
+                {node.output_key && (
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+                    <span style={{
+                      fontSize: 10, fontFamily: "monospace", padding: "2px 8px", borderRadius: 6,
+                      background: "rgba(124,107,240,0.08)", color: "var(--text-muted)",
+                    }}>
+                      → {node.output_key}
+                    </span>
+                  </div>
+                )}
+
+                {/* Right handle */}
+                <div style={{
+                  position: "absolute", right: -5, top: "50%", transform: "translateY(-50%)",
+                  width: 10, height: 10, borderRadius: "50%",
+                  background: "var(--bg-card)",
+                  border: isLlm ? "2px solid var(--accent)" : "2px solid var(--blue)",
+                }} />
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // WorkflowPane
 // ---------------------------------------------------------------------------
 
@@ -951,6 +1226,8 @@ export function WorkflowPane({
   onFreeze,
   onPublish,
   freezing,
+  onGenerateApp,
+  generatingApp,
 }: {
   workflow: Workflow;
   nodeStatuses: Map<string, NodeStatus>;
@@ -958,15 +1235,23 @@ export function WorkflowPane({
   runMode: "deploy" | "test" | null;
   browserUseMode: "local" | "remote";
   onChangeBrowserUseMode: (mode: "local" | "remote") => void;
-  onRun: (mode: "deploy" | "test") => void;
+  onRun: (mode: "deploy" | "test", runtimeParams?: Record<string, any>) => void;
   onCreateWebhook: () => void;
   webhookUrl: string | null;
   onFreeze?: () => void;
   onPublish?: () => void;
   freezing?: boolean;
+  onGenerateApp?: () => void;
+  generatingApp?: boolean;
 }) {
-  const levels = getLevels(workflow.nodes);
   const showExecution = phase === "executing" || phase === "done";
+  const [runtimeValues, setRuntimeValues] = useState<Record<string, any>>(() => {
+    const init: Record<string, any> = {};
+    workflow.configurableParams?.forEach(cp => {
+      init[`${cp.nodeId}.${cp.paramKey}`] = cp.defaultValue ?? "";
+    });
+    return init;
+  });
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden animate-slide-right">
@@ -1003,13 +1288,13 @@ export function WorkflowPane({
           {phase === "preview" && (
             <>
               <button
-                onClick={() => onRun("test")}
+                onClick={() => onRun("test", runtimeValues)}
                 style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "1px solid var(--border)", background: "transparent", color: "var(--text)", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Test Run
               </button>
               <button
-                onClick={() => onRun("deploy")}
+                onClick={() => onRun("deploy", runtimeValues)}
                 style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "none", background: "var(--accent)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Deploy
@@ -1019,13 +1304,13 @@ export function WorkflowPane({
           {phase === "done" && runMode === "test" && (
             <>
               <button
-                onClick={() => onRun("test")}
+                onClick={() => onRun("test", runtimeValues)}
                 style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "1px solid var(--border)", background: "transparent", color: "var(--text)", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Re-run
               </button>
               <button
-                onClick={() => onRun("deploy")}
+                onClick={() => onRun("deploy", runtimeValues)}
                 style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "none", background: "var(--accent)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Deploy
@@ -1067,12 +1352,61 @@ export function WorkflowPane({
               Publish
             </button>
           )}
+          {onGenerateApp && workflow.configurableParams && workflow.configurableParams.length > 0 && (
+            <button
+              onClick={onGenerateApp}
+              disabled={generatingApp}
+              style={{
+                padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                border: "none", background: "var(--orange, #f97316)",
+                color: "#fff", cursor: generatingApp ? "not-allowed" : "pointer",
+                fontFamily: "inherit", opacity: generatingApp ? 0.6 : 1,
+              }}
+            >
+              {generatingApp ? "Generating..." : "Generate App"}
+            </button>
+          )}
         </div>
       </div>
 
+      {workflow.configurableParams && workflow.configurableParams.length > 0 && (
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-card)" }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", marginBottom: 12 }}>
+            Adjustable Inputs
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
+            {workflow.configurableParams.map(cp => {
+              const key = `${cp.nodeId}.${cp.paramKey}`;
+              return (
+                <div key={key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 500, color: "var(--text-dim)" }}>
+                    {cp.label} <span style={{ color: "var(--text-muted)", fontSize: 10 }}>({cp.type})</span>
+                  </label>
+                  <input
+                    type={cp.type === "number" ? "number" : "text"}
+                    value={runtimeValues[key] ?? ""}
+                    onChange={e => setRuntimeValues(prev => ({
+                      ...prev,
+                      [key]: cp.type === "number" ? Number(e.target.value) : e.target.value
+                    }))}
+                    placeholder={cp.description}
+                    title={cp.description}
+                    style={{
+                      padding: "6px 10px", borderRadius: 6, fontSize: 12, outline: "none",
+                      border: "1px solid var(--border)", background: "var(--bg-surface)",
+                      color: "var(--text)", fontFamily: "inherit"
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {showExecution && <PipelineBar nodes={workflow.nodes} nodeStatuses={nodeStatuses} />}
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-auto p-4">
         {showExecution ? (
           <div className="space-y-3">
             {(() => {
@@ -1100,60 +1434,7 @@ export function WorkflowPane({
             )}
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {levels.map((level, li) => (
-              <div key={li}>
-                <div
-                  style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 8 }}
-                >
-                  Level {li + 1}
-                </div>
-                <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
-                  {level.map((node) => {
-                    const isLlm = node.server_name === "__llm__";
-                    return (
-                      <div
-                        key={node.id}
-                        style={{ padding: "12px 14px", borderRadius: 8, border: "1px solid var(--border)" }}
-                      >
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>{node.step}</div>
-                        <div style={{ fontSize: 11, marginTop: 3, color: "var(--text-dim)" }}>
-                          {isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`}
-                        </div>
-                        {isLlm && typeof node.arguments.prompt === "string" && (
-                          <p style={{ fontSize: 12, marginTop: 8, marginBottom: 0, color: "var(--text-dim)", lineHeight: 1.5 }}>
-                            {node.arguments.prompt}
-                          </p>
-                        )}
-                        {!isLlm && Object.keys(node.arguments).length > 0 && (
-                          <pre
-                            className="font-mono"
-                            style={{
-                              marginTop: 8,
-                              marginBottom: 0,
-                              fontSize: 11,
-                              color: "var(--text-dim)",
-                              borderLeft: "2px solid var(--border)",
-                              paddingLeft: 8,
-                              lineHeight: 1.5,
-                              overflow: "auto",
-                            }}
-                          >
-                            {JSON.stringify(node.arguments, null, 2)}
-                          </pre>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                {li < levels.length - 1 && (
-                  <div className="flex justify-center py-2">
-                    <div className="w-px h-6" style={{ background: "var(--border)" }} />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <WorkflowGraph nodes={workflow.nodes} configurableParams={workflow.configurableParams} />
         )}
       </div>
     </div>

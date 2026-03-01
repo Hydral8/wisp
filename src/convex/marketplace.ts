@@ -132,8 +132,8 @@ export const suggestConfigurable = action({
     objective: v.string(),
   },
   handler: async (_ctx, args) => {
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
-    if (!anthropicKey) throw new Error("ANTHROPIC_API_KEY not set");
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (!geminiKey) throw new Error("GEMINI_API_KEY not set");
 
     const nodesDesc = JSON.stringify(args.nodes, null, 2);
     const prompt = `Analyze this workflow and suggest which parameters should be user-configurable.
@@ -154,26 +154,24 @@ For each suggested parameter, return a JSON object with:
 
 Return ONLY a JSON array of suggestions, no other text.`;
 
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${geminiKey}`,
         "Content-Type": "application/json",
-        "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
+        model: "gemini-3-flash-preview",
         messages: [{ role: "user", content: prompt }],
       }),
     });
 
     if (!resp.ok) {
-      throw new Error(`Anthropic API error: ${resp.status}`);
+      throw new Error(`Gemini API error: ${resp.status}`);
     }
 
     const data = await resp.json();
-    const text = data.content?.[0]?.text ?? "";
+    const text = data.choices[0].message.content || "";
 
     // Parse JSON array from response
     try {

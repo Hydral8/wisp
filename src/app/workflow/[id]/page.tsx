@@ -59,10 +59,21 @@ export default function WorkflowPage() {
   // Convex actions
   const startPlanning = useAction(api.planning.startPlanning);
   const startExecution = useAction(api.execution.startExecution);
-  const convertToWorkflow = useAction(api.chat.convertToWorkflow);
+  // Convert/Save Workflow state
+  const [draftingWorkflow, setDraftingWorkflow] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftNodes, setDraftNodes] = useState<any[]>([]);
+  const [draftConfigParams, setDraftConfigParams] = useState<ConfigurableParam[]>([]);
+  const [draftName, setDraftName] = useState("");
+  const [draftDescription, setDraftDescription] = useState("");
+
+  const draftWorkflowConversion = useAction(api.chat.draftWorkflowConversion);
+  const saveWorkflow = useAction(api.chat.saveWorkflow);
   const createWebhookMutation = useMutation(api.webhooks.create);
   const publishToMarketplace = useMutation(api.marketplace.publish);
   const suggestConfigurable = useAction(api.marketplace.suggestConfigurable);
+  const generateAppLayout = useAction(api.apps.generateAppLayout);
+  const [generatingApp, setGeneratingApp] = useState(false);
 
   // Subscribe to planning events reactively
   const planningEvents = useQuery(
@@ -362,20 +373,52 @@ export default function WorkflowPage() {
 
   const handleConvertToWorkflow = useCallback(async () => {
     if (executedSteps.length === 0) return;
+    setDraftingWorkflow(true);
     try {
-      const result = await convertToWorkflow({
-        name: agentSummary.slice(0, 60) || "Workflow",
-        description: agentSummary,
+      const name = agentSummary.slice(0, 60) || "Workflow";
+      const desc = agentSummary;
+      const result = await draftWorkflowConversion({
+        name,
+        description: desc,
         executedSteps,
+      });
+      
+      setDraftNodes(result?.nodes || []);
+      setConfigurableParams(result?.configurableParams || []);
+      setDraftName(name);
+      setDraftDescription(desc);
+      setShowDraftModal(true);
+    } catch (err) {
+      console.error("Draft error:", err);
+      // Fallback
+      setDraftNodes([]);
+      setConfigurableParams([]);
+      setShowDraftModal(true);
+    } finally {
+      setDraftingWorkflow(false);
+    }
+  }, [executedSteps, agentSummary, draftWorkflowConversion]);
+
+  const handleConfirmSaveWorkflow = useCallback(async () => {
+    setDraftingWorkflow(true);
+    try {
+      const result = await saveWorkflow({
+        name: draftName,
+        description: draftDescription,
+        nodes: draftNodes,
+        configurableParams,
       });
       if (result?.workflowId) {
         setWorkflowId(result.workflowId as Id<"workflows">);
+        setShowDraftModal(false);
         router.replace(`/workflow/${result.workflowId}`, { scroll: false });
       }
     } catch (err) {
-      console.error("Convert error:", err);
+      console.error("Save error:", err);
+    } finally {
+      setDraftingWorkflow(false);
     }
-  }, [executedSteps, agentSummary, router, convertToWorkflow]);
+  }, [draftName, draftDescription, draftNodes, configurableParams, router, saveWorkflow]);
 
   const handleCredentialSubmit = useCallback(async () => {
     if (!credentialRequest || !workflowId) return;
@@ -509,6 +552,25 @@ export default function WorkflowPage() {
     }
   }, [workflow, frozenNodes, publishName, publishDescription, publishTags, configurableParams, publishToMarketplace]);
 
+  const handleGenerateApp = useCallback(async () => {
+    if (!workflowId) return;
+    setGeneratingApp(true);
+    try {
+      const result = await generateAppLayout({ workflowId });
+      if (result?.appId) {
+        router.push(`/app/${result.appId}`);
+      }
+    } catch (err) {
+      console.error("Generate app error:", err);
+      setChatMessages(prev => [
+        ...prev,
+        { role: "assistant", content: `Failed to generate app: ${err}` },
+      ]);
+    } finally {
+      setGeneratingApp(false);
+    }
+  }, [workflowId, generateAppLayout, router]);
+
   // Derive planning events for the PlanningFeed component
   const planningEventsList = useMemo(() => {
     return (planningEvents ?? []).map((e: any) => e.event as PlanningEvent);
@@ -545,7 +607,7 @@ export default function WorkflowPage() {
         <ChatPane
           messages={chatMessages}
           onSend={handleChat}
-          loading={isLoading}
+          loading={isLoading || draftingWorkflow}
         />
         {phase === "planning" || (!workflow && planningEventsList.length > 0) ? (
           <PlanningFeed
@@ -566,6 +628,8 @@ export default function WorkflowPage() {
             onFreeze={handleFreeze}
             onPublish={handlePublish}
             freezing={freezing}
+            onGenerateApp={handleGenerateApp}
+            generatingApp={generatingApp}
           />
         ) : (
           <div className="flex-1 flex items-center justify-center">
@@ -680,6 +744,114 @@ export default function WorkflowPage() {
               </button>
               <button
                 onClick={() => setShowPublishModal(false)}
+                style={{
+                  padding: "8px 14px", borderRadius: 8, fontSize: 12,
+                  border: "1px solid var(--border)", background: "transparent",
+                  color: "var(--text-dim)", cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Convert/Draft Workflow modal */}
+      {showDraftModal && (
+        <div
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "var(--bg-card)", border: "1px solid var(--border)",
+              borderRadius: 12, padding: 24, minWidth: 420, maxWidth: 560, maxHeight: "80vh", overflowY: "auto",
+            }}
+          >
+            <h3 className="text-sm font-bold mb-3" style={{ color: "var(--text)" }}>
+              Configure New Workflow
+            </h3>
+            <p className="text-xs mb-4" style={{ color: "var(--text-dim)" }}>
+              We've intelligently converted your session into a reusable workflow graph. Here are the parameters you can adjust each time you run it.
+            </p>
+
+            <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-dim)" }}>Name</label>
+            <input
+              value={draftName}
+              onChange={e => setDraftName(e.target.value)}
+              className="w-full px-3 py-2 rounded text-sm outline-none mb-3"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)" }}
+            />
+
+            <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-dim)" }}>Description</label>
+            <textarea
+              value={draftDescription}
+              onChange={e => setDraftDescription(e.target.value)}
+              rows={2}
+              className="w-full px-3 py-2 rounded text-sm outline-none mb-4"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text)", resize: "vertical", fontFamily: "inherit" }}
+            />
+
+            {/* Configurable params */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium" style={{ color: "var(--text-dim)" }}>
+                  Adjustable Inputs
+                </span>
+              </div>
+              {configurableParams.length === 0 && (
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                  No adjustable inputs were detected for this workflow.
+                </p>
+              )}
+              {configurableParams.map((cp, i) => (
+                <div
+                  key={`${cp.nodeId}-${cp.paramKey}`}
+                  style={{
+                    padding: "10px 12px", borderRadius: 8, marginBottom: 8,
+                    border: "1px solid var(--border)", background: "var(--bg-surface)",
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium" style={{ color: "var(--text)" }}>
+                      {cp.label}
+                    </span>
+                    <button
+                      onClick={() => setConfigurableParams(prev => prev.filter((_, j) => j !== i))}
+                      className="text-xs"
+                      style={{ color: "var(--red, #ef4444)", cursor: "pointer", background: "none", border: "none", fontFamily: "inherit" }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="text-xs mb-1" style={{ color: "var(--text-dim)" }}>
+                    Maps to: <code style={{ color: "var(--orange, #f97316)" }}>{cp.nodeId}.{cp.paramKey}</code>
+                  </div>
+                  <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    {cp.description}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleConfirmSaveWorkflow}
+                disabled={draftingWorkflow || !draftName.trim()}
+                style={{
+                  flex: 1, padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                  border: "none", background: "var(--accent, #3b82f6)", color: "#fff",
+                  cursor: draftingWorkflow ? "not-allowed" : "pointer", fontFamily: "inherit",
+                  opacity: draftingWorkflow ? 0.6 : 1,
+                }}
+              >
+                {draftingWorkflow ? "Saving..." : "Save Workflow"}
+              </button>
+              <button
+                onClick={() => setShowDraftModal(false)}
                 style={{
                   padding: "8px 14px", borderRadius: 8, fontSize: 12,
                   border: "1px solid var(--border)", background: "transparent",

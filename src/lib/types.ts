@@ -16,6 +16,7 @@ export interface Workflow {
   status: string;
   webhook_id?: string;
   browser_use_mode?: "local" | "remote";
+  configurableParams?: ConfigurableParam[];
 }
 
 export interface ExecutionEvent {
@@ -117,3 +118,35 @@ export type PlanningEvent =
   | { type: "tool_exec_start"; server_name: string; tool_name: string; arguments: Record<string, unknown> }
   | { type: "tool_exec_complete"; server_name: string; tool_name: string; result: unknown; elapsed: number; success: boolean }
   | { type: "agent_done"; text: string; executed_steps: Record<string, unknown>[] };
+
+// --- Mini-App layout descriptor ---
+
+export interface AppLayoutField {
+  paramKey: string;       // "nodeId.paramKey"
+  label: string;
+  placeholder: string;
+  type: "text" | "textarea" | "number" | "boolean" | "select" | "url" | "email";
+  options?: string[];
+  required: boolean;
+  helpText?: string;
+}
+
+export interface AppLayoutSection {
+  heading?: string;
+  description?: string;
+  fields: AppLayoutField[];
+}
+
+export interface AppLayoutResultDisplay {
+  style: "card" | "table" | "markdown" | "timeline";
+  showNodeResults: boolean;
+}
+
+export interface AppLayout {
+  title: string;
+  subtitle: string;
+  icon: string;
+  colorTheme: { primary: string; accent: string };
+  sections: AppLayoutSection[];
+  resultDisplay: AppLayoutResultDisplay;
+}

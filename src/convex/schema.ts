@@ -87,6 +87,14 @@ export default defineSchema({
         output_key: v.string(),
       })
     ),
+    configurableParams: v.optional(v.array(v.object({
+      nodeId: v.string(),
+      paramKey: v.string(),
+      label: v.string(),
+      description: v.string(),
+      defaultValue: v.any(),
+      type: v.string(),
+    }))),
     status: v.string(), // "planned" | "running" | "completed" | "failed"
     browserUseMode: v.string(),
   })
@@ -234,4 +242,28 @@ export default defineSchema({
     composioEntityId: v.string(),
     status: v.string(),
   }).index("by_user_provider", ["userId", "provider"]),
+
+  // --- Mini-Apps ---
+  apps: defineTable({
+    userId: v.id("users"),
+    workflowId: v.optional(v.id("workflows")),
+    name: v.string(),
+    description: v.string(),
+    slug: v.string(),
+    layout: v.any(),
+    configurableParams: v.array(v.object({
+      nodeId: v.string(),
+      paramKey: v.string(),
+      label: v.string(),
+      description: v.string(),
+      defaultValue: v.any(),
+      type: v.string(),
+    })),
+    isPublished: v.boolean(),
+    createdAt: v.float64(),
+    updatedAt: v.float64(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_workflow", ["workflowId"])
+    .index("by_slug", ["slug"]),
 });

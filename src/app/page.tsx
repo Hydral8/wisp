@@ -27,6 +27,17 @@ function IconAutomations() {
   );
 }
 
+function IconApps() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="2.25" y="2.25" width="5.25" height="5.25" rx="1.2" stroke="currentColor" strokeWidth="1.4"/>
+      <rect x="10.5" y="2.25" width="5.25" height="5.25" rx="1.2" stroke="currentColor" strokeWidth="1.4"/>
+      <rect x="2.25" y="10.5" width="5.25" height="5.25" rx="1.2" stroke="currentColor" strokeWidth="1.4"/>
+      <rect x="10.5" y="10.5" width="5.25" height="5.25" rx="1.2" stroke="currentColor" strokeWidth="1.4"/>
+    </svg>
+  );
+}
+
 function IconMarketplace() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -71,6 +82,7 @@ function IconSend() {
 const NAV_ITEMS = [
   { id: "compose", label: "Compose", Icon: IconCompose },
   { id: "automations", label: "Automations", Icon: IconAutomations },
+  { id: "apps", label: "Apps", Icon: IconApps },
   { id: "credentials", label: "Credentials", Icon: IconCredentials },
   { id: "marketplace", label: "Marketplace", Icon: IconMarketplace },
 ] as const;
@@ -426,6 +438,89 @@ function AutomationsPane() {
                 </div>
               </button>
             ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── Apps ─────────────────────────────────────────────────────────────────────
+
+function AppsPane() {
+  const router = useRouter();
+  const apps = useQuery(api.apps.listByUser);
+  const loading = apps === undefined;
+
+  return (
+    <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", maxWidth: 900, width: "100%" }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.3px", margin: "0 0 4px", color: "var(--text)" }}>
+          My Apps
+        </h1>
+        <p style={{ fontSize: 13, color: "var(--text-dim)", margin: 0 }}>
+          Mini-apps generated from your workflows
+        </p>
+      </div>
+
+      {loading ? (
+        <div style={{ display: "flex", gap: 5, paddingTop: 40, justifyContent: "center" }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--text-muted)", animation: `pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+          ))}
+        </div>
+      ) : apps.length === 0 ? (
+        <div style={{ textAlign: "center", paddingTop: 80 }}>
+          <p style={{ color: "var(--text-dim)", fontSize: 14, margin: "0 0 4px" }}>No apps yet</p>
+          <p style={{ color: "var(--text-muted)", fontSize: 12, margin: 0 }}>
+            Generate one from a workflow with configurable parameters
+          </p>
+        </div>
+      ) : (
+        <>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12, fontWeight: 500 }}>
+            {apps.length} app{apps.length !== 1 ? "s" : ""}
+          </div>
+          <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+            {apps.map((app: any) => {
+              const layout = app.layout || {};
+              const primary = layout.colorTheme?.primary || "#6366f1";
+              return (
+                <button
+                  key={app._id}
+                  onClick={() => router.push(`/app/${app._id}`)}
+                  className="animate-fade-in"
+                  style={{
+                    textAlign: "left",
+                    padding: "18px 20px",
+                    borderRadius: 12,
+                    border: "1px solid var(--border)",
+                    background: "var(--bg-card)",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                    transition: "border-color 0.12s",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = primary; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)"; }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <span style={{ fontSize: 24 }}>{layout.icon || "+"}</span>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
+                      {app.name}
+                    </div>
+                  </div>
+                  <p style={{
+                    fontSize: 12, color: "var(--text-dim)", margin: 0, lineHeight: 1.5,
+                    display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+                  }}>
+                    {app.description}
+                  </p>
+                  <div style={{ marginTop: 10, fontSize: 11, color: "var(--text-muted)" }}>
+                    {app.configurableParams?.length || 0} input{(app.configurableParams?.length || 0) !== 1 ? "s" : ""}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </>
       )}
@@ -1140,6 +1235,7 @@ export default function Dashboard() {
       <div style={{ marginLeft: 56, flex: 1, display: "flex" }}>
         {active === "compose" && <ComposePane />}
         {active === "automations" && <AutomationsPane />}
+        {active === "apps" && <AppsPane />}
         {active === "credentials" && <CredentialsPane />}
         {active === "marketplace" && <MarketplacePane />}
       </div>

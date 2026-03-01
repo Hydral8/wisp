@@ -39,6 +39,16 @@ export const create = mutation({
       })
     ),
     browserUseMode: v.optional(v.string()),
+    configurableParams: v.optional(v.array(
+      v.object({
+        nodeId: v.string(),
+        paramKey: v.string(),
+        label: v.string(),
+        description: v.string(),
+        defaultValue: v.any(),
+        type: v.string(),
+      })
+    )),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);

@@ -260,6 +260,7 @@ export const startExecution = action({
   args: {
     workflowId: v.id("workflows"),
     browserUseMode: v.optional(v.string()),
+    runtimeParams: v.optional(v.any()), // e.g. { "n1.query": "San Francisco" }
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -281,7 +282,21 @@ export const startExecution = action({
       status: "running",
     });
 
-    const nodes: DAGNode[] = workflow.nodes;
+    let nodes: DAGNode[] = workflow.nodes;
+    // Apply runtime overrides if provided
+    if (args.runtimeParams && typeof args.runtimeParams === "object") {
+      nodes = nodes.map(n => {
+        const updatedArgs = { ...n.arguments };
+        for (const [key, val] of Object.entries(args.runtimeParams!)) {
+          if (key.startsWith(`${n.id}.`)) {
+            const paramName = key.split(".")[1];
+            if (paramName) updatedArgs[paramName] = val;
+          }
+        }
+        return { ...n, arguments: updatedArgs };
+      });
+    }
+
     const levels = topoLevels(nodes);
     const outputs: Record<string, any> = {};
     const total = nodes.length;
