@@ -116,6 +116,7 @@ export default function WorkflowPage() {
         const e = pe as unknown as Record<string, unknown>;
         setExecutedSteps((e.executed_steps as Record<string, unknown>[]) || []);
         setAgentSummary((e.text as string) || "");
+        setPhase("idle");
       }
 
       if (pe.type === "planning_message") {
@@ -546,7 +547,7 @@ export default function WorkflowPage() {
           onSend={handleChat}
           loading={isLoading}
         />
-        {phase === "planning" ? (
+        {phase === "planning" || (!workflow && planningEventsList.length > 0) ? (
           <PlanningFeed
             events={planningEventsList}
             onConvertToWorkflow={executedSteps.length > 0 ? handleConvertToWorkflow : undefined}

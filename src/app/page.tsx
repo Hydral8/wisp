@@ -435,6 +435,8 @@ function AutomationsPane() {
 
 // ─── Credentials ─────────────────────────────────────────────────────────────
 
+const APPS_PER_PAGE = 24;
+
 function IntegrationsSection() {
   const composioApps = useQuery(api.composio.getApps) ?? [];
   const connections = useQuery(api.composio.getConnections) ?? [];
@@ -444,12 +446,22 @@ function IntegrationsSection() {
   const save = useMutation(api.composio.saveConnection);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
 
   const handleSync = async () => {
     setSyncing(true);
     try { await syncApps({}); } catch (err) { console.error("Sync error:", err); }
     finally { setSyncing(false); }
   };
+
+  // Auto-fetch apps on first mount if table is empty
+  useEffect(() => {
+    if (composioApps.length === 0) {
+      handleSync();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Listen for OAuth callback postMessage
   useEffect(() => {
@@ -470,6 +482,27 @@ function IntegrationsSection() {
   const connectedProviders = new Map(
     connections.map((c: any) => [c.provider, c])
   );
+
+  // Connected apps first, then filter by search
+  const sortedApps = [...composioApps].sort((a: any, b: any) => {
+    const aConn = connectedProviders.has(a.key) ? 0 : 1;
+    const bConn = connectedProviders.has(b.key) ? 0 : 1;
+    return aConn - bConn;
+  });
+
+  const filtered = search.trim()
+    ? sortedApps.filter((app: any) =>
+        app.name.toLowerCase().includes(search.toLowerCase()) ||
+        app.key.toLowerCase().includes(search.toLowerCase())
+      )
+    : sortedApps;
+
+  const totalPages = Math.ceil(filtered.length / APPS_PER_PAGE);
+  const currentPage = Math.min(page, Math.max(0, totalPages - 1));
+  const pageApps = filtered.slice(currentPage * APPS_PER_PAGE, (currentPage + 1) * APPS_PER_PAGE);
+
+  // Reset page when search changes
+  useEffect(() => { setPage(0); }, [search]);
 
   const handleConnect = async (appKey: string) => {
     setConnecting(appKey);
@@ -495,13 +528,16 @@ function IntegrationsSection() {
 
   return (
     <div style={{ marginBottom: 28 }}>
+      {/* Header row */}
       <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
         <div>
           <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
             Integrations
           </h2>
           <p style={{ fontSize: 12, color: "var(--text-dim)", margin: 0 }}>
-            Connect apps via OAuth — no API keys needed
+            {composioApps.length > 0
+              ? `${composioApps.length} apps available \u00b7 ${connections.length} connected`
+              : "Connect apps via OAuth \u2014 no API keys needed"}
           </p>
         </div>
         <button
@@ -519,90 +555,157 @@ function IntegrationsSection() {
             opacity: syncing ? 0.5 : 1,
           }}
         >
-          {syncing ? "Syncing..." : composioApps.length === 0 ? "Load Apps" : "Refresh"}
+          {syncing ? "Syncing..." : "Refresh"}
         </button>
       </div>
+
       {composioApps.length === 0 ? (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
           <p style={{ color: "var(--text-dim)", fontSize: 12, margin: 0 }}>
-            No apps loaded yet — click &quot;Load Apps&quot; to fetch available integrations from Composio
+            Loading integrations...
           </p>
         </div>
       ) : (
-      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
-        {composioApps.map((app: any) => {
-          const conn = connectedProviders.get(app.key);
-          const isActive = conn?.status === "active";
-          const isConnecting = connecting === app.key;
+        <>
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search apps..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid var(--border)",
+              background: "var(--bg-surface)",
+              color: "var(--text)",
+              fontSize: 12,
+              fontFamily: "inherit",
+              outline: "none",
+              marginBottom: 12,
+              boxSizing: "border-box",
+            }}
+          />
 
-          return (
-            <div
-              key={app.key}
-              style={{
-                padding: "12px 14px",
-                borderRadius: 8,
-                border: `1px solid ${isActive ? "rgba(74,222,128,0.3)" : "var(--border)"}`,
-                background: isActive ? "rgba(74,222,128,0.05)" : "var(--bg-card)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 10,
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* Grid */}
+          <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+            {pageApps.map((app: any) => {
+              const conn = connectedProviders.get(app.key);
+              const isActive = conn?.status === "active";
+              const isConnecting = connecting === app.key;
+
+              return (
                 <div
+                  key={app.key}
                   style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: isActive ? "var(--green)" : "var(--border)",
-                    flexShrink: 0,
-                  }}
-                />
-                <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>
-                  {app.name}
-                </span>
-              </div>
-              {isActive ? (
-                <button
-                  onClick={() => handleDisconnect(app.key)}
-                  style={{
-                    padding: "3px 10px",
-                    borderRadius: 5,
-                    border: "1px solid rgba(248,113,113,0.3)",
-                    background: "rgba(248,113,113,0.08)",
-                    color: "var(--red)",
-                    fontSize: 10,
-                    fontFamily: "inherit",
-                    cursor: "pointer",
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    border: `1px solid ${isActive ? "rgba(74,222,128,0.3)" : "var(--border)"}`,
+                    background: isActive ? "rgba(74,222,128,0.05)" : "var(--bg-card)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
                   }}
                 >
-                  Disconnect
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleConnect(app.key)}
-                  disabled={isConnecting}
-                  style={{
-                    padding: "3px 10px",
-                    borderRadius: 5,
-                    border: "1px solid var(--border)",
-                    background: isConnecting ? "var(--border)" : "transparent",
-                    color: "var(--text-dim)",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    fontFamily: "inherit",
-                    cursor: isConnecting ? "not-allowed" : "pointer",
-                    transition: "background 0.12s, color 0.12s",
-                  }}
-                >
-                  {isConnecting ? "Connecting..." : "Connect"}
-                </button>
-              )}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                    <div
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        background: isActive ? "var(--green)" : "var(--border)",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {app.name}
+                    </span>
+                  </div>
+                  {isActive ? (
+                    <button
+                      onClick={() => handleDisconnect(app.key)}
+                      style={{
+                        padding: "3px 8px",
+                        borderRadius: 5,
+                        border: "1px solid rgba(248,113,113,0.3)",
+                        background: "rgba(248,113,113,0.08)",
+                        color: "var(--red)",
+                        fontSize: 10,
+                        fontFamily: "inherit",
+                        cursor: "pointer",
+                        flexShrink: 0,
+                      }}
+                    >
+                      Disconnect
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleConnect(app.key)}
+                      disabled={isConnecting}
+                      style={{
+                        padding: "3px 8px",
+                        borderRadius: 5,
+                        border: "1px solid var(--border)",
+                        background: isConnecting ? "var(--border)" : "transparent",
+                        color: "var(--text-dim)",
+                        fontSize: 10,
+                        fontWeight: 500,
+                        fontFamily: "inherit",
+                        cursor: isConnecting ? "not-allowed" : "pointer",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {isConnecting ? "..." : "Connect"}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 14 }}>
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  border: "1px solid var(--border)",
+                  background: "transparent",
+                  color: currentPage === 0 ? "var(--text-muted)" : "var(--text-dim)",
+                  fontSize: 11,
+                  fontFamily: "inherit",
+                  cursor: currentPage === 0 ? "not-allowed" : "pointer",
+                }}
+              >
+                Prev
+              </button>
+              <span style={{ fontSize: 11, color: "var(--text-dim)" }}>
+                {currentPage + 1} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={currentPage >= totalPages - 1}
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  border: "1px solid var(--border)",
+                  background: "transparent",
+                  color: currentPage >= totalPages - 1 ? "var(--text-muted)" : "var(--text-dim)",
+                  fontSize: 11,
+                  fontFamily: "inherit",
+                  cursor: currentPage >= totalPages - 1 ? "not-allowed" : "pointer",
+                }}
+              >
+                Next
+              </button>
             </div>
-          );
-        })}
-      </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -674,7 +777,7 @@ function CredentialsPane() {
   };
 
   return (
-    <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", maxWidth: 900, width: "100%" }}>
+    <div style={{ flex: 1, padding: "48px 40px", minHeight: "100vh", width: "100%" }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.3px", margin: "0 0 4px", color: "var(--text)" }}>
           Credentials

@@ -213,6 +213,27 @@ class CallRequest(BaseModel):
     # Optional: connection info passed by Convex (makes proxy stateless)
     connection_info: Optional[Dict[str, Any]] = None
 
+class EmbedRequest(BaseModel):
+    text: str
+
+
+# ---------------------------------------------------------------------------
+# Embedding Support
+# ---------------------------------------------------------------------------
+
+_embedding_model = None
+
+def get_embedding_model():
+    global _embedding_model
+    if _embedding_model is None:
+        try:
+            from sentence_transformers import SentenceTransformer
+            log.info("Loading semantic embedding model: google/embeddinggemma-300m...")
+            _embedding_model = SentenceTransformer("google/embeddinggemma-300m")
+        except ImportError:
+            log.warning("sentence-transformers not installed; embeddings endpoint will fail.")
+    return _embedding_model
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -254,6 +275,17 @@ def build_stdio_command(server_info: Dict) -> tuple[str, list[str]]:
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.post("/embed")
+async def embed_text(req: EmbedRequest):
+    """Generate 768-D embeddings for the input text."""
+    model = get_embedding_model()
+    if not model:
+        raise HTTPException(
+            status_code=500, detail="SentenceTransformer is not available."
+        )
+    vec = model.encode(req.text)
+    return {"embedding": vec.tolist()}
 
 
 @app.post("/call")

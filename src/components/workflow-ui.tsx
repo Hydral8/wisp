@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type {
   Workflow,
   DAGNode,
@@ -142,9 +144,9 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
     case "planning_thinking":
       return (
         <Collapsible label="Model response" defaultOpen={expanded} onToggle={setExpanded}>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, maxHeight: 200, overflow: "auto", whiteSpace: "pre-wrap" }}>
-            {event.text}
-          </p>
+          <div className="markdown-body" style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text)", maxHeight: 200, overflow: "auto" }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.text || ""}</ReactMarkdown>
+          </div>
         </Collapsible>
       );
 
@@ -212,8 +214,8 @@ export function ChatPane({
     <div
       className="flex flex-col h-full animate-slide-left"
       style={{
-        width: 320,
-        minWidth: 320,
+        width: 420,
+        minWidth: 420,
         borderRight: "1px solid var(--border)",
         background: "var(--bg)",
       }}
@@ -425,9 +427,9 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
     case "planning_thinking":
       return (
         <Collapsible label="Model response" defaultOpen={true}>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, maxHeight: 200, overflow: "auto", whiteSpace: "pre-wrap" }}>
-            {event.text}
-          </p>
+          <div className="markdown-body" style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text)", maxHeight: 300, overflow: "auto" }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.text || ""}</ReactMarkdown>
+          </div>
         </Collapsible>
       );
 
@@ -509,9 +511,9 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)", flexShrink: 0 }} />
             <span style={{ fontSize: 12, color: "var(--text)", fontWeight: 500 }}>Agent complete</span>
           </div>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, whiteSpace: "pre-wrap" }}>
-            {event.text}
-          </p>
+          <div className="markdown-body" style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text)", margin: 0 }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.text || ""}</ReactMarkdown>
+          </div>
         </div>
       );
     }

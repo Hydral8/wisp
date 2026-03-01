@@ -692,8 +692,8 @@ function ChatPane({ messages, onSend, loading }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex flex-col h-full animate-slide-left",
         style: {
-            width: 320,
-            minWidth: 320,
+            width: 420,
+            minWidth: 420,
             borderRight: "1px solid var(--border)",
             background: "var(--bg)"
         },
@@ -3568,6 +3568,7 @@ function AutomationsPane() {
     }, this);
 }
 // ─── Credentials ─────────────────────────────────────────────────────────────
+const APPS_PER_PAGE = 24;
 function IntegrationsSection() {
     const composioApps = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$convex$40$1$2e$32$2e$0_react$40$19$2e$2$2e$3$2f$node_modules$2f$convex$2f$dist$2f$esm$2f$react$2f$client$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useQuery"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$convex$2f$_generated$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["api"].composio.getApps) ?? [];
     const connections = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$convex$40$1$2e$32$2e$0_react$40$19$2e$2$2e$3$2f$node_modules$2f$convex$2f$dist$2f$esm$2f$react$2f$client$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useQuery"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$convex$2f$_generated$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["api"].composio.getConnections) ?? [];
@@ -3577,6 +3578,8 @@ function IntegrationsSection() {
     const save = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$convex$40$1$2e$32$2e$0_react$40$19$2e$2$2e$3$2f$node_modules$2f$convex$2f$dist$2f$esm$2f$react$2f$client$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMutation"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$convex$2f$_generated$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["api"].composio.saveConnection);
     const [connecting, setConnecting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [syncing, setSyncing] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [search, setSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const [page, setPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const handleSync = async ()=>{
         setSyncing(true);
         try {
@@ -3587,6 +3590,13 @@ function IntegrationsSection() {
             setSyncing(false);
         }
     };
+    // Auto-fetch apps on first mount if table is empty
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (composioApps.length === 0) {
+            handleSync();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     // Listen for OAuth callback postMessage
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const handler = (e)=>{
@@ -3609,6 +3619,24 @@ function IntegrationsSection() {
             c.provider,
             c
         ]));
+    // Connected apps first, then filter by search
+    const sortedApps = [
+        ...composioApps
+    ].sort((a, b)=>{
+        const aConn = connectedProviders.has(a.key) ? 0 : 1;
+        const bConn = connectedProviders.has(b.key) ? 0 : 1;
+        return aConn - bConn;
+    });
+    const filtered = search.trim() ? sortedApps.filter((app)=>app.name.toLowerCase().includes(search.toLowerCase()) || app.key.toLowerCase().includes(search.toLowerCase())) : sortedApps;
+    const totalPages = Math.ceil(filtered.length / APPS_PER_PAGE);
+    const currentPage = Math.min(page, Math.max(0, totalPages - 1));
+    const pageApps = filtered.slice(currentPage * APPS_PER_PAGE, (currentPage + 1) * APPS_PER_PAGE);
+    // Reset page when search changes
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        setPage(0);
+    }, [
+        search
+    ]);
     const handleConnect = async (appKey)=>{
         setConnecting(appKey);
         try {
@@ -3659,7 +3687,7 @@ function IntegrationsSection() {
                                 children: "Integrations"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 500,
+                                lineNumber: 534,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3668,16 +3696,16 @@ function IntegrationsSection() {
                                     color: "var(--text-dim)",
                                     margin: 0
                                 },
-                                children: "Connect apps via OAuth — no API keys needed"
+                                children: composioApps.length > 0 ? `${composioApps.length} apps available \u00b7 ${connections.length} connected` : "Connect apps via OAuth \u2014 no API keys needed"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 503,
+                                lineNumber: 537,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 499,
+                        lineNumber: 533,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3694,16 +3722,16 @@ function IntegrationsSection() {
                             cursor: syncing ? "not-allowed" : "pointer",
                             opacity: syncing ? 0.5 : 1
                         },
-                        children: syncing ? "Syncing..." : composioApps.length === 0 ? "Load Apps" : "Refresh"
+                        children: syncing ? "Syncing..." : "Refresh"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 507,
+                        lineNumber: 543,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 498,
+                lineNumber: 532,
                 columnNumber: 7
             }, this),
             composioApps.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3717,130 +3745,230 @@ function IntegrationsSection() {
                         fontSize: 12,
                         margin: 0
                     },
-                    children: 'No apps loaded yet — click "Load Apps" to fetch available integrations from Composio'
+                    children: "Loading integrations..."
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 527,
+                    lineNumber: 564,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 526,
+                lineNumber: 563,
                 columnNumber: 9
-            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                style: {
-                    display: "grid",
-                    gap: 8,
-                    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))"
-                },
-                children: composioApps.map((app)=>{
-                    const conn = connectedProviders.get(app.key);
-                    const isActive = conn?.status === "active";
-                    const isConnecting = connecting === app.key;
-                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                        type: "text",
+                        placeholder: "Search apps...",
+                        value: search,
+                        onChange: (e)=>setSearch(e.target.value),
                         style: {
-                            padding: "12px 14px",
+                            width: "100%",
+                            padding: "8px 12px",
                             borderRadius: 8,
-                            border: `1px solid ${isActive ? "rgba(74,222,128,0.3)" : "var(--border)"}`,
-                            background: isActive ? "rgba(74,222,128,0.05)" : "var(--bg-card)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: 10
+                            border: "1px solid var(--border)",
+                            background: "var(--bg-surface)",
+                            color: "var(--text)",
+                            fontSize: 12,
+                            fontFamily: "inherit",
+                            outline: "none",
+                            marginBottom: 12,
+                            boxSizing: "border-box"
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 571,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: "grid",
+                            gap: 8,
+                            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))"
                         },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        children: pageApps.map((app)=>{
+                            const conn = connectedProviders.get(app.key);
+                            const isActive = conn?.status === "active";
+                            const isConnecting = connecting === app.key;
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
+                                    padding: "10px 12px",
+                                    borderRadius: 8,
+                                    border: `1px solid ${isActive ? "rgba(74,222,128,0.3)" : "var(--border)"}`,
+                                    background: isActive ? "rgba(74,222,128,0.05)" : "var(--bg-card)",
                                     display: "flex",
                                     alignItems: "center",
+                                    justifyContent: "space-between",
                                     gap: 8
                                 },
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
-                                            width: 8,
-                                            height: 8,
-                                            borderRadius: "50%",
-                                            background: isActive ? "var(--green)" : "var(--border)",
-                                            flexShrink: 0
-                                        }
-                                    }, void 0, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 553,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        style: {
-                                            fontSize: 12,
-                                            fontWeight: 500,
-                                            color: "var(--text)"
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                            minWidth: 0
                                         },
-                                        children: app.name
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    width: 7,
+                                                    height: 7,
+                                                    borderRadius: "50%",
+                                                    background: isActive ? "var(--green)" : "var(--border)",
+                                                    flexShrink: 0
+                                                }
+                                            }, void 0, false, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 613,
+                                                columnNumber: 21
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                style: {
+                                                    fontSize: 12,
+                                                    fontWeight: 500,
+                                                    color: "var(--text)",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap"
+                                                },
+                                                children: app.name
+                                            }, void 0, false, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 622,
+                                                columnNumber: 21
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 612,
+                                        columnNumber: 19
+                                    }, this),
+                                    isActive ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>handleDisconnect(app.key),
+                                        style: {
+                                            padding: "3px 8px",
+                                            borderRadius: 5,
+                                            border: "1px solid rgba(248,113,113,0.3)",
+                                            background: "rgba(248,113,113,0.08)",
+                                            color: "var(--red)",
+                                            fontSize: 10,
+                                            fontFamily: "inherit",
+                                            cursor: "pointer",
+                                            flexShrink: 0
+                                        },
+                                        children: "Disconnect"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 562,
-                                        columnNumber: 17
+                                        lineNumber: 627,
+                                        columnNumber: 21
+                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>handleConnect(app.key),
+                                        disabled: isConnecting,
+                                        style: {
+                                            padding: "3px 8px",
+                                            borderRadius: 5,
+                                            border: "1px solid var(--border)",
+                                            background: isConnecting ? "var(--border)" : "transparent",
+                                            color: "var(--text-dim)",
+                                            fontSize: 10,
+                                            fontWeight: 500,
+                                            fontFamily: "inherit",
+                                            cursor: isConnecting ? "not-allowed" : "pointer",
+                                            flexShrink: 0
+                                        },
+                                        children: isConnecting ? "..." : "Connect"
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 644,
+                                        columnNumber: 21
                                     }, this)
+                                ]
+                            }, app.key, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 599,
+                                columnNumber: 17
+                            }, this);
+                        })
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 592,
+                        columnNumber: 11
+                    }, this),
+                    totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 12,
+                            marginTop: 14
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>setPage((p)=>Math.max(0, p - 1)),
+                                disabled: currentPage === 0,
+                                style: {
+                                    padding: "4px 10px",
+                                    borderRadius: 6,
+                                    border: "1px solid var(--border)",
+                                    background: "transparent",
+                                    color: currentPage === 0 ? "var(--text-muted)" : "var(--text-dim)",
+                                    fontSize: 11,
+                                    fontFamily: "inherit",
+                                    cursor: currentPage === 0 ? "not-allowed" : "pointer"
+                                },
+                                children: "Prev"
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 671,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                style: {
+                                    fontSize: 11,
+                                    color: "var(--text-dim)"
+                                },
+                                children: [
+                                    currentPage + 1,
+                                    " / ",
+                                    totalPages
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 552,
+                                lineNumber: 687,
                                 columnNumber: 15
                             }, this),
-                            isActive ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>handleDisconnect(app.key),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>setPage((p)=>Math.min(totalPages - 1, p + 1)),
+                                disabled: currentPage >= totalPages - 1,
                                 style: {
-                                    padding: "3px 10px",
-                                    borderRadius: 5,
-                                    border: "1px solid rgba(248,113,113,0.3)",
-                                    background: "rgba(248,113,113,0.08)",
-                                    color: "var(--red)",
-                                    fontSize: 10,
-                                    fontFamily: "inherit",
-                                    cursor: "pointer"
-                                },
-                                children: "Disconnect"
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 567,
-                                columnNumber: 17
-                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>handleConnect(app.key),
-                                disabled: isConnecting,
-                                style: {
-                                    padding: "3px 10px",
-                                    borderRadius: 5,
+                                    padding: "4px 10px",
+                                    borderRadius: 6,
                                     border: "1px solid var(--border)",
-                                    background: isConnecting ? "var(--border)" : "transparent",
-                                    color: "var(--text-dim)",
-                                    fontSize: 10,
-                                    fontWeight: 500,
+                                    background: "transparent",
+                                    color: currentPage >= totalPages - 1 ? "var(--text-muted)" : "var(--text-dim)",
+                                    fontSize: 11,
                                     fontFamily: "inherit",
-                                    cursor: isConnecting ? "not-allowed" : "pointer",
-                                    transition: "background 0.12s, color 0.12s"
+                                    cursor: currentPage >= totalPages - 1 ? "not-allowed" : "pointer"
                                 },
-                                children: isConnecting ? "Connecting..." : "Connect"
+                                children: "Next"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 583,
-                                columnNumber: 17
+                                lineNumber: 690,
+                                columnNumber: 15
                             }, this)
                         ]
-                    }, app.key, true, {
+                    }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 539,
+                        lineNumber: 670,
                         columnNumber: 13
-                    }, this);
-                })
-            }, void 0, false, {
-                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 532,
-                columnNumber: 7
-            }, this)
+                    }, this)
+                ]
+            }, void 0, true)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 497,
+        lineNumber: 530,
         columnNumber: 5
     }, this);
 }
@@ -3957,7 +4085,6 @@ function CredentialsPane() {
             flex: 1,
             padding: "48px 40px",
             minHeight: "100vh",
-            maxWidth: 900,
             width: "100%"
         },
         children: [
@@ -3977,7 +4104,7 @@ function CredentialsPane() {
                         children: "Credentials"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 679,
+                        lineNumber: 782,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3989,18 +4116,18 @@ function CredentialsPane() {
                         children: "API keys and login profiles for your automations"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 682,
+                        lineNumber: 785,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 678,
+                lineNumber: 781,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(IntegrationsSection, {}, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 688,
+                lineNumber: 791,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4039,12 +4166,12 @@ function CredentialsPane() {
                                 disabled: "disabled" in f && f.disabled === "editing" && Boolean(editingAppId)
                             }, f.key, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 702,
+                                lineNumber: 805,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 700,
+                        lineNumber: 803,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4074,7 +4201,7 @@ function CredentialsPane() {
                                 children: editingAppId ? "Update" : "Save"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 723,
+                                lineNumber: 826,
                                 columnNumber: 11
                             }, this),
                             editingAppId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4092,19 +4219,19 @@ function CredentialsPane() {
                                 children: "Cancel"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 743,
+                                lineNumber: 846,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 722,
+                        lineNumber: 825,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 691,
+                lineNumber: 794,
                 columnNumber: 7
             }, this),
             loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4128,12 +4255,12 @@ function CredentialsPane() {
                         }
                     }, i, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 766,
+                        lineNumber: 869,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 764,
+                lineNumber: 867,
                 columnNumber: 9
             }, this) : profiles.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
@@ -4149,12 +4276,12 @@ function CredentialsPane() {
                     children: "No credential profiles yet"
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                    lineNumber: 771,
+                    lineNumber: 874,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 770,
+                lineNumber: 873,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
@@ -4172,7 +4299,7 @@ function CredentialsPane() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 775,
+                        lineNumber: 878,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4206,7 +4333,7 @@ function CredentialsPane() {
                                                 children: p.displayName || p.appId
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 790,
+                                                lineNumber: 893,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4218,13 +4345,13 @@ function CredentialsPane() {
                                                 children: p.appId
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 793,
+                                                lineNumber: 896,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 789,
+                                        lineNumber: 892,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4243,7 +4370,7 @@ function CredentialsPane() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 798,
+                                                lineNumber: 901,
                                                 columnNumber: 34
                                             }, this),
                                             p.email && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4253,28 +4380,28 @@ function CredentialsPane() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 799,
+                                                lineNumber: 902,
                                                 columnNumber: 31
                                             }, this),
                                             p.password && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 children: "Password: --------"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 800,
+                                                lineNumber: 903,
                                                 columnNumber: 34
                                             }, this),
                                             p.apiKey && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 children: "API key: --------"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 801,
+                                                lineNumber: 904,
                                                 columnNumber: 32
                                             }, this),
                                             p.token && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 children: "Token: --------"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 802,
+                                                lineNumber: 905,
                                                 columnNumber: 31
                                             }, this),
                                             p.notes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4284,13 +4411,13 @@ function CredentialsPane() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 803,
+                                                lineNumber: 906,
                                                 columnNumber: 31
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 797,
+                                        lineNumber: 900,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4315,7 +4442,7 @@ function CredentialsPane() {
                                                 children: "Edit"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 806,
+                                                lineNumber: 909,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4333,24 +4460,24 @@ function CredentialsPane() {
                                                 children: "Delete"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 821,
+                                                lineNumber: 924,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 805,
+                                        lineNumber: 908,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, p.appId, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 780,
+                                lineNumber: 883,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 778,
+                        lineNumber: 881,
                         columnNumber: 11
                     }, this)
                 ]
@@ -4358,7 +4485,7 @@ function CredentialsPane() {
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 677,
+        lineNumber: 780,
         columnNumber: 5
     }, this);
 }
@@ -4458,7 +4585,7 @@ function MarketplacePane() {
                         children: "Marketplace"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 897,
+                        lineNumber: 1000,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4470,13 +4597,13 @@ function MarketplacePane() {
                         children: "Pre-built automation templates — one click to run"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 900,
+                        lineNumber: 1003,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 896,
+                lineNumber: 999,
                 columnNumber: 7
             }, this),
             loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4500,12 +4627,12 @@ function MarketplacePane() {
                         }
                     }, i, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 908,
+                        lineNumber: 1011,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 906,
+                lineNumber: 1009,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 style: {
@@ -4548,7 +4675,7 @@ function MarketplacePane() {
                                         children: item.name
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 931,
+                                        lineNumber: 1034,
                                         columnNumber: 17
                                     }, this),
                                     item._id && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4583,13 +4710,13 @@ function MarketplacePane() {
                                         children: usingId === item._id ? "Cloning..." : "Use"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 935,
+                                        lineNumber: 1038,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 930,
+                                lineNumber: 1033,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4602,7 +4729,7 @@ function MarketplacePane() {
                                 children: item.description
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 969,
+                                lineNumber: 1072,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4630,12 +4757,12 @@ function MarketplacePane() {
                                                 children: t
                                             }, t, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 975,
+                                                lineNumber: 1078,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 973,
+                                        lineNumber: 1076,
                                         columnNumber: 17
                                     }, this),
                                     item.publisherName && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4649,7 +4776,7 @@ function MarketplacePane() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 990,
+                                        lineNumber: 1093,
                                         columnNumber: 19
                                     }, this),
                                     item.usageCount > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4664,30 +4791,30 @@ function MarketplacePane() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 995,
+                                        lineNumber: 1098,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 972,
+                                lineNumber: 1075,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, item._id ?? item.name, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 914,
+                        lineNumber: 1017,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 912,
+                lineNumber: 1015,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 895,
+        lineNumber: 998,
         columnNumber: 5
     }, this);
 }
@@ -4723,24 +4850,24 @@ function Dashboard() {
                         }
                     }, i, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 1023,
+                        lineNumber: 1126,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1021,
+                lineNumber: 1124,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-            lineNumber: 1020,
+            lineNumber: 1123,
             columnNumber: 7
         }, this);
     }
     if (!isAuthenticated) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$auth$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SignIn"], {}, void 0, false, {
             fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-            lineNumber: 1031,
+            lineNumber: 1134,
             columnNumber: 12
         }, this);
     }
@@ -4756,7 +4883,7 @@ function Dashboard() {
                 user: user
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1036,
+                lineNumber: 1139,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4768,34 +4895,34 @@ function Dashboard() {
                 children: [
                     active === "compose" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ComposePane, {}, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 1038,
+                        lineNumber: 1141,
                         columnNumber: 34
                     }, this),
                     active === "automations" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AutomationsPane, {}, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 1039,
+                        lineNumber: 1142,
                         columnNumber: 38
                     }, this),
                     active === "credentials" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(CredentialsPane, {}, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 1040,
+                        lineNumber: 1143,
                         columnNumber: 38
                     }, this),
                     active === "marketplace" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MarketplacePane, {}, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 1041,
+                        lineNumber: 1144,
                         columnNumber: 38
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 1037,
+                lineNumber: 1140,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 1035,
+        lineNumber: 1138,
         columnNumber: 5
     }, this);
 }

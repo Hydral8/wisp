@@ -7,7 +7,7 @@ interface ToolSearchResult {
   tool_name: string;
   title: string;
   description: string;
-  input_schema: any;
+  input_schema: string;
   server: { name: string; description: string };
 }
 
@@ -43,7 +43,7 @@ export const searchToolsByVector = action({
           tool_name: tool.toolName,
           title: tool.title,
           description: tool.description,
-          input_schema: tool.inputSchema ? JSON.parse(tool.inputSchema) : {},
+          input_schema: tool.inputSchema || "{}",
           server: server
             ? { name: server.name, description: server.description }
             : { name: tool.serverName, description: "" },
@@ -119,7 +119,7 @@ export const getToolsForServer = query({
       server_name: t.serverName,
       tool_name: t.toolName,
       description: t.description,
-      input_schema: t.inputSchema ? JSON.parse(t.inputSchema) : {},
+      input_schema: t.inputSchema || "{}",
     }));
   },
 });

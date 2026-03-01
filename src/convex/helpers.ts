@@ -17,6 +17,6 @@ export async function requireUser(
     throw new Error("Not authenticated");
   }
   // The subject field contains the Convex user ID when using @convex-dev/auth
-  const userId = identity.subject as any;
+  const userId = identity.subject.split("|")[0] as any;
   return { userId };
 }

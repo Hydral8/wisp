@@ -21,6 +21,10 @@ TOOL SEARCH RULES:
 - Search for each distinct capability exactly once. Do not rephrase and retry the same search.
 - Use list_server_tools after finding a promising tool to discover sibling tools on the same server.
 
+SCRAPING & WEB SEARCH:
+- If the task requires scraping, getting text data from websites, or searching the web, actively look for and use web search tools (e.g., Brave, Google, Scrapeless, specific scraping APIs) available in the registry.
+- Do NOT just assume data is unavailable; leverage the available MCP tools to fetch the required information.
+
 EXECUTE_TOOL:
 - Use execute_tool to run MCP tools (non-browser). Do NOT use execute_tool for browser tasks.
 
@@ -301,6 +305,15 @@ export const startPlanning = action({
               query: q,
               limit: 5,
             });
+            if (Array.isArray(result)) {
+              result = result.map((t: any) => {
+                try {
+                  return { ...t, input_schema: JSON.parse(t.input_schema) };
+                } catch {
+                  return t;
+                }
+              });
+            }
             const elapsed = (Date.now() - t0) / 1000;
             const toolNames = (result || []).map(
               (t: any) => t.tool_name || ""
@@ -324,6 +337,15 @@ export const startPlanning = action({
             result = await ctx.runQuery(api.registry.getToolsForServer, {
               serverName: sn,
             });
+            if (Array.isArray(result)) {
+              result = result.map((t: any) => {
+                try {
+                  return { ...t, input_schema: JSON.parse(t.input_schema) };
+                } catch {
+                  return t;
+                }
+              });
+            }
             const elapsed = (Date.now() - t0) / 1000;
             await ctx.runMutation(internal.planning.writePlanningEvent, {
               sessionId,
@@ -382,7 +404,7 @@ export const startPlanning = action({
               let usedComposio = false;
 
               if (composioApp) {
-                const userId = identity.subject as Id<"users">;
+                const userId = identity.subject.split("|")[0] as Id<"users">;
                 const connection = await ctx.runQuery(
                   internal.composio.getConnectionForProvider,
                   { userId, provider: composioApp }
@@ -601,7 +623,7 @@ export const startPlanning = action({
       }
 
       // Save session messages
-      const userId = identity.subject as Id<"users">;
+      const userId = identity.subject.split("|")[0] as Id<"users">;
       await ctx.runMutation(internal.planning.saveChatSession, {
         userId,
         sessionId,
