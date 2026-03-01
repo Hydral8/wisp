@@ -59,6 +59,9 @@ workflows: dict[str, Workflow] = {}
 webhooks: dict[str, str] = {}
 sessions: dict[str, dict] = {}
 
+# For bidirectional credential flow: node_id -> {"event": asyncio.Event, "data": dict}
+pending_inputs: dict[str, dict] = {}
+
 # --- JSON extraction (handles LLM prose around JSON) ---
 
 class PlanIncomplete(Exception):
@@ -124,7 +127,20 @@ OTHER RULES:
   * "This task requires capabilities not available in the current tool set" for unsupported operations
   * Suggest alternatives or workarounds when possible
 - If only some steps are blocked, build a partial DAG for what IS possible and explain what was skipped and why in a "warnings" field: {"name":"...","description":"...","warnings":["..."],"nodes":[...]}
-- When everything is feasible, output ONLY the JSON DAG, no prose."""
+- When everything is feasible, output ONLY the JSON DAG, no prose.
+
+BROWSER FALLBACK:
+- If no specific MCP tool is found for a task, fall back to browser-use. Search for "browser use" to find the browser automation MCP tool.
+- Browser-use can automate most workflows directly via the browser: navigate pages, fill forms, click buttons, extract data, etc.
+- Always prefer a dedicated MCP tool when one is available. Use browser-use ONLY as a last-resort fallback.
+- When using browser-use, provide clear step-by-step instructions in the arguments describing what to do in the browser.
+
+CREDENTIAL REQUESTS (bidirectional):
+- If any step (especially browser-use) requires user credentials (username, password, API key, OAuth token, etc.), you MUST add a node BEFORE that step with server_name "__user_input__" and tool_name "request_credentials".
+- Arguments format: {"fields": [{"name": "username", "label": "GitHub Username"}, {"name": "password", "label": "GitHub Password", "sensitive": true}], "reason": "Login to GitHub to star the repository"}
+- Mark any secret field (passwords, tokens, API keys) with "sensitive": true so the UI renders a password input.
+- The output_key of the __user_input__ node should be referenced by downstream steps via {{output_key}} to inject the collected values.
+- Example: if output_key is "creds", the browser-use step can reference {{creds}} to get {"username": "...", "password": "..."}."""
 
 SEARCH_TOOL = {"name": "search_tools", "description": "Search Wisp for MCP tools matching a query.", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}
 
@@ -269,14 +285,38 @@ def resolve(value: Any, outputs: dict) -> Any:
     if isinstance(value, list): return [resolve(v, outputs) for v in value]
     return value
 
-async def exec_node(node: DAGNode, outputs: dict) -> dict:
+async def exec_node(node: DAGNode, outputs: dict, on_credential_request=None) -> dict:
     args = resolve(node.arguments, outputs)
     if node.server_name == "__llm__":
         return await exec_llm(args)
+    if node.server_name == "__user_input__":
+        return await exec_user_input(node, args, on_credential_request)
     async with httpx.AsyncClient(timeout=120) as c:
         r = await c.post(f"{WISP_URL}/call", json={"server_name": node.server_name, "tool_name": node.tool_name, "arguments": args})
         r.raise_for_status()
         return r.json()
+
+
+async def exec_user_input(node: DAGNode, args: dict, on_credential_request=None) -> dict:
+    """Pause execution and wait for user to provide credentials via the /input endpoint."""
+    fields = args.get("fields", [])
+    reason = args.get("reason", "Credentials required")
+    event = asyncio.Event()
+    pending_inputs[node.id] = {"event": event, "data": None}
+
+    # Notify the SSE stream that we need user input
+    if on_credential_request:
+        await on_credential_request(node.id, fields, reason)
+
+    # Wait for user to submit credentials (timeout after 5 min)
+    try:
+        await asyncio.wait_for(event.wait(), timeout=300)
+    except asyncio.TimeoutError:
+        pending_inputs.pop(node.id, None)
+        raise ValueError(f"Credential request for node {node.id} timed out (5 min)")
+
+    data = pending_inputs.pop(node.id, {}).get("data", {})
+    return data or {}
 
 
 async def exec_llm(args: dict) -> dict:
@@ -299,34 +339,58 @@ def sse(data: dict) -> str:
 async def run_workflow(wf: Workflow):
     outputs, levels = {}, topo_levels(wf.nodes)
     total, done = len(wf.nodes), 0
+    # Event queue: all SSE events (node_start, credential_request, node_complete, etc.)
+    # are pushed here so the generator can yield them in real-time — critical for
+    # __user_input__ nodes that block until the user submits credentials.
+    event_queue: asyncio.Queue = asyncio.Queue()
+    _LEVEL_DONE = object()  # sentinel
+
+    async def on_credential_request(node_id: str, fields: list, reason: str):
+        await event_queue.put(sse({"type": "credential_request", "workflow_id": wf.id,
+                                   "node_id": node_id, "data": {"fields": fields, "reason": reason}}))
+
     yield sse({"type": "workflow_start", "workflow_id": wf.id, "total_nodes": total})
 
     for li, level in enumerate(levels):
-        async def run(node: DAGNode) -> tuple[str, str]:
-            nonlocal done
+        remaining = len(level)
+
+        async def run(node: DAGNode):
+            nonlocal done, remaining
             args = resolve(node.arguments, outputs)
-            s = sse({"type": "node_start", "workflow_id": wf.id, "node_id": node.id,
+            await event_queue.put(sse({"type": "node_start", "workflow_id": wf.id, "node_id": node.id,
                      "data": {"step": node.step, "server_name": node.server_name, "tool_name": node.tool_name,
                               "arguments": args, "level": li, "progress": done/total},
-                     "timestamp": datetime.utcnow().isoformat()})
+                     "timestamp": datetime.utcnow().isoformat()}))
             t0 = time.time()
             try:
-                result = await exec_node(node, outputs)
+                result = await exec_node(node, outputs, on_credential_request)
                 if node.output_key: outputs[node.output_key] = result
                 done += 1
                 rs = json.dumps(result)
                 if len(rs) > 8000: result = {"_truncated": True, "preview": rs[:8000]}
-                return s, sse({"type": "node_complete", "workflow_id": wf.id, "node_id": node.id,
+                await event_queue.put(sse({"type": "node_complete", "workflow_id": wf.id, "node_id": node.id,
                                "data": {"result": result, "elapsed": round(time.time()-t0, 2), "progress": done/total},
-                               "timestamp": datetime.utcnow().isoformat()})
+                               "timestamp": datetime.utcnow().isoformat()}))
             except Exception as e:
                 done += 1
-                return s, sse({"type": "node_error", "workflow_id": wf.id, "node_id": node.id,
+                await event_queue.put(sse({"type": "node_error", "workflow_id": wf.id, "node_id": node.id,
                                "data": {"error": str(e), "progress": done/total},
-                               "timestamp": datetime.utcnow().isoformat()})
+                               "timestamp": datetime.utcnow().isoformat()}))
+            finally:
+                remaining -= 1
+                if remaining == 0:
+                    await event_queue.put(_LEVEL_DONE)
 
-        for s, e in await asyncio.gather(*[run(n) for n in level]):
-            yield s; yield e
+        # Launch all nodes in this level as concurrent tasks
+        for node in level:
+            asyncio.create_task(run(node))
+
+        # Yield events from the queue as they arrive until the level is done
+        while True:
+            event = await event_queue.get()
+            if event is _LEVEL_DONE:
+                break
+            yield event
 
     wf.status = "completed"
     yield sse({"type": "workflow_complete", "workflow_id": wf.id, "data": {"outputs": {k: str(v)[:500] for k, v in outputs.items()}}})
@@ -432,6 +496,22 @@ async def trigger(wid: str):
     wf_id = webhooks.get(wid)
     if not wf_id or wf_id not in workflows: raise HTTPException(404, "Webhook not found")
     return stream_resp(run_workflow(workflows[wf_id]))
+
+class UserInputReq(BaseModel):
+    node_id: str
+    data: dict[str, Any]
+
+@app.post("/workflow/{wid}/input")
+async def submit_user_input(wid: str, req: UserInputReq):
+    """Submit credentials/input for a paused __user_input__ node."""
+    if wid not in workflows:
+        raise HTTPException(404, "Workflow not found")
+    entry = pending_inputs.get(req.node_id)
+    if not entry:
+        raise HTTPException(404, f"No pending input request for node {req.node_id}")
+    entry["data"] = req.data
+    entry["event"].set()
+    return {"status": "ok", "node_id": req.node_id}
 
 @app.get("/workflows")
 async def list_wf():

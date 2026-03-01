@@ -31,12 +31,25 @@ export interface NodeStatus {
   server_name: string;
   tool_name: string;
   arguments: Record<string, unknown>;
-  status: "pending" | "running" | "complete" | "error";
+  status: "pending" | "running" | "complete" | "error" | "waiting_input";
   result?: unknown;
   error?: string;
   elapsed?: number;
   progress?: number;
   level?: number;
+}
+
+export interface CredentialField {
+  name: string;
+  label: string;
+  sensitive?: boolean;
+}
+
+export interface CredentialRequest {
+  node_id: string;
+  workflow_id: string;
+  fields: CredentialField[];
+  reason: string;
 }
 
 export interface ChatMessage {

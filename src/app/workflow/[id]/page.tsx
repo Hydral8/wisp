@@ -8,6 +8,8 @@ import type {
   ChatMessage,
   PlanningEvent,
   AppPhase,
+  CredentialRequest,
+  CredentialField,
 } from "@/lib/types";
 import {
   API,
@@ -34,6 +36,8 @@ export default function WorkflowPage() {
   const [runMode, setRunMode] = useState<"deploy" | "test" | null>(null);
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [credentialRequest, setCredentialRequest] = useState<CredentialRequest | null>(null);
+  const [credentialValues, setCredentialValues] = useState<Record<string, string>>({});
 
   // Stream planning events
   const streamPlan = useCallback(
@@ -195,6 +199,27 @@ export default function WorkflowPage() {
               });
               return next;
             });
+          } else if (event.type === "credential_request") {
+            const d = event.data as { fields: CredentialField[]; reason: string };
+            setCredentialRequest({
+              node_id: event.node_id as string,
+              workflow_id: event.workflow_id as string,
+              fields: d.fields,
+              reason: d.reason,
+            });
+            // Initialize empty values for each field
+            const initial: Record<string, string> = {};
+            for (const f of d.fields) initial[f.name] = "";
+            setCredentialValues(initial);
+            // Update the node status to show it's waiting for input
+            setNodeStatuses((prev) => {
+              const next = new Map(prev);
+              const existing = next.get(event.node_id as string);
+              if (existing) {
+                next.set(event.node_id as string, { ...existing, status: "waiting_input" });
+              }
+              return next;
+            });
           }
         });
       } catch (err) {
@@ -225,6 +250,36 @@ export default function WorkflowPage() {
   }, [workflow]);
 
   const isLoading = phase === "planning" || phase === "executing";
+
+  const handleCredentialSubmit = useCallback(async () => {
+    if (!credentialRequest || !workflow) return;
+    try {
+      await fetch(`${API}/workflow/${workflow.id}/input`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          node_id: credentialRequest.node_id,
+          data: credentialValues,
+        }),
+      });
+      // Update node status back to running
+      setNodeStatuses((prev) => {
+        const next = new Map(prev);
+        const existing = next.get(credentialRequest.node_id);
+        if (existing) {
+          next.set(credentialRequest.node_id, { ...existing, status: "running" });
+        }
+        return next;
+      });
+      setCredentialRequest(null);
+      setCredentialValues({});
+    } catch (err) {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: `Failed to submit credentials: ${err}` },
+      ]);
+    }
+  }, [credentialRequest, credentialValues, workflow]);
 
   return (
     <div className="h-screen flex flex-col">
@@ -279,6 +334,92 @@ export default function WorkflowPage() {
           </div>
         )}
       </div>
+
+      {/* Credential request modal */}
+      {credentialRequest && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "var(--bg-card)",
+              border: "1px solid var(--border)",
+              borderRadius: 12,
+              padding: 24,
+              minWidth: 360,
+              maxWidth: 480,
+            }}
+          >
+            <h3
+              className="text-sm font-bold mb-1"
+              style={{ color: "var(--text)" }}
+            >
+              Credentials Required
+            </h3>
+            <p className="text-xs mb-4" style={{ color: "var(--text-dim)" }}>
+              {credentialRequest.reason}
+            </p>
+            {credentialRequest.fields.map((field) => (
+              <div key={field.name} className="mb-3">
+                <label
+                  className="text-xs font-medium block mb-1"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  {field.label}
+                </label>
+                <input
+                  type={field.sensitive ? "password" : "text"}
+                  value={credentialValues[field.name] || ""}
+                  onChange={(e) =>
+                    setCredentialValues((prev) => ({
+                      ...prev,
+                      [field.name]: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 rounded text-sm outline-none"
+                  style={{
+                    background: "var(--bg-surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text)",
+                  }}
+                  placeholder={field.label}
+                />
+              </div>
+            ))}
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleCredentialSubmit}
+                className="flex-1 px-4 py-2 rounded text-sm font-medium transition-colors"
+                style={{
+                  background: "var(--blue)",
+                  color: "#fff",
+                }}
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setCredentialRequest(null)}
+                className="px-4 py-2 rounded text-sm transition-colors"
+                style={{
+                  background: "var(--bg-surface)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-dim)",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -96,23 +96,35 @@ export function Collapsible({
   };
   return (
     <div
-      className="text-xs animate-fade-in-fast rounded"
-      style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+      className="animate-fade-in-fast"
+      style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}
     >
       <div
-        className="flex items-center justify-between px-3 py-1.5 cursor-pointer select-none"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "8px 12px",
+          cursor: "pointer",
+          userSelect: "none",
+        }}
         onClick={toggle}
       >
-        <div className="flex items-center gap-1.5">
-          <span style={{ color: "var(--text-dim)" }}>{label}</span>
-          {meta && <span style={{ color: "var(--text-dim)", opacity: 0.5 }}>{meta}</span>}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 12, color: "var(--text-dim)", fontWeight: 400 }}>{label}</span>
+          {meta && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{meta}</span>}
         </div>
-        <span style={{
-          color: "var(--text-dim)", fontSize: 10, display: "inline-block",
-          transition: "transform 0.15s", transform: open ? "rotate(180deg)" : "none",
-        }}>v</span>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          style={{ transition: "transform 0.15s", transform: open ? "rotate(180deg)" : "none", flexShrink: 0 }}
+        >
+          <path d="M2 4l4 4 4-4" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
-      {open && <div className="px-3 pb-2">{children}</div>}
+      {open && <div style={{ padding: "0 12px 10px" }}>{children}</div>}
     </div>
   );
 }
@@ -127,9 +139,9 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
   switch (event.type) {
     case "tool_search_start":
       return (
-        <div className="flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast"
-          style={{ color: "var(--text-dim)" }}>
-          <div className="w-1 h-1 rounded-full" style={{ background: "var(--text-dim)" }} />
+        <div className="flex items-center gap-1.5 animate-fade-in-fast"
+          style={{ color: "var(--text-dim)", fontSize: 12, padding: "4px 0" }}>
+          <div style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--text-muted)", flexShrink: 0 }} />
           Searching: {event.query}
         </div>
       );
@@ -157,22 +169,19 @@ export function ChatPlanningStep({ event }: { event: PlanningEvent }) {
     case "planning_thinking":
       return (
         <Collapsible label="Model response" defaultOpen={expanded} onToggle={setExpanded}>
-          <pre className="text-xs whitespace-pre-wrap"
-            style={{ color: "var(--text)", maxHeight: 200, overflow: "auto" }}>
+          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, maxHeight: 200, overflow: "auto", whiteSpace: "pre-wrap" }}>
             {event.text}
-          </pre>
+          </p>
         </Collapsible>
       );
 
     case "planning_warnings":
       return (
-        <div className="text-xs px-3 py-1.5 rounded animate-fade-in-fast"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+        <div className="animate-fade-in-fast"
+          style={{ borderLeft: "2px solid var(--yellow)", paddingLeft: 10, paddingTop: 4, paddingBottom: 4 }}>
           {event.warnings.map((w, i) => (
-            <div key={i} className="flex items-start gap-1.5 py-0.5"
-              style={{ color: "var(--text-dim)" }}>
-              <span style={{ opacity: 0.5 }}>!</span>
-              <span>{w}</span>
+            <div key={i} style={{ fontSize: 12, color: "var(--text-dim)", lineHeight: 1.5, padding: "2px 0" }}>
+              {w}
             </div>
           ))}
         </div>
@@ -230,15 +239,14 @@ export function ChatPane({
     <div
       className="flex flex-col h-full animate-slide-left"
       style={{
-        width: 340,
-        minWidth: 340,
+        width: 320,
+        minWidth: 320,
         borderRight: "1px solid var(--border)",
         background: "var(--bg)",
       }}
     >
       <div
-        className="px-4 py-3 text-xs font-bold tracking-wider uppercase"
-        style={{ color: "var(--text-dim)", borderBottom: "1px solid var(--border)" }}
+        style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--text-dim)", borderBottom: "1px solid var(--border)", padding: "10px 16px" }}
       >
         Chat
       </div>
@@ -251,23 +259,20 @@ export function ChatPane({
             ) : m.role === "user" ? (
               <div className="flex justify-end">
                 <div
-                  className="px-3 py-2 rounded-lg text-xs max-w-[260px]"
-                  style={{ background: "var(--accent-dim)", color: "#fff" }}
+                  style={{ padding: "8px 12px", borderRadius: 10, fontSize: 13, maxWidth: 240, background: "var(--accent-dim)", color: "#fff", lineHeight: 1.5 }}
                 >
                   {m.content}
                 </div>
               </div>
             ) : m.role === "system" ? (
               <div
-                className="text-xs px-3 py-1.5 rounded"
-                style={{ color: "var(--blue)", background: "rgba(96,165,250,0.08)" }}
+                style={{ fontSize: 12, color: "var(--blue)", paddingLeft: 10, borderLeft: "2px solid rgba(96,165,250,0.4)" }}
               >
                 {m.content}
               </div>
             ) : (
               <div
-                className="px-3 py-2 rounded-lg text-xs"
-                style={{ background: "var(--bg-card)", color: "var(--text)" }}
+                style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.6 }}
               >
                 {m.content}
               </div>
@@ -288,14 +293,13 @@ export function ChatPane({
         <div ref={endRef} />
       </div>
 
-      <div className="p-3" style={{ borderTop: "1px solid var(--border)" }}>
-        <div className="flex gap-2">
+      <div style={{ padding: "10px 12px", borderTop: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", gap: 8 }}>
           <input
-            className="flex-1 px-3 py-2 rounded text-xs outline-none"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: "var(--text)",
+              flex: 1, padding: "7px 12px", borderRadius: 8, fontSize: 13,
+              outline: "none", border: "1px solid var(--border)",
+              background: "transparent", color: "var(--text)", fontFamily: "inherit",
             }}
             placeholder="Follow up..."
             value={input}
@@ -306,11 +310,12 @@ export function ChatPane({
           <button
             onClick={send}
             disabled={loading || !input.trim()}
-            className="px-3 py-2 rounded text-xs font-medium transition-opacity"
             style={{
-              background: "var(--accent)",
-              color: "#fff",
+              padding: "7px 14px", borderRadius: 8, fontSize: 13, fontWeight: 500,
+              border: "none", cursor: "pointer", fontFamily: "inherit",
+              background: "var(--accent)", color: "#fff",
               opacity: loading || !input.trim() ? 0.4 : 1,
+              transition: "opacity 0.15s",
             }}
           >
             Send
@@ -344,7 +349,7 @@ export function PlanningFeed({ events }: { events: PlanningEvent[] }) {
         className="flex items-center justify-between px-4 py-3"
         style={{ borderBottom: "1px solid var(--border)" }}
       >
-        <div className="text-xs font-bold tracking-wider uppercase" style={{ color: "var(--text-dim)" }}>
+        <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--text-dim)" }}>
           Planning
         </div>
         {!isDone && (
@@ -374,10 +379,13 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
           defaultOpen={true}
         >
           {event.tool_names.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
               {event.tool_names.map((name, i) => (
-                <span key={i} className="px-1.5 py-0.5 rounded"
-                  style={{ background: "var(--bg-surface)", color: "var(--text-dim)", fontSize: 10 }}>
+                <span key={i} style={{
+                  padding: "2px 8px", borderRadius: 12,
+                  border: "1px solid var(--border)",
+                  color: "var(--text-dim)", fontSize: 11,
+                }}>
                   {name}
                 </span>
               ))}
@@ -389,22 +397,19 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
     case "planning_thinking":
       return (
         <Collapsible label="Model response" defaultOpen={true}>
-          <pre className="text-xs whitespace-pre-wrap"
-            style={{ color: "var(--text-dim)", maxHeight: 200, overflow: "auto" }}>
+          <p style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-dim)", margin: 0, maxHeight: 200, overflow: "auto", whiteSpace: "pre-wrap" }}>
             {event.text}
-          </pre>
+          </p>
         </Collapsible>
       );
 
     case "planning_warnings":
       return (
-        <div className="p-3 rounded-lg text-xs animate-fade-in"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+        <div className="animate-fade-in"
+          style={{ borderLeft: "2px solid var(--yellow)", paddingLeft: 10, paddingTop: 4, paddingBottom: 4 }}>
           {event.warnings.map((w, i) => (
-            <div key={i} className="flex items-start gap-1.5 py-0.5"
-              style={{ color: "var(--text-dim)" }}>
-              <span style={{ opacity: 0.5 }}>!</span>
-              <span>{w}</span>
+            <div key={i} style={{ fontSize: 12, color: "var(--text-dim)", padding: "2px 0", lineHeight: 1.5 }}>
+              {w}
             </div>
           ))}
         </div>
@@ -412,22 +417,20 @@ function PlanningFeedCard({ event }: { event: PlanningEvent }) {
 
     case "dag_complete":
       return (
-        <div className="p-3 rounded-lg text-xs animate-fade-in"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text)" }} />
-            <span style={{ color: "var(--text)" }}>
-              Workflow ready — {event.workflow.nodes.length} steps
-            </span>
-          </div>
+        <div className="animate-fade-in"
+          style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0" }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)", flexShrink: 0 }} />
+          <span style={{ fontSize: 12, color: "var(--text)" }}>
+            Workflow ready — {event.workflow.nodes.length} steps
+          </span>
         </div>
       );
 
     case "planning_error":
       return (
-        <div className="p-3 rounded-lg text-xs animate-fade-in"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
-          <span style={{ color: "var(--red)" }}>
+        <div className="animate-fade-in"
+          style={{ borderLeft: "2px solid var(--red)", paddingLeft: 10, paddingTop: 4, paddingBottom: 4 }}>
+          <span style={{ fontSize: 12, color: "var(--red)" }}>
             {event.message.slice(0, 300)}
           </span>
         </div>
@@ -554,10 +557,11 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
 
   return (
     <div
-      className={`rounded-lg animate-fade-in transition-all ${statusClass}`}
+      className={`animate-fade-in transition-all ${statusClass}`}
       style={{
-        background: isFinal ? "var(--bg-surface)" : "var(--bg-card)",
+        background: "var(--bg-card)",
         border: isFinal ? "1px solid var(--accent)" : "1px solid var(--border)",
+        borderRadius: 10,
       }}
     >
       {/* Header — always visible */}
@@ -574,38 +578,37 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
                 node.status === "running" ? "pulse-dot 1s ease-in-out infinite" : "none",
             }}
           />
-          <div className="min-w-0">
-            <div className="text-xs font-medium" style={{ color: "var(--text)" }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>
               {isFinal ? "Final Result" : friendlyLabel(node)}
             </div>
-            <div className="text-xs mt-0.5" style={{ color: "var(--text-dim)" }}>
+            <div style={{ fontSize: 11, marginTop: 2, color: "var(--text-dim)" }}>
               {isFinal ? friendlyLabel(node) : friendlySubtitle(node)}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           {node.status === "running" && (
-            <span className="text-xs" style={{ color: "var(--text-dim)" }}>Running...</span>
+            <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Running...</span>
           )}
           {node.elapsed !== undefined && node.status !== "running" && (
-            <span className="text-xs" style={{ color: "var(--text-dim)" }}>
+            <span style={{ fontSize: 11, color: "var(--text-dim)", fontVariantNumeric: "tabular-nums" }}>
               {node.elapsed}s
             </span>
           )}
-          <span
-            className="text-xs transition-transform"
-            style={{ color: "var(--text-dim)", transform: expanded ? "rotate(180deg)" : "none" }}
+          <svg
+            width="12" height="12" viewBox="0 0 12 12" fill="none"
+            style={{ transition: "transform 0.15s", transform: expanded ? "rotate(180deg)" : "none", flexShrink: 0 }}
           >
-            v
-          </span>
+            <path d="M2 4l4 4 4-4" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </div>
 
       {/* Result preview — shows a one-liner when collapsed */}
       {!expanded && hasResult && node.status === "complete" && (
         <div
-          className="px-4 pb-3 -mt-1 text-xs truncate"
-          style={{ color: "var(--text-dim)" }}
+          style={{ padding: "0 16px 12px", marginTop: -2, fontSize: 12, color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
         >
           {previewText(resultText)}
         </div>
@@ -613,49 +616,54 @@ export function ExecutionEntry({ node, isFinal }: { node: NodeStatus; isFinal?: 
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 animate-fade-in-fast"
-          style={{ borderTop: "1px solid var(--border)" }}
+        <div
+          className="animate-fade-in-fast"
+          style={{ padding: "12px 16px 16px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 12 }}
         >
-          {/* Result — readable text */}
+          {/* Result — readable text, no background box */}
           {hasResult && (
-            <div className="mt-3">
-              <pre
-                className="text-xs whitespace-pre-wrap leading-relaxed"
-                style={{
-                  color: "var(--text)",
-                  maxHeight: isFinal ? 500 : 300,
-                  overflow: "auto",
-                }}
-              >
-                {resultText}
-              </pre>
-            </div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 13,
+                lineHeight: 1.65,
+                color: "var(--text)",
+                whiteSpace: "pre-wrap",
+                maxHeight: isFinal ? 480 : 280,
+                overflow: "auto",
+              }}
+            >
+              {resultText}
+            </p>
           )}
 
-          {/* Error */}
+          {/* Error — left-border accent only */}
           {node.error && (
-            <div className="mt-3 p-2 rounded"
-              style={{ background: "rgba(248,113,113,0.08)" }}>
-              <div className="text-xs" style={{ color: "var(--red)" }}>
+            <div style={{ borderLeft: "2px solid var(--red)", paddingLeft: 10 }}>
+              <div style={{ fontSize: 12, color: "var(--red)" }}>
                 {node.error}
               </div>
             </div>
           )}
 
-          {/* Technical details — collapsible for devs */}
+          {/* Technical details — collapsible */}
           {node.arguments && Object.keys(node.arguments).length > 0 && (
             <Collapsible label="Technical details" defaultOpen={false}>
-              <div className="space-y-2">
-                <div className="text-xs" style={{ color: "var(--text-dim)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ fontSize: 11, color: "var(--text-dim)" }}>
                   {node.server_name} / {node.tool_name}
                 </div>
                 <pre
-                  className="text-xs p-2 rounded overflow-x-auto"
+                  className="font-mono"
                   style={{
-                    background: "var(--bg)",
+                    margin: 0,
+                    fontSize: 11,
                     color: "var(--text-dim)",
                     maxHeight: 150,
-                    fontSize: 10,
+                    overflow: "auto",
+                    borderLeft: "2px solid var(--border)",
+                    paddingLeft: 10,
+                    lineHeight: 1.5,
                   }}
                 >
                   {JSON.stringify(node.arguments, null, 2)}
@@ -696,29 +704,26 @@ export function WorkflowPane({
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden animate-slide-right">
       <div
-        className="flex items-center justify-between px-4 py-3"
-        style={{ borderBottom: "1px solid var(--border)" }}
+        style={{ borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px" }}
       >
         <div>
-          <div className="text-sm font-medium">{workflow.name}</div>
-          <div className="text-xs" style={{ color: "var(--text-dim)" }}>
+          <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>{workflow.name}</div>
+          <div style={{ fontSize: 12, color: "var(--text-dim)", marginTop: 2, lineHeight: 1.4 }}>
             {workflow.description}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div style={{ display: "flex", gap: 8 }}>
           {phase === "preview" && (
             <>
               <button
                 onClick={() => onRun("test")}
-                className="px-4 py-1.5 rounded text-xs font-medium"
-                style={{ background: "var(--blue)", color: "#fff" }}
+                style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "1px solid var(--border)", background: "transparent", color: "var(--text)", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Test Run
               </button>
               <button
                 onClick={() => onRun("deploy")}
-                className="px-4 py-1.5 rounded text-xs font-medium"
-                style={{ background: "var(--green)", color: "#000" }}
+                style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "none", background: "var(--accent)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Deploy
               </button>
@@ -728,15 +733,13 @@ export function WorkflowPane({
             <>
               <button
                 onClick={() => onRun("test")}
-                className="px-4 py-1.5 rounded text-xs font-medium"
-                style={{ background: "var(--blue)", color: "#fff" }}
+                style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "1px solid var(--border)", background: "transparent", color: "var(--text)", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Re-run
               </button>
               <button
                 onClick={() => onRun("deploy")}
-                className="px-4 py-1.5 rounded text-xs font-medium"
-                style={{ background: "var(--green)", color: "#000" }}
+                style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "none", background: "var(--accent)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}
               >
                 Deploy
               </button>
@@ -745,8 +748,7 @@ export function WorkflowPane({
           {phase === "done" && runMode === "deploy" && !webhookUrl && (
             <button
               onClick={onCreateWebhook}
-              className="px-4 py-1.5 rounded text-xs font-medium"
-              style={{ background: "var(--accent)", color: "#fff" }}
+              style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500, border: "none", background: "var(--accent)", color: "#fff", cursor: "pointer", fontFamily: "inherit" }}
             >
               Create Webhook
             </button>
@@ -784,12 +786,11 @@ export function WorkflowPane({
             )}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {levels.map((level, li) => (
               <div key={li}>
                 <div
-                  className="text-xs font-medium mb-2 uppercase tracking-wider"
-                  style={{ color: "var(--text-dim)" }}
+                  style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 8 }}
                 >
                   Level {li + 1}
                 </div>
@@ -799,26 +800,29 @@ export function WorkflowPane({
                     return (
                       <div
                         key={node.id}
-                        className="p-3 rounded-lg"
-                        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+                        style={{ padding: "12px 14px", borderRadius: 8, border: "1px solid var(--border)" }}
                       >
-                        <div className="text-xs font-medium">{node.step}</div>
-                        <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>{node.step}</div>
+                        <div style={{ fontSize: 11, marginTop: 3, color: "var(--text-dim)" }}>
                           {isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`}
                         </div>
                         {isLlm && typeof node.arguments.prompt === "string" && (
-                          <div className="text-xs mt-2 p-2 rounded"
-                            style={{ background: "var(--bg-surface)", color: "var(--text-dim)" }}>
+                          <p style={{ fontSize: 12, marginTop: 8, marginBottom: 0, color: "var(--text-dim)", lineHeight: 1.5 }}>
                             {node.arguments.prompt}
-                          </div>
+                          </p>
                         )}
                         {!isLlm && Object.keys(node.arguments).length > 0 && (
                           <pre
-                            className="text-xs mt-2 p-2 rounded overflow-x-auto"
+                            className="font-mono"
                             style={{
-                              background: "var(--bg-surface)",
+                              marginTop: 8,
+                              marginBottom: 0,
+                              fontSize: 11,
                               color: "var(--text-dim)",
-                              fontSize: 10,
+                              borderLeft: "2px solid var(--border)",
+                              paddingLeft: 8,
+                              lineHeight: 1.5,
+                              overflow: "auto",
                             }}
                           >
                             {JSON.stringify(node.arguments, null, 2)}
@@ -851,4 +855,6 @@ export const PRESETS = [
   { label: "Multi-source research report", prompt: "Search GitHub for the top 5 trending AI repositories this week, fetch each repo's README, then synthesize a research briefing that covers what each project does, their tech stacks, and which problems they solve" },
   { label: "Job market snapshot", prompt: "Search for senior backend engineer job postings on LinkedIn and Indeed, extract salary ranges and required skills, then produce a summary table comparing compensation across companies" },
   { label: "News digest + sentiment", prompt: "Scrape the front pages of Hacker News, TechCrunch, and The Verge, identify overlapping stories, then run sentiment analysis on coverage of the top 3 topics and generate a briefing with takeaways" },
+  { label: "UML diagram on draw.io", prompt: "Go to draw.io (https://app.diagrams.net) and create a UML class diagram for a simple e-commerce application with entities for User, Product, Order, and OrderItem — including their attributes, methods, and relationships (associations, multiplicities). Save the diagram." },
+  { label: "Star today's trending GitHub repos", prompt: "Fetch today's top trending repositories on GitHub, then for each one check whether I have already starred it and, if not, star it on my behalf. Report which repos were newly starred and which were already starred." },
 ];

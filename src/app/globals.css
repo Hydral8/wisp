@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 :root {
-  --bg: #0a0a0f;
-  --bg-card: #12121a;
-  --bg-surface: #1a1a25;
-  --border: #2a2a3a;
-  --text: #e0e0e8;
-  --text-dim: #8888a0;
+  --bg: #0e0e0e;
+  --bg-card: #161616;
+  --bg-surface: #1c1c1c;
+  --bg-sidebar: #111111;
+  --border: #252525;
+  --border-subtle: #1e1e1e;
+  --text: #e8e8e8;
+  --text-dim: #888888;
+  --text-muted: #444444;
   --accent: #7c6bf0;
   --accent-dim: #5a4fcf;
   --green: #34d399;
@@ -21,22 +25,29 @@
 
 body {
   margin: 0;
-  font-family: "SF Mono", "Fira Code", "JetBrains Mono", monospace;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mono only for code */
+.font-mono {
+  font-family: 'Roboto Mono', 'SF Mono', 'Fira Code', monospace;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 /* Animations */
@@ -46,7 +57,7 @@ body {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -56,17 +67,17 @@ body {
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-12px); }
+  from { opacity: 0; transform: translateX(-10px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(12px); }
+  from { opacity: 0; transform: translateX(10px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.25s ease-out;
 }
 
 .animate-fade-in-fast {
@@ -74,25 +85,23 @@ body {
 }
 
 .animate-slide-left {
-  animation: slide-in-left 0.3s ease-out;
+  animation: slide-in-left 0.25s ease-out;
 }
 
 .animate-slide-right {
-  animation: slide-in-right 0.3s ease-out;
+  animation: slide-in-right 0.25s ease-out;
 }
 
 /* Node status glows */
 .node-active {
-  box-shadow: 0 0 12px rgba(96, 165, 250, 0.3);
-  border-color: var(--blue);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.4);
+  border-color: rgba(96, 165, 250, 0.5) !important;
 }
 
 .node-complete {
-  box-shadow: 0 0 12px rgba(52, 211, 153, 0.2);
-  border-color: var(--green);
+  border-color: rgba(52, 211, 153, 0.3) !important;
 }
 
 .node-error {
-  box-shadow: 0 0 12px rgba(248, 113, 113, 0.2);
-  border-color: var(--red);
+  border-color: rgba(248, 113, 113, 0.4) !important;
 }

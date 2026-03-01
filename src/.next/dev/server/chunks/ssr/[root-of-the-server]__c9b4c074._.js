@@ -121,58 +121,84 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
         });
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "text-xs animate-fade-in-fast rounded",
+        className: "animate-fade-in-fast",
         style: {
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)"
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            overflow: "hidden"
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between px-3 py-1.5 cursor-pointer select-none",
+                style: {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "8px 12px",
+                    cursor: "pointer",
+                    userSelect: "none"
+                },
                 onClick: toggle,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-1.5",
+                        style: {
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6
+                        },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 style: {
-                                    color: "var(--text-dim)"
+                                    fontSize: 12,
+                                    color: "var(--text-dim)",
+                                    fontWeight: 400
                                 },
                                 children: label
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 107,
+                                lineNumber: 114,
                                 columnNumber: 11
                             }, this),
                             meta && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 style: {
-                                    color: "var(--text-dim)",
-                                    opacity: 0.5
+                                    fontSize: 11,
+                                    color: "var(--text-muted)"
                                 },
                                 children: meta
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 108,
+                                lineNumber: 115,
                                 columnNumber: 20
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 106,
+                        lineNumber: 113,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                        width: "12",
+                        height: "12",
+                        viewBox: "0 0 12 12",
+                        fill: "none",
                         style: {
-                            color: "var(--text-dim)",
-                            fontSize: 10,
-                            display: "inline-block",
                             transition: "transform 0.15s",
-                            transform: open ? "rotate(180deg)" : "none"
+                            transform: open ? "rotate(180deg)" : "none",
+                            flexShrink: 0
                         },
-                        children: "v"
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                            d: "M2 4l4 4 4-4",
+                            stroke: "var(--text-muted)",
+                            strokeWidth: "1.5",
+                            strokeLinecap: "round",
+                            strokeLinejoin: "round"
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                            lineNumber: 124,
+                            columnNumber: 11
+                        }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 110,
+                        lineNumber: 117,
                         columnNumber: 9
                     }, this)
                 ]
@@ -182,11 +208,13 @@ function Collapsible({ label, meta, defaultOpen = true, onToggle, children }) {
                 columnNumber: 7
             }, this),
             open && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-3 pb-2",
+                style: {
+                    padding: "0 12px 10px"
+                },
                 children: children
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 115,
+                lineNumber: 127,
                 columnNumber: 16
             }, this)
         ]
@@ -201,19 +229,24 @@ function ChatPlanningStep({ event }) {
     switch(event.type){
         case "tool_search_start":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center gap-1.5 text-xs px-3 py-1 animate-fade-in-fast",
+                className: "flex items-center gap-1.5 animate-fade-in-fast",
                 style: {
-                    color: "var(--text-dim)"
+                    color: "var(--text-dim)",
+                    fontSize: 12,
+                    padding: "4px 0"
                 },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-1 h-1 rounded-full",
                         style: {
-                            background: "var(--text-dim)"
+                            width: 4,
+                            height: 4,
+                            borderRadius: "50%",
+                            background: "var(--text-muted)",
+                            flexShrink: 0
                         }
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 132,
+                        lineNumber: 144,
                         columnNumber: 11
                     }, this),
                     "Searching: ",
@@ -221,7 +254,7 @@ function ChatPlanningStep({ event }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 130,
+                lineNumber: 142,
                 columnNumber: 9
             }, this);
         case "tool_search_complete":
@@ -241,17 +274,17 @@ function ChatPlanningStep({ event }) {
                             children: name
                         }, i, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 147,
+                            lineNumber: 159,
                             columnNumber: 17
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 145,
+                    lineNumber: 157,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 139,
+                lineNumber: 151,
                 columnNumber: 9
             }, this);
         case "planning_thinking":
@@ -259,63 +292,52 @@ function ChatPlanningStep({ event }) {
                 label: "Model response",
                 defaultOpen: expanded,
                 onToggle: setExpanded,
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                    className: "text-xs whitespace-pre-wrap",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     style: {
-                        color: "var(--text)",
+                        fontSize: 12,
+                        lineHeight: 1.6,
+                        color: "var(--text-dim)",
+                        margin: 0,
                         maxHeight: 200,
-                        overflow: "auto"
+                        overflow: "auto",
+                        whiteSpace: "pre-wrap"
                     },
                     children: event.text
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 160,
+                    lineNumber: 172,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 159,
+                lineNumber: 171,
                 columnNumber: 9
             }, this);
         case "planning_warnings":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "text-xs px-3 py-1.5 rounded animate-fade-in-fast",
+                className: "animate-fade-in-fast",
                 style: {
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)"
+                    borderLeft: "2px solid var(--yellow)",
+                    paddingLeft: 10,
+                    paddingTop: 4,
+                    paddingBottom: 4
                 },
                 children: event.warnings.map((w, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-start gap-1.5 py-0.5",
                         style: {
-                            color: "var(--text-dim)"
+                            fontSize: 12,
+                            color: "var(--text-dim)",
+                            lineHeight: 1.5,
+                            padding: "2px 0"
                         },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                style: {
-                                    opacity: 0.5
-                                },
-                                children: "!"
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 174,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                children: w
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 175,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, i, true, {
+                        children: w
+                    }, i, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 172,
+                        lineNumber: 183,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 169,
+                lineNumber: 180,
                 columnNumber: 9
             }, this);
         case "dag_complete":
@@ -332,7 +354,7 @@ function ChatPlanningStep({ event }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 185,
+                        lineNumber: 194,
                         columnNumber: 11
                     }, this),
                     "Workflow ready — ",
@@ -341,7 +363,7 @@ function ChatPlanningStep({ event }) {
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 183,
+                lineNumber: 192,
                 columnNumber: 9
             }, this);
         case "planning_error":
@@ -353,7 +375,7 @@ function ChatPlanningStep({ event }) {
                 children: event.message.slice(0, 200)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 192,
+                lineNumber: 201,
                 columnNumber: 9
             }, this);
         default:
@@ -378,22 +400,26 @@ function ChatPane({ messages, onSend, loading }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex flex-col h-full animate-slide-left",
         style: {
-            width: 340,
-            minWidth: 340,
+            width: 320,
+            minWidth: 320,
             borderRight: "1px solid var(--border)",
             background: "var(--bg)"
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-4 py-3 text-xs font-bold tracking-wider uppercase",
                 style: {
+                    fontSize: 11,
+                    fontWeight: 500,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
                     color: "var(--text-dim)",
-                    borderBottom: "1px solid var(--border)"
+                    borderBottom: "1px solid var(--border)",
+                    padding: "10px 16px"
                 },
                 children: "Chat"
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 239,
+                lineNumber: 248,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -405,52 +431,57 @@ function ChatPane({ messages, onSend, loading }) {
                                 event: m.planningEvent
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 250,
+                                lineNumber: 258,
                                 columnNumber: 15
                             }, this) : m.role === "user" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex justify-end",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "px-3 py-2 rounded-lg text-xs max-w-[260px]",
                                     style: {
+                                        padding: "8px 12px",
+                                        borderRadius: 10,
+                                        fontSize: 13,
+                                        maxWidth: 240,
                                         background: "var(--accent-dim)",
-                                        color: "#fff"
+                                        color: "#fff",
+                                        lineHeight: 1.5
                                     },
                                     children: m.content
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 253,
+                                    lineNumber: 261,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 252,
+                                lineNumber: 260,
                                 columnNumber: 15
                             }, this) : m.role === "system" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-xs px-3 py-1.5 rounded",
                                 style: {
+                                    fontSize: 12,
                                     color: "var(--blue)",
-                                    background: "rgba(96,165,250,0.08)"
-                                },
-                                children: m.content
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 261,
-                                columnNumber: 15
-                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "px-3 py-2 rounded-lg text-xs",
-                                style: {
-                                    background: "var(--bg-card)",
-                                    color: "var(--text)"
+                                    paddingLeft: 10,
+                                    borderLeft: "2px solid rgba(96,165,250,0.4)"
                                 },
                                 children: m.content
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
                                 lineNumber: 268,
                                 columnNumber: 15
+                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    fontSize: 13,
+                                    color: "var(--text)",
+                                    lineHeight: 1.6
+                                },
+                                children: m.content
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                lineNumber: 274,
+                                columnNumber: 15
                             }, this)
                         }, i, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 248,
+                            lineNumber: 256,
                             columnNumber: 11
                         }, this)),
                     loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -467,41 +498,49 @@ function ChatPane({ messages, onSend, loading }) {
                                 }
                             }, i, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 280,
+                                lineNumber: 285,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 278,
+                        lineNumber: 283,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         ref: endRef
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 288,
+                        lineNumber: 293,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 246,
+                lineNumber: 254,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-3",
                 style: {
+                    padding: "10px 12px",
                     borderTop: "1px solid var(--border)"
                 },
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex gap-2",
+                    style: {
+                        display: "flex",
+                        gap: 8
+                    },
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                            className: "flex-1 px-3 py-2 rounded text-xs outline-none",
                             style: {
-                                background: "var(--bg-surface)",
+                                flex: 1,
+                                padding: "7px 12px",
+                                borderRadius: 8,
+                                fontSize: 13,
+                                outline: "none",
                                 border: "1px solid var(--border)",
-                                color: "var(--text)"
+                                background: "transparent",
+                                color: "var(--text)",
+                                fontFamily: "inherit"
                             },
                             placeholder: "Follow up...",
                             value: input,
@@ -510,39 +549,46 @@ function ChatPane({ messages, onSend, loading }) {
                             disabled: loading
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 293,
+                            lineNumber: 298,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             onClick: send,
                             disabled: loading || !input.trim(),
-                            className: "px-3 py-2 rounded text-xs font-medium transition-opacity",
                             style: {
+                                padding: "7px 14px",
+                                borderRadius: 8,
+                                fontSize: 13,
+                                fontWeight: 500,
+                                border: "none",
+                                cursor: "pointer",
+                                fontFamily: "inherit",
                                 background: "var(--accent)",
                                 color: "#fff",
-                                opacity: loading || !input.trim() ? 0.4 : 1
+                                opacity: loading || !input.trim() ? 0.4 : 1,
+                                transition: "opacity 0.15s"
                             },
                             children: "Send"
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 306,
+                            lineNumber: 310,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 292,
+                    lineNumber: 297,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 291,
+                lineNumber: 296,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 230,
+        lineNumber: 239,
         columnNumber: 5
     }, this);
 }
@@ -567,14 +613,17 @@ function PlanningFeed({ events }) {
                 },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-xs font-bold tracking-wider uppercase",
                         style: {
+                            fontSize: 11,
+                            fontWeight: 500,
+                            letterSpacing: "0.06em",
+                            textTransform: "uppercase",
                             color: "var(--text-dim)"
                         },
                         children: "Planning"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 347,
+                        lineNumber: 352,
                         columnNumber: 9
                     }, this),
                     !isDone && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -588,7 +637,7 @@ function PlanningFeed({ events }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 352,
+                                lineNumber: 357,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -599,19 +648,19 @@ function PlanningFeed({ events }) {
                                 children: "Thinking..."
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 353,
+                                lineNumber: 358,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 351,
+                        lineNumber: 356,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 343,
+                lineNumber: 348,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -621,26 +670,26 @@ function PlanningFeed({ events }) {
                             event: e
                         }, i, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 359,
+                            lineNumber: 364,
                             columnNumber: 11
                         }, this)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         ref: endRef
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 361,
+                        lineNumber: 366,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 357,
+                lineNumber: 362,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 342,
+        lineNumber: 347,
         columnNumber: 5
     }, this);
 }
@@ -652,158 +701,154 @@ function PlanningFeedCard({ event }) {
                 meta: `${event.count} tools · ${event.elapsed}s`,
                 defaultOpen: true,
                 children: event.tool_names.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex flex-wrap gap-1",
+                    style: {
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 4
+                    },
                     children: event.tool_names.map((name, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            className: "px-1.5 py-0.5 rounded",
                             style: {
-                                background: "var(--bg-surface)",
+                                padding: "2px 8px",
+                                borderRadius: 12,
+                                border: "1px solid var(--border)",
                                 color: "var(--text-dim)",
-                                fontSize: 10
+                                fontSize: 11
                             },
                             children: name
                         }, i, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 379,
+                            lineNumber: 384,
                             columnNumber: 17
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 377,
+                    lineNumber: 382,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 371,
+                lineNumber: 376,
                 columnNumber: 9
             }, this);
         case "planning_thinking":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Collapsible, {
                 label: "Model response",
                 defaultOpen: true,
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                    className: "text-xs whitespace-pre-wrap",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     style: {
+                        fontSize: 12,
+                        lineHeight: 1.6,
                         color: "var(--text-dim)",
+                        margin: 0,
                         maxHeight: 200,
-                        overflow: "auto"
+                        overflow: "auto",
+                        whiteSpace: "pre-wrap"
                     },
                     children: event.text
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 392,
+                    lineNumber: 400,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 391,
+                lineNumber: 399,
                 columnNumber: 9
             }, this);
         case "planning_warnings":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-3 rounded-lg text-xs animate-fade-in",
+                className: "animate-fade-in",
                 style: {
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)"
+                    borderLeft: "2px solid var(--yellow)",
+                    paddingLeft: 10,
+                    paddingTop: 4,
+                    paddingBottom: 4
                 },
                 children: event.warnings.map((w, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-start gap-1.5 py-0.5",
                         style: {
-                            color: "var(--text-dim)"
+                            fontSize: 12,
+                            color: "var(--text-dim)",
+                            padding: "2px 0",
+                            lineHeight: 1.5
                         },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                style: {
-                                    opacity: 0.5
-                                },
-                                children: "!"
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 406,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                children: w
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 407,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, i, true, {
+                        children: w
+                    }, i, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 404,
+                        lineNumber: 411,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 401,
+                lineNumber: 408,
                 columnNumber: 9
             }, this);
         case "dag_complete":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-3 rounded-lg text-xs animate-fade-in",
+                className: "animate-fade-in",
                 style: {
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)"
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "6px 0"
                 },
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex items-center gap-2",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "w-1.5 h-1.5 rounded-full",
-                            style: {
-                                background: "var(--text)"
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 418,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            style: {
-                                color: "var(--text)"
-                            },
-                            children: [
-                                "Workflow ready — ",
-                                event.workflow.nodes.length,
-                                " steps"
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 419,
-                            columnNumber: 13
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 417,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            background: "var(--green)",
+                            flexShrink: 0
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 422,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        style: {
+                            fontSize: 12,
+                            color: "var(--text)"
+                        },
+                        children: [
+                            "Workflow ready — ",
+                            event.workflow.nodes.length,
+                            " steps"
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                        lineNumber: 423,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 415,
+                lineNumber: 420,
                 columnNumber: 9
             }, this);
         case "planning_error":
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-3 rounded-lg text-xs animate-fade-in",
+                className: "animate-fade-in",
                 style: {
-                    background: "var(--bg-card)",
-                    border: "1px solid var(--border)"
+                    borderLeft: "2px solid var(--red)",
+                    paddingLeft: 10,
+                    paddingTop: 4,
+                    paddingBottom: 4
                 },
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     style: {
+                        fontSize: 12,
                         color: "var(--red)"
                     },
                     children: event.message.slice(0, 300)
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 430,
+                    lineNumber: 433,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 428,
+                lineNumber: 431,
                 columnNumber: 9
             }, this);
         default:
@@ -831,7 +876,7 @@ function PipelineBar({ nodes, nodeStatuses }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 470,
+                        lineNumber: 473,
                         columnNumber: 13
                     }, this),
                     i < nodes.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -841,19 +886,19 @@ function PipelineBar({ nodes, nodeStatuses }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 475,
+                        lineNumber: 478,
                         columnNumber: 15
                     }, this)
                 ]
             }, n.id, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 469,
+                lineNumber: 472,
                 columnNumber: 11
             }, this);
         })
     }, void 0, false, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 453,
+        lineNumber: 456,
         columnNumber: 5
     }, this);
 }
@@ -900,10 +945,11 @@ function ExecutionEntry({ node, isFinal }) {
     const resultText = node.result !== undefined ? formatResult(node.result) : "";
     const hasResult = resultText.length > 0;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: `rounded-lg animate-fade-in transition-all ${statusClass}`,
+        className: `animate-fade-in transition-all ${statusClass}`,
         style: {
-            background: isFinal ? "var(--bg-surface)" : "var(--bg-card)",
-            border: isFinal ? "1px solid var(--accent)" : "1px solid var(--border)"
+            background: "var(--bg-card)",
+            border: isFinal ? "1px solid var(--accent)" : "1px solid var(--border)",
+            borderRadius: 10
         },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -921,64 +967,75 @@ function ExecutionEntry({ node, isFinal }) {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 569,
+                                lineNumber: 573,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "min-w-0",
+                                style: {
+                                    minWidth: 0
+                                },
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-xs font-medium",
                                         style: {
-                                            color: "var(--text)"
+                                            fontSize: 13,
+                                            fontWeight: 500,
+                                            color: "var(--text)",
+                                            lineHeight: 1.3
                                         },
                                         children: isFinal ? "Final Result" : friendlyLabel(node)
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 578,
+                                        lineNumber: 582,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "text-xs mt-0.5",
                                         style: {
+                                            fontSize: 11,
+                                            marginTop: 2,
                                             color: "var(--text-dim)"
                                         },
                                         children: isFinal ? friendlyLabel(node) : friendlySubtitle(node)
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 581,
+                                        lineNumber: 585,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 577,
+                                lineNumber: 581,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 568,
+                        lineNumber: 572,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-2 flex-shrink-0",
+                        style: {
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            flexShrink: 0
+                        },
                         children: [
                             node.status === "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-xs",
                                 style: {
+                                    fontSize: 11,
                                     color: "var(--text-dim)"
                                 },
                                 children: "Running..."
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 588,
+                                lineNumber: 592,
                                 columnNumber: 13
                             }, this),
                             node.elapsed !== undefined && node.status !== "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-xs",
                                 style: {
-                                    color: "var(--text-dim)"
+                                    fontSize: 11,
+                                    color: "var(--text-dim)",
+                                    fontVariantNumeric: "tabular-nums"
                                 },
                                 children: [
                                     node.elapsed,
@@ -986,100 +1043,123 @@ function ExecutionEntry({ node, isFinal }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 591,
+                                lineNumber: 595,
                                 columnNumber: 13
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-xs transition-transform",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                width: "12",
+                                height: "12",
+                                viewBox: "0 0 12 12",
+                                fill: "none",
                                 style: {
-                                    color: "var(--text-dim)",
-                                    transform: expanded ? "rotate(180deg)" : "none"
+                                    transition: "transform 0.15s",
+                                    transform: expanded ? "rotate(180deg)" : "none",
+                                    flexShrink: 0
                                 },
-                                children: "v"
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                    d: "M2 4l4 4 4-4",
+                                    stroke: "var(--text-muted)",
+                                    strokeWidth: "1.5",
+                                    strokeLinecap: "round",
+                                    strokeLinejoin: "round"
+                                }, void 0, false, {
+                                    fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
+                                    lineNumber: 603,
+                                    columnNumber: 13
+                                }, this)
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 595,
+                                lineNumber: 599,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 586,
+                        lineNumber: 590,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 564,
+                lineNumber: 568,
                 columnNumber: 7
             }, this),
             !expanded && hasResult && node.status === "complete" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-4 pb-3 -mt-1 text-xs truncate",
                 style: {
-                    color: "var(--text-dim)"
+                    padding: "0 16px 12px",
+                    marginTop: -2,
+                    fontSize: 12,
+                    color: "var(--text-dim)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
                 },
                 children: previewText(resultText)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 606,
+                lineNumber: 610,
                 columnNumber: 9
             }, this),
             expanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-4 pb-4 space-y-3 animate-fade-in-fast",
+                className: "animate-fade-in-fast",
                 style: {
-                    borderTop: "1px solid var(--border)"
+                    padding: "12px 16px 16px",
+                    borderTop: "1px solid var(--border)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12
                 },
                 children: [
-                    hasResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mt-3",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                            className: "text-xs whitespace-pre-wrap leading-relaxed",
-                            style: {
-                                color: "var(--text)",
-                                maxHeight: isFinal ? 500 : 300,
-                                overflow: "auto"
-                            },
-                            children: resultText
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 622,
-                            columnNumber: 15
-                        }, this)
+                    hasResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            margin: 0,
+                            fontSize: 13,
+                            lineHeight: 1.65,
+                            color: "var(--text)",
+                            whiteSpace: "pre-wrap",
+                            maxHeight: isFinal ? 480 : 280,
+                            overflow: "auto"
+                        },
+                        children: resultText
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 621,
+                        lineNumber: 625,
                         columnNumber: 13
                     }, this),
                     node.error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mt-3 p-2 rounded",
                         style: {
-                            background: "rgba(248,113,113,0.08)"
+                            borderLeft: "2px solid var(--red)",
+                            paddingLeft: 10
                         },
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "text-xs",
                             style: {
+                                fontSize: 12,
                                 color: "var(--red)"
                             },
                             children: node.error
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 639,
+                            lineNumber: 643,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 637,
+                        lineNumber: 642,
                         columnNumber: 13
                     }, this),
                     node.arguments && Object.keys(node.arguments).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Collapsible, {
                         label: "Technical details",
                         defaultOpen: false,
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-2",
+                            style: {
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 8
+                            },
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-xs",
                                     style: {
+                                        fontSize: 11,
                                         color: "var(--text-dim)"
                                     },
                                     children: [
@@ -1089,44 +1169,48 @@ function ExecutionEntry({ node, isFinal }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 649,
+                                    lineNumber: 653,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                                    className: "text-xs p-2 rounded overflow-x-auto",
+                                    className: "font-mono",
                                     style: {
-                                        background: "var(--bg)",
+                                        margin: 0,
+                                        fontSize: 11,
                                         color: "var(--text-dim)",
                                         maxHeight: 150,
-                                        fontSize: 10
+                                        overflow: "auto",
+                                        borderLeft: "2px solid var(--border)",
+                                        paddingLeft: 10,
+                                        lineHeight: 1.5
                                     },
                                     children: JSON.stringify(node.arguments, null, 2)
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 652,
+                                    lineNumber: 656,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 648,
+                            lineNumber: 652,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 647,
+                        lineNumber: 651,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 616,
+                lineNumber: 619,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 556,
+        lineNumber: 559,
         columnNumber: 5
     }, this);
 }
@@ -1137,67 +1221,91 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
         className: "flex-1 flex flex-col h-full overflow-hidden animate-slide-right",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center justify-between px-4 py-3",
                 style: {
-                    borderBottom: "1px solid var(--border)"
+                    borderBottom: "1px solid var(--border)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 16px"
                 },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-sm font-medium",
+                                style: {
+                                    fontSize: 14,
+                                    fontWeight: 500,
+                                    color: "var(--text)"
+                                },
                                 children: workflow.name
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 703,
+                                lineNumber: 710,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-xs",
                                 style: {
-                                    color: "var(--text-dim)"
+                                    fontSize: 12,
+                                    color: "var(--text-dim)",
+                                    marginTop: 2,
+                                    lineHeight: 1.4
                                 },
                                 children: workflow.description
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 704,
+                                lineNumber: 711,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 702,
+                        lineNumber: 709,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex gap-2",
+                        style: {
+                            display: "flex",
+                            gap: 8
+                        },
                         children: [
                             phase === "preview" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>onRun("test"),
-                                        className: "px-4 py-1.5 rounded text-xs font-medium",
                                         style: {
-                                            background: "var(--blue)",
-                                            color: "#fff"
+                                            padding: "6px 14px",
+                                            borderRadius: 8,
+                                            fontSize: 12,
+                                            fontWeight: 500,
+                                            border: "1px solid var(--border)",
+                                            background: "transparent",
+                                            color: "var(--text)",
+                                            cursor: "pointer",
+                                            fontFamily: "inherit"
                                         },
                                         children: "Test Run"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 711,
+                                        lineNumber: 718,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>onRun("deploy"),
-                                        className: "px-4 py-1.5 rounded text-xs font-medium",
                                         style: {
-                                            background: "var(--green)",
-                                            color: "#000"
+                                            padding: "6px 14px",
+                                            borderRadius: 8,
+                                            fontSize: 12,
+                                            fontWeight: 500,
+                                            border: "none",
+                                            background: "var(--accent)",
+                                            color: "#fff",
+                                            cursor: "pointer",
+                                            fontFamily: "inherit"
                                         },
                                         children: "Deploy"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 718,
+                                        lineNumber: 724,
                                         columnNumber: 15
                                     }, this)
                                 ]
@@ -1206,55 +1314,73 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>onRun("test"),
-                                        className: "px-4 py-1.5 rounded text-xs font-medium",
                                         style: {
-                                            background: "var(--blue)",
-                                            color: "#fff"
+                                            padding: "6px 14px",
+                                            borderRadius: 8,
+                                            fontSize: 12,
+                                            fontWeight: 500,
+                                            border: "1px solid var(--border)",
+                                            background: "transparent",
+                                            color: "var(--text)",
+                                            cursor: "pointer",
+                                            fontFamily: "inherit"
                                         },
                                         children: "Re-run"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 729,
+                                        lineNumber: 734,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>onRun("deploy"),
-                                        className: "px-4 py-1.5 rounded text-xs font-medium",
                                         style: {
-                                            background: "var(--green)",
-                                            color: "#000"
+                                            padding: "6px 14px",
+                                            borderRadius: 8,
+                                            fontSize: 12,
+                                            fontWeight: 500,
+                                            border: "none",
+                                            background: "var(--accent)",
+                                            color: "#fff",
+                                            cursor: "pointer",
+                                            fontFamily: "inherit"
                                         },
                                         children: "Deploy"
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 736,
+                                        lineNumber: 740,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true),
                             phase === "done" && runMode === "deploy" && !webhookUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: onCreateWebhook,
-                                className: "px-4 py-1.5 rounded text-xs font-medium",
                                 style: {
+                                    padding: "6px 14px",
+                                    borderRadius: 8,
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    border: "none",
                                     background: "var(--accent)",
-                                    color: "#fff"
+                                    color: "#fff",
+                                    cursor: "pointer",
+                                    fontFamily: "inherit"
                                 },
                                 children: "Create Webhook"
                             }, void 0, false, {
                                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                lineNumber: 746,
+                                lineNumber: 749,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                        lineNumber: 708,
+                        lineNumber: 715,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 698,
+                lineNumber: 706,
                 columnNumber: 7
             }, this),
             showExecution && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(PipelineBar, {
@@ -1262,7 +1388,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                 nodeStatuses: nodeStatuses
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 757,
+                lineNumber: 759,
                 columnNumber: 25
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1279,7 +1405,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     isFinal: allDone && i === lastIdx
                                 }, n.id, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 767,
+                                    lineNumber: 769,
                                     columnNumber: 17
                                 }, this));
                         })(),
@@ -1298,7 +1424,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     children: "Webhook Created"
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 779,
+                                    lineNumber: 781,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
@@ -1311,28 +1437,36 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 782,
+                                    lineNumber: 784,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 775,
+                            lineNumber: 777,
                             columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 761,
+                    lineNumber: 763,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "space-y-4",
+                    style: {
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 20
+                    },
                     children: levels.map((level, li)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-xs font-medium mb-2 uppercase tracking-wider",
                                     style: {
-                                        color: "var(--text-dim)"
+                                        fontSize: 10,
+                                        fontWeight: 500,
+                                        letterSpacing: "0.07em",
+                                        textTransform: "uppercase",
+                                        color: "var(--text-muted)",
+                                        marginBottom: 8
                                     },
                                     children: [
                                         "Level ",
@@ -1340,7 +1474,7 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 790,
+                                    lineNumber: 792,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1351,14 +1485,18 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                     children: level.map((node)=>{
                                         const isLlm = node.server_name === "__llm__";
                                         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "p-3 rounded-lg",
                                             style: {
-                                                background: "var(--bg-card)",
+                                                padding: "12px 14px",
+                                                borderRadius: 8,
                                                 border: "1px solid var(--border)"
                                             },
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-xs font-medium",
+                                                    style: {
+                                                        fontSize: 13,
+                                                        fontWeight: 500,
+                                                        color: "var(--text)"
+                                                    },
                                                     children: node.step
                                                 }, void 0, false, {
                                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
@@ -1366,8 +1504,9 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-xs mt-1",
                                                     style: {
+                                                        fontSize: 11,
+                                                        marginTop: 3,
                                                         color: "var(--text-dim)"
                                                     },
                                                     children: isLlm ? "Language model" : `${node.server_name} / ${node.tool_name}`
@@ -1376,11 +1515,13 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                     lineNumber: 806,
                                                     columnNumber: 25
                                                 }, this),
-                                                isLlm && typeof node.arguments.prompt === "string" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-xs mt-2 p-2 rounded",
+                                                isLlm && typeof node.arguments.prompt === "string" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                     style: {
-                                                        background: "var(--bg-surface)",
-                                                        color: "var(--text-dim)"
+                                                        fontSize: 12,
+                                                        marginTop: 8,
+                                                        marginBottom: 0,
+                                                        color: "var(--text-dim)",
+                                                        lineHeight: 1.5
                                                     },
                                                     children: node.arguments.prompt
                                                 }, void 0, false, {
@@ -1389,28 +1530,33 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                                     columnNumber: 27
                                                 }, this),
                                                 !isLlm && Object.keys(node.arguments).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                                                    className: "text-xs mt-2 p-2 rounded overflow-x-auto",
+                                                    className: "font-mono",
                                                     style: {
-                                                        background: "var(--bg-surface)",
+                                                        marginTop: 8,
+                                                        marginBottom: 0,
+                                                        fontSize: 11,
                                                         color: "var(--text-dim)",
-                                                        fontSize: 10
+                                                        borderLeft: "2px solid var(--border)",
+                                                        paddingLeft: 8,
+                                                        lineHeight: 1.5,
+                                                        overflow: "auto"
                                                     },
                                                     children: JSON.stringify(node.arguments, null, 2)
                                                 }, void 0, false, {
                                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                                    lineNumber: 816,
+                                                    lineNumber: 815,
                                                     columnNumber: 27
                                                 }, this)
                                             ]
                                         }, node.id, true, {
                                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                            lineNumber: 800,
+                                            lineNumber: 801,
                                             columnNumber: 23
                                         }, this);
                                     })
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 796,
+                                    lineNumber: 797,
                                     columnNumber: 17
                                 }, this),
                                 li < levels.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1422,34 +1568,34 @@ function WorkflowPane({ workflow, nodeStatuses, phase, runMode, onRun, onCreateW
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                        lineNumber: 833,
+                                        lineNumber: 837,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                                    lineNumber: 832,
+                                    lineNumber: 836,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, li, true, {
                             fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                            lineNumber: 789,
+                            lineNumber: 791,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                    lineNumber: 787,
+                    lineNumber: 789,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-                lineNumber: 759,
+                lineNumber: 761,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/components/workflow-ui.tsx",
-        lineNumber: 697,
+        lineNumber: 705,
         columnNumber: 5
     }, this);
 }
@@ -1469,6 +1615,14 @@ const PRESETS = [
     {
         label: "News digest + sentiment",
         prompt: "Scrape the front pages of Hacker News, TechCrunch, and The Verge, identify overlapping stories, then run sentiment analysis on coverage of the top 3 topics and generate a briefing with takeaways"
+    },
+    {
+        label: "UML diagram on draw.io",
+        prompt: "Go to draw.io (https://app.diagrams.net) and create a UML class diagram for a simple e-commerce application with entities for User, Product, Order, and OrderItem — including their attributes, methods, and relationships (associations, multiplicities). Save the diagram."
+    },
+    {
+        label: "Star today's trending GitHub repos",
+        prompt: "Fetch today's top trending repositories on GitHub, then for each one check whether I have already starred it and, if not, star it on my behalf. Report which repos were newly starred and which were already starred."
     }
 ];
 }),
@@ -1488,290 +1642,846 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$
 ;
 ;
 ;
-function Dashboard() {
+// ─── Icons ────────────────────────────────────────────────────────────────────
+function IconCompose() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        width: "18",
+        height: "18",
+        viewBox: "0 0 18 18",
+        fill: "none",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M9 3H3.75A1.5 1.5 0 0 0 2.25 4.5v9.75A1.5 1.5 0 0 0 3.75 15.75H13.5A1.5 1.5 0 0 0 15 14.25V9",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round",
+                strokeLinejoin: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 20,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M13.875 2.625a1.5 1.5 0 0 1 2.121 2.122L9.75 11 6.75 11.75l.75-3 6.375-6.125z",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round",
+                strokeLinejoin: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 21,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 19,
+        columnNumber: 5
+    }, this);
+}
+function IconAutomations() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        width: "18",
+        height: "18",
+        viewBox: "0 0 18 18",
+        fill: "none",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M3 9a6 6 0 1 0 12 0A6 6 0 0 0 3 9z",
+                stroke: "currentColor",
+                strokeWidth: "1.4"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 29,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M9 6v3l2 2",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round",
+                strokeLinejoin: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 30,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 28,
+        columnNumber: 5
+    }, this);
+}
+function IconMarketplace() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        width: "18",
+        height: "18",
+        viewBox: "0 0 18 18",
+        fill: "none",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M2.25 3.75h13.5l-1.5 6H3.75l-1.5-6z",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinejoin: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 38,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                cx: "6",
+                cy: "14.25",
+                r: "0.75",
+                fill: "currentColor"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 39,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                cx: "12",
+                cy: "14.25",
+                r: "0.75",
+                fill: "currentColor"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 40,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M3.75 9.75v4.5",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 41,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M14.25 9.75v4.5",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 42,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 37,
+        columnNumber: 5
+    }, this);
+}
+function IconSettings() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        width: "18",
+        height: "18",
+        viewBox: "0 0 18 18",
+        fill: "none",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                cx: "9",
+                cy: "9",
+                r: "2.25",
+                stroke: "currentColor",
+                strokeWidth: "1.4"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 50,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                d: "M9 2.25v1.5M9 14.25v1.5M2.25 9h1.5M14.25 9h1.5M4.4 4.4l1.06 1.06M12.54 12.54l1.06 1.06M4.4 13.6l1.06-1.06M12.54 5.46l1.06-1.06",
+                stroke: "currentColor",
+                strokeWidth: "1.4",
+                strokeLinecap: "round"
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 51,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 49,
+        columnNumber: 5
+    }, this);
+}
+function IconSend() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        width: "15",
+        height: "15",
+        viewBox: "0 0 15 15",
+        fill: "none",
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+            d: "M2 7.5h11M7.5 2l5.5 5.5-5.5 5.5",
+            stroke: "currentColor",
+            strokeWidth: "1.5",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        }, void 0, false, {
+            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+            lineNumber: 59,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 58,
+        columnNumber: 5
+    }, this);
+}
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+    {
+        id: "compose",
+        label: "Compose",
+        Icon: IconCompose
+    },
+    {
+        id: "automations",
+        label: "Automations",
+        Icon: IconAutomations
+    },
+    {
+        id: "marketplace",
+        label: "Marketplace",
+        Icon: IconMarketplace
+    }
+];
+function Sidebar({ active, onChange }) {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        style: {
+            width: 56,
+            minWidth: 56,
+            height: "100vh",
+            background: "var(--bg-sidebar)",
+            borderRight: "1px solid var(--border)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingTop: 16,
+            paddingBottom: 16,
+            position: "fixed",
+            left: 0,
+            top: 0,
+            zIndex: 10,
+            gap: 2
+        },
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    width: 30,
+                    height: 30,
+                    borderRadius: 8,
+                    background: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 20,
+                    flexShrink: 0
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                    width: "14",
+                    height: "14",
+                    viewBox: "0 0 14 14",
+                    fill: "none",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                        d: "M7 1L13 7L7 13L1 7L7 1Z",
+                        fill: "white"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 110,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 109,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 96,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    alignItems: "center",
+                    width: "100%"
+                },
+                children: NAV_ITEMS.map(({ id, label, Icon })=>{
+                    const isActive = active === id;
+                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        title: label,
+                        onClick: ()=>onChange(id),
+                        style: {
+                            width: 40,
+                            height: 40,
+                            borderRadius: 10,
+                            border: "none",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: isActive ? "var(--bg-surface)" : "transparent",
+                            color: isActive ? "var(--text)" : "var(--text-muted)",
+                            transition: "background 0.12s, color 0.12s",
+                            fontFamily: "inherit"
+                        },
+                        onMouseEnter: (e)=>{
+                            if (!isActive) {
+                                e.currentTarget.style.color = "var(--text-dim)";
+                                e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                            }
+                        },
+                        onMouseLeave: (e)=>{
+                            if (!isActive) {
+                                e.currentTarget.style.color = "var(--text-muted)";
+                                e.currentTarget.style.background = "transparent";
+                            }
+                        },
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {}, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            lineNumber: 150,
+                            columnNumber: 15
+                        }, this)
+                    }, id, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 119,
+                        columnNumber: 13
+                    }, this);
+                })
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 115,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                title: "Settings",
+                style: {
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    color: "var(--text-muted)",
+                    transition: "background 0.12s, color 0.12s",
+                    fontFamily: "inherit"
+                },
+                onMouseEnter: (e)=>{
+                    e.currentTarget.style.color = "var(--text-dim)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                },
+                onMouseLeave: (e)=>{
+                    e.currentTarget.style.color = "var(--text-muted)";
+                    e.currentTarget.style.background = "transparent";
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(IconSettings, {}, void 0, false, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 182,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 157,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 76,
+        columnNumber: 5
+    }, this);
+}
+// ─── Compose (home) ──────────────────────────────────────────────────────────
+function ComposePane() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
-    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PRESETS"][0].prompt);
-    const [workflows, setWorkflows] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [loadingList, setLoadingList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const textareaRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
-    // Fetch all workflows on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["API"]}/workflows`).then((r)=>r.json()).then((data)=>{
-            setWorkflows(data.workflows ?? []);
-        }).catch(()=>{}).finally(()=>setLoadingList(false));
-    }, []);
+        const el = textareaRef.current;
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
+    }, [
+        input
+    ]);
     const handleSubmit = ()=>{
         if (!input.trim()) return;
         router.push(`/workflow/new?prompt=${encodeURIComponent(input.trim())}`);
     };
-    const statusColor = (status)=>{
-        switch(status){
-            case "completed":
-                return "var(--green)";
-            case "running":
-                return "var(--blue)";
-            case "planned":
-                return "var(--text-dim)";
-            default:
-                return "var(--text-dim)";
-        }
-    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "min-h-screen flex flex-col",
+        style: {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 24px 80px",
+            minHeight: "100vh"
+        },
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            style: {
+                width: "100%",
+                maxWidth: 620
+            },
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                    style: {
+                        fontSize: 28,
+                        fontWeight: 600,
+                        letterSpacing: "-0.4px",
+                        margin: "0 0 8px",
+                        color: "var(--text)"
+                    },
+                    children: "What do you want to automate?"
+                }, void 0, false, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 220,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    style: {
+                        fontSize: 14,
+                        color: "var(--text-dim)",
+                        margin: "0 0 28px",
+                        fontWeight: 400
+                    },
+                    children: "Describe your goal — Wisp finds the right tools and runs them."
+                }, void 0, false, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 223,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 14,
+                        padding: "14px 14px 10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 10
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                            ref: textareaRef,
+                            rows: 1,
+                            style: {
+                                background: "transparent",
+                                border: "none",
+                                outline: "none",
+                                resize: "none",
+                                width: "100%",
+                                fontSize: 14,
+                                lineHeight: "1.65",
+                                color: "var(--text)",
+                                fontFamily: "inherit",
+                                overflow: "hidden",
+                                minHeight: 28,
+                                padding: 0
+                            },
+                            placeholder: "e.g. Search GitHub for trending AI repos and summarize them...",
+                            value: input,
+                            onChange: (e)=>setInput(e.target.value),
+                            onKeyDown: (e)=>{
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSubmit();
+                                }
+                            }
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            lineNumber: 239,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            style: {
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between"
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    style: {
+                                        fontSize: 11,
+                                        color: "var(--text-muted)"
+                                    },
+                                    children: "Shift + Enter for new line"
+                                }, void 0, false, {
+                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                    lineNumber: 267,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: handleSubmit,
+                                    disabled: !input.trim(),
+                                    style: {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 6,
+                                        padding: "6px 14px",
+                                        borderRadius: 8,
+                                        border: "none",
+                                        cursor: input.trim() ? "pointer" : "not-allowed",
+                                        fontSize: 13,
+                                        fontWeight: 500,
+                                        fontFamily: "inherit",
+                                        background: input.trim() ? "var(--accent)" : "var(--border)",
+                                        color: input.trim() ? "#fff" : "var(--text-muted)",
+                                        transition: "background 0.15s, color 0.15s"
+                                    },
+                                    children: [
+                                        "Run ",
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(IconSend, {}, void 0, false, {
+                                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                            lineNumber: 287,
+                                            columnNumber: 19
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                    lineNumber: 268,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            lineNumber: 266,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 228,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 8,
+                        marginTop: 16
+                    },
+                    children: __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PRESETS"].map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            onClick: ()=>{
+                                setInput(p.prompt);
+                                textareaRef.current?.focus();
+                            },
+                            style: {
+                                padding: "6px 14px",
+                                borderRadius: 20,
+                                border: "1px solid var(--border)",
+                                background: "none",
+                                cursor: "pointer",
+                                fontSize: 12,
+                                fontWeight: 400,
+                                fontFamily: "inherit",
+                                color: "var(--text-dim)",
+                                transition: "border-color 0.12s, color 0.12s"
+                            },
+                            onMouseEnter: (e)=>{
+                                e.currentTarget.style.color = "var(--text)";
+                                e.currentTarget.style.borderColor = "var(--text-muted)";
+                            },
+                            onMouseLeave: (e)=>{
+                                e.currentTarget.style.color = "var(--text-dim)";
+                                e.currentTarget.style.borderColor = "var(--border)";
+                            },
+                            children: p.label
+                        }, p.label, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                            lineNumber: 295,
+                            columnNumber: 13
+                        }, this))
+                }, void 0, false, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                    lineNumber: 293,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+            lineNumber: 219,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 208,
+        columnNumber: 5
+    }, this);
+}
+// ─── Automations ─────────────────────────────────────────────────────────────
+const STATUS_COLOR = {
+    completed: "var(--green)",
+    running: "var(--blue)",
+    planned: "var(--text-dim)"
+};
+function AutomationsPane() {
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
+    const [workflows, setWorkflows] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["API"]}/workflows`).then((r)=>r.json()).then((d)=>setWorkflows(d.workflows ?? [])).catch(()=>{}).finally(()=>setLoading(false));
+    }, []);
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        style: {
+            flex: 1,
+            padding: "48px 40px",
+            minHeight: "100vh",
+            maxWidth: 900,
+            width: "100%"
+        },
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex flex-col items-center pt-16 pb-12 px-4",
+                style: {
+                    marginBottom: 28
+                },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                        className: "text-2xl font-bold mb-2 tracking-tight",
                         style: {
+                            fontSize: 22,
+                            fontWeight: 600,
+                            letterSpacing: "-0.3px",
+                            margin: "0 0 4px",
                             color: "var(--text)"
                         },
-                        children: "Wisp Instant"
+                        children: "My Automations"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 52,
+                        lineNumber: 355,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-xs mb-8",
                         style: {
-                            color: "var(--text-dim)"
+                            fontSize: 13,
+                            color: "var(--text-dim)",
+                            margin: 0
                         },
-                        children: "Describe a workflow — we'll find the right tools and run them."
+                        children: "Your saved and deployed workflows"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 58,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-full max-w-xl",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
-                                ref: textareaRef,
-                                className: "w-full p-4 rounded-lg text-sm outline-none resize-none",
-                                style: {
-                                    background: "var(--bg-card)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text)",
-                                    minHeight: 80
-                                },
-                                placeholder: "e.g. Search GitHub for trending AI repos this week...",
-                                value: input,
-                                onChange: (e)=>setInput(e.target.value),
-                                onKeyDown: (e)=>{
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSubmit();
-                                    }
-                                }
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 63,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex gap-2 mt-3 flex-wrap",
-                                children: __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PRESETS"].map((p)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: ()=>{
-                                            setInput(p.prompt);
-                                            textareaRef.current?.focus();
-                                        },
-                                        className: "px-3 py-1.5 rounded text-xs transition-colors",
-                                        style: {
-                                            background: "var(--bg-surface)",
-                                            border: "1px solid var(--border)",
-                                            color: "var(--text-dim)"
-                                        },
-                                        children: p.label
-                                    }, p.label, false, {
-                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 84,
-                                        columnNumber: 15
-                                    }, this))
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 82,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 62,
+                        lineNumber: 358,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 51,
+                lineNumber: 354,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex-1 px-4 pb-12 max-w-4xl mx-auto w-full",
+            loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    display: "flex",
+                    gap: 5,
+                    paddingTop: 40,
+                    justifyContent: "center"
+                },
+                children: [
+                    0,
+                    1,
+                    2
+                ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            width: 5,
+                            height: 5,
+                            borderRadius: "50%",
+                            background: "var(--text-muted)",
+                            animation: `pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite`
+                        }
+                    }, i, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 366,
+                        columnNumber: 13
+                    }, this))
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 364,
+                columnNumber: 9
+            }, this) : workflows.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    textAlign: "center",
+                    paddingTop: 80
+                },
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            color: "var(--text-dim)",
+                            fontSize: 14,
+                            margin: "0 0 4px"
+                        },
+                        children: "No automations yet"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 371,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            color: "var(--text-muted)",
+                            fontSize: 12,
+                            margin: 0
+                        },
+                        children: "Create one from the Compose tab"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 372,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 370,
+                columnNumber: 9
+            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center justify-between mb-4 pb-2",
                         style: {
-                            borderBottom: "1px solid var(--border)"
+                            fontSize: 11,
+                            color: "var(--text-muted)",
+                            marginBottom: 12,
+                            fontWeight: 500
                         },
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                className: "text-xs font-bold tracking-wider uppercase",
-                                style: {
-                                    color: "var(--text-dim)"
-                                },
-                                children: "Your Workflows"
-                            }, void 0, false, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 110,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-xs",
-                                style: {
-                                    color: "var(--text-dim)"
-                                },
-                                children: [
-                                    workflows.length,
-                                    " total"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 113,
-                                columnNumber: 11
-                            }, this)
+                            workflows.length,
+                            " automation",
+                            workflows.length !== 1 ? "s" : ""
                         ]
                     }, void 0, true, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 106,
-                        columnNumber: 9
+                        lineNumber: 376,
+                        columnNumber: 11
                     }, this),
-                    loadingList ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex justify-center py-8",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex gap-1",
-                            children: [
-                                0,
-                                1,
-                                2
-                            ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "w-1.5 h-1.5 rounded-full",
-                                    style: {
-                                        background: "var(--text-dim)",
-                                        opacity: 0.4
-                                    }
-                                }, i, false, {
-                                    fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                    lineNumber: 122,
-                                    columnNumber: 17
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 120,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 119,
-                        columnNumber: 11
-                    }, this) : workflows.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-col items-center py-12",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-xs",
-                            style: {
-                                color: "var(--text-dim)"
-                            },
-                            children: "No workflows yet. Create one above to get started."
-                        }, void 0, false, {
-                            fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                            lineNumber: 132,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 131,
-                        columnNumber: 11
-                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "grid gap-3",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         style: {
+                            display: "grid",
+                            gap: 10,
                             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))"
                         },
                         children: workflows.map((wf)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: ()=>router.push(`/workflow/${wf.id}`),
-                                className: "text-left p-4 rounded-lg transition-all hover:scale-[1.01]",
+                                className: "animate-fade-in",
                                 style: {
+                                    textAlign: "left",
+                                    padding: "16px 18px",
+                                    borderRadius: 10,
+                                    border: "1px solid var(--border)",
                                     background: "var(--bg-card)",
-                                    border: "1px solid var(--border)"
+                                    cursor: "pointer",
+                                    fontFamily: "inherit",
+                                    transition: "border-color 0.12s"
+                                },
+                                onMouseEnter: (e)=>{
+                                    e.currentTarget.style.borderColor = "var(--text-muted)";
+                                },
+                                onMouseLeave: (e)=>{
+                                    e.currentTarget.style.borderColor = "var(--border)";
                                 },
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-between mb-2",
+                                        style: {
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "flex-start",
+                                            marginBottom: 6,
+                                            gap: 12
+                                        },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "text-sm font-medium",
                                                 style: {
-                                                    color: "var(--text)"
+                                                    fontSize: 13,
+                                                    fontWeight: 500,
+                                                    color: "var(--text)",
+                                                    lineHeight: 1.4
                                                 },
                                                 children: wf.name
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 149,
+                                                lineNumber: 399,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-1.5",
+                                                style: {
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: 5,
+                                                    flexShrink: 0
+                                                },
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "w-1.5 h-1.5 rounded-full",
                                                         style: {
-                                                            background: statusColor(wf.status)
+                                                            width: 6,
+                                                            height: 6,
+                                                            borderRadius: "50%",
+                                                            background: STATUS_COLOR[wf.status] ?? "var(--text-muted)"
                                                         }
                                                     }, void 0, false, {
                                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                        lineNumber: 153,
+                                                        lineNumber: 403,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-xs",
                                                         style: {
+                                                            fontSize: 11,
                                                             color: "var(--text-dim)"
                                                         },
                                                         children: wf.status
                                                     }, void 0, false, {
                                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                        lineNumber: 157,
+                                                        lineNumber: 404,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 152,
+                                                lineNumber: 402,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 148,
+                                        lineNumber: 398,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        className: "text-xs mb-3 line-clamp-2",
                                         style: {
-                                            color: "var(--text-dim)"
+                                            fontSize: 12,
+                                            color: "var(--text-dim)",
+                                            margin: "0 0 12px",
+                                            lineHeight: 1.5,
+                                            display: "-webkit-box",
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: "vertical",
+                                            overflow: "hidden"
                                         },
                                         children: wf.description
                                     }, void 0, false, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 162,
+                                        lineNumber: 407,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center gap-2",
+                                        style: {
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8
+                                        },
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "text-xs px-2 py-0.5 rounded",
                                                 style: {
-                                                    background: "var(--bg-surface)",
+                                                    fontSize: 11,
                                                     color: "var(--text-dim)"
                                                 },
                                                 children: [
@@ -1780,48 +2490,364 @@ function Dashboard() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 169,
+                                                lineNumber: 411,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "text-xs",
                                                 style: {
-                                                    color: "var(--text-dim)",
-                                                    opacity: 0.5
+                                                    color: "var(--border)"
                                                 },
-                                                children: wf.id
+                                                children: "·"
                                             }, void 0, false, {
                                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                                lineNumber: 175,
+                                                lineNumber: 412,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                style: {
+                                                    fontSize: 11,
+                                                    color: "var(--text-muted)",
+                                                    fontFamily: "'Roboto Mono', monospace"
+                                                },
+                                                children: wf.id.slice(0, 8)
+                                            }, void 0, false, {
+                                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                                lineNumber: 413,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                        lineNumber: 168,
+                                        lineNumber: 410,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, wf.id, true, {
                                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                                lineNumber: 139,
+                                lineNumber: 381,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                        lineNumber: 137,
+                        lineNumber: 379,
                         columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 353,
+        columnNumber: 5
+    }, this);
+}
+// ─── Marketplace ─────────────────────────────────────────────────────────────
+const MARKETPLACE_ITEMS = [
+    {
+        name: "GitHub Intelligence",
+        description: "Search repos, read READMEs, analyze trends and generate reports.",
+        tags: [
+            "GitHub",
+            "Research"
+        ],
+        icon: "⬡"
+    },
+    {
+        name: "Competitive Analysis",
+        description: "Scrape company homepages, compare features, output structured briefs.",
+        tags: [
+            "Web",
+            "Analysis"
+        ],
+        icon: "◈"
+    },
+    {
+        name: "Job Market Scanner",
+        description: "Search job boards, extract salaries & skills, build comparison tables.",
+        tags: [
+            "LinkedIn",
+            "Data"
+        ],
+        icon: "◉"
+    },
+    {
+        name: "News Digest",
+        description: "Aggregate top stories from multiple sources with sentiment analysis.",
+        tags: [
+            "News",
+            "AI"
+        ],
+        icon: "◎"
+    },
+    {
+        name: "Crypto Price Monitor",
+        description: "Fetch real-time prices across exchanges and generate summaries.",
+        tags: [
+            "Finance",
+            "API"
+        ],
+        icon: "⬟"
+    },
+    {
+        name: "Code Review Pipeline",
+        description: "Fetch PRs, analyze diffs, post structured review comments.",
+        tags: [
+            "GitHub",
+            "DevTools"
+        ],
+        icon: "◬"
+    }
+];
+function MarketplacePane() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        style: {
+            flex: 1,
+            padding: "48px 40px",
+            minHeight: "100vh",
+            maxWidth: 900,
+            width: "100%"
+        },
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    marginBottom: 28
+                },
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                        style: {
+                            fontSize: 22,
+                            fontWeight: 600,
+                            letterSpacing: "-0.3px",
+                            margin: "0 0 4px",
+                            color: "var(--text)"
+                        },
+                        children: "Marketplace"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 441,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        style: {
+                            fontSize: 13,
+                            color: "var(--text-dim)",
+                            margin: 0
+                        },
+                        children: "Pre-built automation templates — one click to run"
+                    }, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 444,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-                lineNumber: 105,
+                lineNumber: 440,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    display: "grid",
+                    gap: 10,
+                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))"
+                },
+                children: MARKETPLACE_ITEMS.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        style: {
+                            padding: "18px 18px",
+                            borderRadius: 10,
+                            border: "1px solid var(--border)",
+                            background: "var(--bg-card)",
+                            cursor: "pointer",
+                            transition: "border-color 0.12s",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 10
+                        },
+                        onMouseEnter: (e)=>{
+                            e.currentTarget.style.borderColor = "var(--text-muted)";
+                        },
+                        onMouseLeave: (e)=>{
+                            e.currentTarget.style.borderColor = "var(--border)";
+                        },
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    justifyContent: "space-between"
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        style: {
+                                            fontSize: 20,
+                                            lineHeight: 1
+                                        },
+                                        children: item.icon
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 468,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        style: {
+                                            padding: "4px 12px",
+                                            borderRadius: 6,
+                                            border: "1px solid var(--border)",
+                                            background: "transparent",
+                                            color: "var(--text-dim)",
+                                            fontSize: 11,
+                                            fontWeight: 500,
+                                            cursor: "pointer",
+                                            fontFamily: "inherit",
+                                            transition: "background 0.12s, color 0.12s"
+                                        },
+                                        onMouseEnter: (e)=>{
+                                            e.currentTarget.style.background = "var(--accent)";
+                                            e.currentTarget.style.color = "#fff";
+                                            e.currentTarget.style.borderColor = "var(--accent)";
+                                        },
+                                        onMouseLeave: (e)=>{
+                                            e.currentTarget.style.background = "transparent";
+                                            e.currentTarget.style.color = "var(--text-dim)";
+                                            e.currentTarget.style.borderColor = "var(--border)";
+                                        },
+                                        children: "Use"
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 469,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 467,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            fontSize: 13,
+                                            fontWeight: 500,
+                                            color: "var(--text)",
+                                            marginBottom: 4
+                                        },
+                                        children: item.name
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 497,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        style: {
+                                            fontSize: 12,
+                                            color: "var(--text-dim)",
+                                            margin: 0,
+                                            lineHeight: 1.5
+                                        },
+                                        children: item.description
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 500,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 496,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                style: {
+                                    display: "flex",
+                                    gap: 6,
+                                    flexWrap: "wrap"
+                                },
+                                children: item.tags.map((t)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        style: {
+                                            fontSize: 10,
+                                            padding: "2px 8px",
+                                            borderRadius: 12,
+                                            border: "1px solid var(--border)",
+                                            color: "var(--text-muted)"
+                                        },
+                                        children: t
+                                    }, t, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                        lineNumber: 506,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                                lineNumber: 504,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, item.name, true, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 451,
+                        columnNumber: 11
+                    }, this))
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 449,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
-        lineNumber: 49,
+        lineNumber: 439,
+        columnNumber: 5
+    }, this);
+}
+function Dashboard() {
+    const [active, setActive] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("compose");
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        style: {
+            display: "flex",
+            minHeight: "100vh"
+        },
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Sidebar, {
+                active: active,
+                onChange: setActive
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 534,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    marginLeft: 56,
+                    flex: 1,
+                    display: "flex"
+                },
+                children: [
+                    active === "compose" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ComposePane, {}, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 536,
+                        columnNumber: 34
+                    }, this),
+                    active === "automations" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AutomationsPane, {}, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 537,
+                        columnNumber: 38
+                    }, this),
+                    active === "marketplace" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MarketplacePane, {}, void 0, false, {
+                        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                        lineNumber: 538,
+                        columnNumber: 38
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+                lineNumber: 535,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/hackathons/yc/wisp/src/app/page.tsx",
+        lineNumber: 533,
         columnNumber: 5
     }, this);
 }

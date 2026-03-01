@@ -1516,6 +1516,8 @@ function WorkflowPage() {
     const [runMode, setRunMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [webhookUrl, setWebhookUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loaded, setLoaded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [credentialRequest, setCredentialRequest] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [credentialValues, setCredentialValues] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({});
     // Stream planning events
     const streamPlan = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "WorkflowPage.useCallback[streamPlan]": async (prompt, existingSessionId)=>{
@@ -1733,6 +1735,32 @@ function WorkflowPage() {
                                     return next;
                                 }
                             }["WorkflowPage.useCallback[handleRun]"]);
+                        } else if (event.type === "credential_request") {
+                            const d = event.data;
+                            setCredentialRequest({
+                                node_id: event.node_id,
+                                workflow_id: event.workflow_id,
+                                fields: d.fields,
+                                reason: d.reason
+                            });
+                            // Initialize empty values for each field
+                            const initial = {};
+                            for (const f of d.fields)initial[f.name] = "";
+                            setCredentialValues(initial);
+                            // Update the node status to show it's waiting for input
+                            setNodeStatuses({
+                                "WorkflowPage.useCallback[handleRun]": (prev)=>{
+                                    const next = new Map(prev);
+                                    const existing = next.get(event.node_id);
+                                    if (existing) {
+                                        next.set(event.node_id, {
+                                            ...existing,
+                                            status: "waiting_input"
+                                        });
+                                    }
+                                    return next;
+                                }
+                            }["WorkflowPage.useCallback[handleRun]"]);
                         }
                     }
                 }["WorkflowPage.useCallback[handleRun]"]);
@@ -1776,6 +1804,53 @@ function WorkflowPage() {
         workflow
     ]);
     const isLoading = phase === "planning" || phase === "executing";
+    const handleCredentialSubmit = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "WorkflowPage.useCallback[handleCredentialSubmit]": async ()=>{
+            if (!credentialRequest || !workflow) return;
+            try {
+                await fetch(`${__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["API"]}/workflow/${workflow.id}/input`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        node_id: credentialRequest.node_id,
+                        data: credentialValues
+                    })
+                });
+                // Update node status back to running
+                setNodeStatuses({
+                    "WorkflowPage.useCallback[handleCredentialSubmit]": (prev)=>{
+                        const next = new Map(prev);
+                        const existing = next.get(credentialRequest.node_id);
+                        if (existing) {
+                            next.set(credentialRequest.node_id, {
+                                ...existing,
+                                status: "running"
+                            });
+                        }
+                        return next;
+                    }
+                }["WorkflowPage.useCallback[handleCredentialSubmit]"]);
+                setCredentialRequest(null);
+                setCredentialValues({});
+            } catch (err) {
+                setChatMessages({
+                    "WorkflowPage.useCallback[handleCredentialSubmit]": (prev)=>[
+                            ...prev,
+                            {
+                                role: "assistant",
+                                content: `Failed to submit credentials: ${err}`
+                            }
+                        ]
+                }["WorkflowPage.useCallback[handleCredentialSubmit]"]);
+            }
+        }
+    }["WorkflowPage.useCallback[handleCredentialSubmit]"], [
+        credentialRequest,
+        credentialValues,
+        workflow
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "h-screen flex flex-col",
         children: [
@@ -1796,7 +1871,7 @@ function WorkflowPage() {
                         children: "← All workflows"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 236,
+                        lineNumber: 291,
                         columnNumber: 9
                     }, this),
                     workflow && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1807,7 +1882,7 @@ function WorkflowPage() {
                         children: workflow.name
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 244,
+                        lineNumber: 299,
                         columnNumber: 11
                     }, this),
                     isNew && !workflow && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1818,13 +1893,13 @@ function WorkflowPage() {
                         children: "New workflow"
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 249,
+                        lineNumber: 304,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                lineNumber: 232,
+                lineNumber: 287,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1836,14 +1911,14 @@ function WorkflowPage() {
                         loading: isLoading
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 257,
+                        lineNumber: 312,
                         columnNumber: 9
                     }, this),
                     phase === "planning" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PlanningFeed"], {
                         events: planningEvents
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 263,
+                        lineNumber: 318,
                         columnNumber: 11
                     }, this) : workflow ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$components$2f$workflow$2d$ui$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["WorkflowPane"], {
                         workflow: workflow,
@@ -1855,7 +1930,7 @@ function WorkflowPage() {
                         webhookUrl: webhookUrl
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 265,
+                        lineNumber: 320,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex-1 flex items-center justify-center",
@@ -1867,28 +1942,156 @@ function WorkflowPage() {
                             children: phase === "idle" && !isNew ? "Loading workflow..." : "Waiting for workflow plan..."
                         }, void 0, false, {
                             fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                            lineNumber: 276,
+                            lineNumber: 331,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                        lineNumber: 275,
+                        lineNumber: 330,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-                lineNumber: 256,
+                lineNumber: 311,
                 columnNumber: 7
+            }, this),
+            credentialRequest && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                style: {
+                    position: "fixed",
+                    inset: 0,
+                    background: "rgba(0,0,0,0.6)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1000
+                },
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    style: {
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 12,
+                        padding: 24,
+                        minWidth: 360,
+                        maxWidth: 480
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                            className: "text-sm font-bold mb-1",
+                            style: {
+                                color: "var(--text)"
+                            },
+                            children: "Credentials Required"
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                            lineNumber: 361,
+                            columnNumber: 13
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "text-xs mb-4",
+                            style: {
+                                color: "var(--text-dim)"
+                            },
+                            children: credentialRequest.reason
+                        }, void 0, false, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                            lineNumber: 367,
+                            columnNumber: 13
+                        }, this),
+                        credentialRequest.fields.map((field)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "mb-3",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                        className: "text-xs font-medium block mb-1",
+                                        style: {
+                                            color: "var(--text-dim)"
+                                        },
+                                        children: field.label
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                                        lineNumber: 372,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: field.sensitive ? "password" : "text",
+                                        value: credentialValues[field.name] || "",
+                                        onChange: (e)=>setCredentialValues((prev)=>({
+                                                    ...prev,
+                                                    [field.name]: e.target.value
+                                                })),
+                                        className: "w-full px-3 py-2 rounded text-sm outline-none",
+                                        style: {
+                                            background: "var(--bg-surface)",
+                                            border: "1px solid var(--border)",
+                                            color: "var(--text)"
+                                        },
+                                        placeholder: field.label
+                                    }, void 0, false, {
+                                        fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                                        lineNumber: 378,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, field.name, true, {
+                                fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                                lineNumber: 371,
+                                columnNumber: 15
+                            }, this)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex gap-2 mt-4",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: handleCredentialSubmit,
+                                    className: "flex-1 px-4 py-2 rounded text-sm font-medium transition-colors",
+                                    style: {
+                                        background: "var(--blue)",
+                                        color: "#fff"
+                                    },
+                                    children: "Submit"
+                                }, void 0, false, {
+                                    fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                                    lineNumber: 398,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    onClick: ()=>setCredentialRequest(null),
+                                    className: "px-4 py-2 rounded text-sm transition-colors",
+                                    style: {
+                                        background: "var(--bg-surface)",
+                                        border: "1px solid var(--border)",
+                                        color: "var(--text-dim)"
+                                    },
+                                    children: "Cancel"
+                                }, void 0, false, {
+                                    fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                                    lineNumber: 408,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                            lineNumber: 397,
+                            columnNumber: 13
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                    lineNumber: 351,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
+                lineNumber: 340,
+                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/hackathons/yc/wisp/src/app/workflow/[id]/page.tsx",
-        lineNumber: 230,
+        lineNumber: 285,
         columnNumber: 5
     }, this);
 }
-_s(WorkflowPage, "Y2VBoWzsM2FX+ceqrNI3rhnmEUo=", false, function() {
+_s(WorkflowPage, "onw351y/KR1n1JdX3UC2msHhL8s=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useParams"],
         __TURBOPACK__imported__module__$5b$project$5d2f$hackathons$2f$yc$2f$wisp$2f$src$2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_react$2d$dom$40$19$2e$2$2e$3_react$40$19$2e$2$2e$3_$5f$react$40$19$2e$2$2e$3$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
